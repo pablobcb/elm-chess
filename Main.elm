@@ -13,8 +13,16 @@
 import Html exposing (..)
 import Html.Attributes exposing (..)
 
+boardStyle : Attribute
+boardStyle =
+  style [ ("width" , "640px")
+        , ("height", "640px")
+        , ("margin", "0.5em")
+        , ("border", "2px solid #808080")
+        ]
+        
 main =
-  table [ id "chessBoard", colspan 8, rowspan 8 ]
+  table [ id "chessBoard", colspan 8, rowspan 8, boardStyle ]
         [ tr [] 
           [ td [ id "A8" ] []
           , td [ id "B8" ] []
