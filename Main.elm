@@ -12,26 +12,77 @@
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Maybe exposing ( Maybe(..) )
+import Array exposing ( Array(..) )
+
+
+type Color = Black 
+           | White
+
+
+type alias Player = Color
+
+
+type Piece = Pawn 
+           | Knight 
+           | Bishop 
+           | Rook 
+           | Queen 
+           | King
+
+
+type alias PieceInstance = 
+    { piece : Piece
+    , color : Color
+    , moved : Bool
+    }
+
+
+type alias Square = 
+    { color : Color
+    , piece : Maybe PieceInstance
+    }
+
+
+type alias Row = Array Square
+
+type alias Board = Array Row
 
 boardStyle : Attribute
 boardStyle =
   style [ ("width" , "640px")
         , ("height", "640px")
         , ("margin", "0.5em")
-        , ("border", "2px solid #808080")
+        , ("border", "2px solid #000")
         ]
+
+squareStyle : Color -> Attribute
+squareStyle color =
+  let bgColor = case color of
+        Black -> ("background-color", "#808080")
+        White -> ("background-color", "#000")
+  
+  in style <| bgColor :: [ ("float", "left")
+                         , ("width", "80px")
+                         , ("height", "80px")
+                         ]
+
+blackSquareStyle = squareStyle Black
         
+--Square : Square -> Html
+--makeSquare square = td
+
 main =
   table [ id "chessBoard", colspan 8, rowspan 8, boardStyle ]
         [ tr [] 
-          [ td [ id "A8" ] []
+          [ td [ id "A8", blackSquareStyle ] []
           , td [ id "B8" ] []
-          , td [ id "C8" ] []
+          , td [ id "C8", blackSquareStyle ] []
           , td [ id "D8" ] []
           , td [ id "E8" ] []
           , td [ id "F8" ] []
           , td [ id "G8" ] []
-          , td [ id "H8" ] []
+          , td [ id "H8", blackSquareStyle ] []
           ]
         , tr []
           [ td [ id "A7" ] []
