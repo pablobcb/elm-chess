@@ -9,7 +9,6 @@
 --    , update = update
 --    , view = view
 --    }
-
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Maybe exposing ( Maybe(..) )
@@ -18,6 +17,11 @@ import Array exposing ( Array(..) )
 
 type Color = Black 
            | White
+           
+other color =
+  case color of
+    Black -> White
+    White -> Black
 
 
 type alias Player = Color
@@ -60,14 +64,16 @@ squareStyle : Color -> Attribute
 squareStyle color =
   let bgColor = case color of
         Black -> ("background-color", "#808080")
-        White -> ("background-color", "#000")
+        White -> ("background-color", "#0000")
   
   in style <| bgColor :: [ ("float", "left")
                          , ("width", "80px")
                          , ("height", "80px")
+                         , ("border", "2px solid #000")
                          ]
 
 blackSquareStyle = squareStyle Black
+whiteSquareStyle = squareStyle White 
         
 --Square : Square -> Html
 --makeSquare square = td
@@ -76,13 +82,13 @@ main =
   table [ id "chessBoard", colspan 8, rowspan 8, boardStyle ]
         [ tr [] 
           [ td [ id "A8", blackSquareStyle ] []
-          , td [ id "B8" ] []
+          , td [ id "B8", whiteSquareStyle ] []
           , td [ id "C8", blackSquareStyle ] []
-          , td [ id "D8" ] []
-          , td [ id "E8" ] []
-          , td [ id "F8" ] []
-          , td [ id "G8" ] []
-          , td [ id "H8", blackSquareStyle ] []
+          , td [ id "D8", whiteSquareStyle ] []
+          , td [ id "E8", blackSquareStyle ] []
+          , td [ id "F8", whiteSquareStyle ] []
+          , td [ id "G8", blackSquareStyle ] []
+          , td [ id "H8", whiteSquareStyle ] []
           ]
         , tr []
           [ td [ id "A7" ] []
