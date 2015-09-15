@@ -40,27 +40,20 @@ squareStyle color =
                          , ("border", "1px solid #000")
                          ]
 
-blackSquareStyle : Attribute
-blackSquareStyle = squareStyle Black
-
-whiteSquareStyle : Attribute
-whiteSquareStyle = squareStyle White 
-        
-
 main =
   table [ id "chessBoard", colspan 8, rowspan 8, boardStyle ]
         [ tr [] 
-          [ td [ id "A8", blackSquareStyle ] []
-          , td [ id "B8", whiteSquareStyle ] []
-          , td [ id "C8", blackSquareStyle ] []
-          , td [ id "D8", whiteSquareStyle ] []
-          , td [ id "E8", blackSquareStyle ] []
-          , td [ id "F8", whiteSquareStyle ] []
-          , td [ id "G8", blackSquareStyle ] []
-          , td [ id "H8", whiteSquareStyle ] []
+          [ td [ id "A8", squareStyle Black ] []
+          , td [ id "B8", squareStyle White ] []
+          , td [ id "C8", squareStyle Black ] []
+          , td [ id "D8", squareStyle White ] []
+          , td [ id "E8", squareStyle Black ] []
+          , td [ id "F8", squareStyle White ] []
+          , td [ id "G8", squareStyle Black ] []
+          , td [ id "H8", squareStyle White ] []
           ]
         , tr []
-          [ td [ id "A7" , blackSquareStyle ] []
+          [ td [ id "A7" , squareStyle Black ] []
           , td [ id "B7" ] []
           , td [ id "C7" ] []
           , td [ id "D7" ] []

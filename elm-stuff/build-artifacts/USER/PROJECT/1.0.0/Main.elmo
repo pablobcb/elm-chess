@@ -48,8 +48,6 @@ Elm.Main.make = function (_elm) {
                        ,_1: "1px solid #000"}])));
       }();
    };
-   var blackSquareStyle = squareStyle($Board.Black);
-   var whiteSquareStyle = squareStyle($Board.White);
    var boardStyle = $Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
                                                          ,_0: "width"
                                                          ,_1: "640px"}
@@ -71,41 +69,41 @@ Elm.Main.make = function (_elm) {
                 _L.fromArray([]),
                 _L.fromArray([A2($Html.td,
                              _L.fromArray([$Html$Attributes.id("A8")
-                                          ,blackSquareStyle]),
+                                          ,squareStyle($Board.Black)]),
                              _L.fromArray([]))
                              ,A2($Html.td,
                              _L.fromArray([$Html$Attributes.id("B8")
-                                          ,whiteSquareStyle]),
+                                          ,squareStyle($Board.White)]),
                              _L.fromArray([]))
                              ,A2($Html.td,
                              _L.fromArray([$Html$Attributes.id("C8")
-                                          ,blackSquareStyle]),
+                                          ,squareStyle($Board.Black)]),
                              _L.fromArray([]))
                              ,A2($Html.td,
                              _L.fromArray([$Html$Attributes.id("D8")
-                                          ,whiteSquareStyle]),
+                                          ,squareStyle($Board.White)]),
                              _L.fromArray([]))
                              ,A2($Html.td,
                              _L.fromArray([$Html$Attributes.id("E8")
-                                          ,blackSquareStyle]),
+                                          ,squareStyle($Board.Black)]),
                              _L.fromArray([]))
                              ,A2($Html.td,
                              _L.fromArray([$Html$Attributes.id("F8")
-                                          ,whiteSquareStyle]),
+                                          ,squareStyle($Board.White)]),
                              _L.fromArray([]))
                              ,A2($Html.td,
                              _L.fromArray([$Html$Attributes.id("G8")
-                                          ,blackSquareStyle]),
+                                          ,squareStyle($Board.Black)]),
                              _L.fromArray([]))
                              ,A2($Html.td,
                              _L.fromArray([$Html$Attributes.id("H8")
-                                          ,whiteSquareStyle]),
+                                          ,squareStyle($Board.White)]),
                              _L.fromArray([]))]))
                 ,A2($Html.tr,
                 _L.fromArray([]),
                 _L.fromArray([A2($Html.td,
                              _L.fromArray([$Html$Attributes.id("A7")
-                                          ,blackSquareStyle]),
+                                          ,squareStyle($Board.Black)]),
                              _L.fromArray([]))
                              ,A2($Html.td,
                              _L.fromArray([$Html$Attributes.id("B7")]),
@@ -287,8 +285,6 @@ Elm.Main.make = function (_elm) {
    _elm.Main.values = {_op: _op
                       ,boardStyle: boardStyle
                       ,squareStyle: squareStyle
-                      ,blackSquareStyle: blackSquareStyle
-                      ,whiteSquareStyle: whiteSquareStyle
                       ,main: main};
    return _elm.Main.values;
 };
