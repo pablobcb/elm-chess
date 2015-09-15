@@ -1,5 +1,3 @@
-module Board where
-
 import Maybe exposing ( Maybe(..) )
 import Array exposing ( Array(..) )
 
@@ -7,11 +5,6 @@ import Array exposing ( Array(..) )
 type Color = Black 
            | White
 
-other : Color -> Color
-other color =
-  case color of
-    Black -> White
-    White -> Black
 
 type alias Player = Color
 
@@ -34,6 +27,7 @@ type alias PieceInstance =
 type alias Square = 
     { color : Color
     , piece : Maybe PieceInstance
+    ,
     }
 
 

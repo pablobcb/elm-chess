@@ -1,0 +1,61 @@
+Elm.Board = Elm.Board || {};
+Elm.Board.make = function (_elm) {
+   "use strict";
+   _elm.Board = _elm.Board || {};
+   if (_elm.Board.values)
+   return _elm.Board.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Board",
+   $Array = Elm.Array.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var Square = F2(function (a,b) {
+      return {_: {}
+             ,color: a
+             ,piece: b};
+   });
+   var PieceInstance = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,color: b
+             ,moved: c
+             ,piece: a};
+   });
+   var King = {ctor: "King"};
+   var Queen = {ctor: "Queen"};
+   var Rook = {ctor: "Rook"};
+   var Bishop = {ctor: "Bishop"};
+   var Knight = {ctor: "Knight"};
+   var Pawn = {ctor: "Pawn"};
+   var White = {ctor: "White"};
+   var Black = {ctor: "Black"};
+   var other = function (color) {
+      return function () {
+         switch (color.ctor)
+         {case "Black": return White;
+            case "White": return Black;}
+         _U.badCase($moduleName,
+         "between lines 12 and 14");
+      }();
+   };
+   _elm.Board.values = {_op: _op
+                       ,Black: Black
+                       ,White: White
+                       ,other: other
+                       ,Pawn: Pawn
+                       ,Knight: Knight
+                       ,Bishop: Bishop
+                       ,Rook: Rook
+                       ,Queen: Queen
+                       ,King: King
+                       ,PieceInstance: PieceInstance
+                       ,Square: Square};
+   return _elm.Board.values;
+};

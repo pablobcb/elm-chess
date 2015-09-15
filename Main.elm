@@ -14,43 +14,11 @@ import Html.Attributes exposing (..)
 import Maybe exposing ( Maybe(..) )
 import Array exposing ( Array(..) )
 
+import Board exposing (..)
 
-type Color = Black 
-           | White
+
            
-other color =
-  case color of
-    Black -> White
-    White -> Black
 
-
-type alias Player = Color
-
-
-type Piece = Pawn 
-           | Knight 
-           | Bishop 
-           | Rook 
-           | Queen 
-           | King
-
-
-type alias PieceInstance = 
-    { piece : Piece
-    , color : Color
-    , moved : Bool
-    }
-
-
-type alias Square = 
-    { color : Color
-    , piece : Maybe PieceInstance
-    }
-
-
-type alias Row = Array Square
-
-type alias Board = Array Row
 
 boardStyle : Attribute
 boardStyle =
@@ -69,7 +37,7 @@ squareStyle color =
   in style <| bgColor :: [ ("float", "left")
                          , ("width", "80px")
                          , ("height", "80px")
-                         , ("border", "2px solid #000")
+                         , ("border", "1px solid #000")
                          ]
 
 blackSquareStyle = squareStyle Black
@@ -91,7 +59,7 @@ main =
           , td [ id "H8", whiteSquareStyle ] []
           ]
         , tr []
-          [ td [ id "A7" ] []
+          [ td [ id "A7" , blackSquareStyle ] []
           , td [ id "B7" ] []
           , td [ id "C7" ] []
           , td [ id "D7" ] []

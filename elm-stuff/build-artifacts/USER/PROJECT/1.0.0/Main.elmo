@@ -10,17 +10,283 @@ Elm.Main.make = function (_elm) {
    _L = _N.List.make(_elm),
    $moduleName = "Main",
    $Basics = Elm.Basics.make(_elm),
-   $Counter = Elm.Counter.make(_elm),
+   $Board = Elm.Board.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $StartApp$Simple = Elm.StartApp.Simple.make(_elm);
-   var main = $StartApp$Simple.start({_: {}
-                                     ,model: 0
-                                     ,update: $Counter.update
-                                     ,view: $Counter.view});
+   $Signal = Elm.Signal.make(_elm);
+   var squareStyle = function (color) {
+      return function () {
+         var bgColor = function () {
+            switch (color.ctor)
+            {case "Black":
+               return {ctor: "_Tuple2"
+                      ,_0: "background-color"
+                      ,_1: "#808080"};
+               case "White":
+               return {ctor: "_Tuple2"
+                      ,_0: "background-color"
+                      ,_1: "#0000"};}
+            _U.badCase($moduleName,
+            "between lines 33 and 37");
+         }();
+         return $Html$Attributes.style(A2($List._op["::"],
+         bgColor,
+         _L.fromArray([{ctor: "_Tuple2"
+                       ,_0: "float"
+                       ,_1: "left"}
+                      ,{ctor: "_Tuple2"
+                       ,_0: "width"
+                       ,_1: "80px"}
+                      ,{ctor: "_Tuple2"
+                       ,_0: "height"
+                       ,_1: "80px"}
+                      ,{ctor: "_Tuple2"
+                       ,_0: "border"
+                       ,_1: "1px solid #000"}])));
+      }();
+   };
+   var blackSquareStyle = squareStyle($Board.Black);
+   var whiteSquareStyle = squareStyle($Board.White);
+   var boardStyle = $Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                         ,_0: "width"
+                                                         ,_1: "710px"}
+                                                        ,{ctor: "_Tuple2"
+                                                         ,_0: "height"
+                                                         ,_1: "640px"}
+                                                        ,{ctor: "_Tuple2"
+                                                         ,_0: "margin"
+                                                         ,_1: "0.5em"}
+                                                        ,{ctor: "_Tuple2"
+                                                         ,_0: "border"
+                                                         ,_1: "2px solid #000"}]));
+   var main = A2($Html.table,
+   _L.fromArray([$Html$Attributes.id("chessBoard")
+                ,boardStyle]),
+   _L.fromArray([A2($Html.tr,
+                _L.fromArray([]),
+                _L.fromArray([A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("A8")
+                                          ,blackSquareStyle]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("B8")
+                                          ,whiteSquareStyle]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("C8")
+                                          ,blackSquareStyle]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("D8")
+                                          ,whiteSquareStyle]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("E8")
+                                          ,blackSquareStyle]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("F8")
+                                          ,whiteSquareStyle]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("G8")
+                                          ,blackSquareStyle]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("H8")
+                                          ,whiteSquareStyle]),
+                             _L.fromArray([]))]))
+                ,A2($Html.tr,
+                _L.fromArray([]),
+                _L.fromArray([A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("A7")
+                                          ,blackSquareStyle]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("B7")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("C7")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("D7")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("E7")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("F7")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("G7")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("H7")]),
+                             _L.fromArray([]))]))
+                ,A2($Html.tr,
+                _L.fromArray([]),
+                _L.fromArray([A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("A6")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("B6")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("C6")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("D6")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("E6")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("F6")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("G6")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("H6")]),
+                             _L.fromArray([]))]))
+                ,A2($Html.tr,
+                _L.fromArray([]),
+                _L.fromArray([A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("A5")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("B5")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("C5")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("D5")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("E5")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("F5")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("G5")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("H5")]),
+                             _L.fromArray([]))]))
+                ,A2($Html.tr,
+                _L.fromArray([]),
+                _L.fromArray([A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("A4")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("B4")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("C4")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("D4")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("E4")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("F4")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("G4")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("H4")]),
+                             _L.fromArray([]))]))
+                ,A2($Html.tr,
+                _L.fromArray([]),
+                _L.fromArray([A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("A3")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("B3")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("C3")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("D3")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("E3")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("F3")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("G3")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("H3")]),
+                             _L.fromArray([]))]))
+                ,A2($Html.tr,
+                _L.fromArray([]),
+                _L.fromArray([A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("A2")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("B2")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("C2")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("D2")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("E2")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("F2")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("G2")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("H2")]),
+                             _L.fromArray([]))]))
+                ,A2($Html.tr,
+                _L.fromArray([]),
+                _L.fromArray([A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("A1")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("B1")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("C1")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("D1")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("E1")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("F1")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("G1")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("H1")]),
+                             _L.fromArray([]))]))]));
    _elm.Main.values = {_op: _op
+                      ,boardStyle: boardStyle
+                      ,squareStyle: squareStyle
+                      ,blackSquareStyle: blackSquareStyle
+                      ,whiteSquareStyle: whiteSquareStyle
                       ,main: main};
    return _elm.Main.values;
 };

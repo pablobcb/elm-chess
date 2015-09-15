@@ -270,6 +270,67 @@ Elm.Basics.make = function (_elm) {
                         ,GT: GT};
    return _elm.Basics.values;
 };
+Elm.Board = Elm.Board || {};
+Elm.Board.make = function (_elm) {
+   "use strict";
+   _elm.Board = _elm.Board || {};
+   if (_elm.Board.values)
+   return _elm.Board.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Board",
+   $Array = Elm.Array.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var Square = F2(function (a,b) {
+      return {_: {}
+             ,color: a
+             ,piece: b};
+   });
+   var PieceInstance = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,color: b
+             ,moved: c
+             ,piece: a};
+   });
+   var King = {ctor: "King"};
+   var Queen = {ctor: "Queen"};
+   var Rook = {ctor: "Rook"};
+   var Bishop = {ctor: "Bishop"};
+   var Knight = {ctor: "Knight"};
+   var Pawn = {ctor: "Pawn"};
+   var White = {ctor: "White"};
+   var Black = {ctor: "Black"};
+   var other = function (color) {
+      return function () {
+         switch (color.ctor)
+         {case "Black": return White;
+            case "White": return Black;}
+         _U.badCase($moduleName,
+         "between lines 12 and 14");
+      }();
+   };
+   _elm.Board.values = {_op: _op
+                       ,Black: Black
+                       ,White: White
+                       ,other: other
+                       ,Pawn: Pawn
+                       ,Knight: Knight
+                       ,Bishop: Bishop
+                       ,Rook: Rook
+                       ,Queen: Queen
+                       ,King: King
+                       ,PieceInstance: PieceInstance
+                       ,Square: Square};
+   return _elm.Board.values;
+};
 Elm.Char = Elm.Char || {};
 Elm.Char.make = function (_elm) {
    "use strict";
@@ -784,80 +845,6 @@ Elm.Color.make = function (_elm) {
                        ,gray: gray
                        ,darkGray: darkGray};
    return _elm.Color.values;
-};
-Elm.Counter = Elm.Counter || {};
-Elm.Counter.make = function (_elm) {
-   "use strict";
-   _elm.Counter = _elm.Counter || {};
-   if (_elm.Counter.values)
-   return _elm.Counter.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   $moduleName = "Counter",
-   $Basics = Elm.Basics.make(_elm),
-   $Html = Elm.Html.make(_elm),
-   $Html$Attributes = Elm.Html.Attributes.make(_elm),
-   $Html$Events = Elm.Html.Events.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var countStyle = $Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
-                                                         ,_0: "font-size"
-                                                         ,_1: "20px"}
-                                                        ,{ctor: "_Tuple2"
-                                                         ,_0: "font-family"
-                                                         ,_1: "monospace"}
-                                                        ,{ctor: "_Tuple2"
-                                                         ,_0: "display"
-                                                         ,_1: "inline-block"}
-                                                        ,{ctor: "_Tuple2"
-                                                         ,_0: "width"
-                                                         ,_1: "50px"}
-                                                        ,{ctor: "_Tuple2"
-                                                         ,_0: "text-align"
-                                                         ,_1: "center"}]));
-   var update = F2(function (action,
-   model) {
-      return function () {
-         switch (action.ctor)
-         {case "Decrement":
-            return model - 1;
-            case "Increment":
-            return model + 1;}
-         _U.badCase($moduleName,
-         "between lines 19 and 21");
-      }();
-   });
-   var Decrement = {ctor: "Decrement"};
-   var Increment = {ctor: "Increment"};
-   var view = F2(function (address,
-   model) {
-      return A2($Html.div,
-      _L.fromArray([]),
-      _L.fromArray([A2($Html.button,
-                   _L.fromArray([A2($Html$Events.onClick,
-                   address,
-                   Decrement)]),
-                   _L.fromArray([$Html.text("-")]))
-                   ,A2($Html.div,
-                   _L.fromArray([countStyle]),
-                   _L.fromArray([$Html.text($Basics.toString(model))]))
-                   ,A2($Html.button,
-                   _L.fromArray([A2($Html$Events.onClick,
-                   address,
-                   Increment)]),
-                   _L.fromArray([$Html.text("+")]))]));
-   });
-   _elm.Counter.values = {_op: _op
-                         ,Increment: Increment
-                         ,Decrement: Decrement
-                         ,update: update
-                         ,view: view
-                         ,countStyle: countStyle};
-   return _elm.Counter.values;
 };
 Elm.Debug = Elm.Debug || {};
 Elm.Debug.make = function (_elm) {
@@ -3618,113 +3605,6 @@ Elm.Html.Attributes.make = function (_elm) {
                                  ,attribute: attribute};
    return _elm.Html.Attributes.values;
 };
-Elm.Html = Elm.Html || {};
-Elm.Html.Events = Elm.Html.Events || {};
-Elm.Html.Events.make = function (_elm) {
-   "use strict";
-   _elm.Html = _elm.Html || {};
-   _elm.Html.Events = _elm.Html.Events || {};
-   if (_elm.Html.Events.values)
-   return _elm.Html.Events.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   $moduleName = "Html.Events",
-   $Basics = Elm.Basics.make(_elm),
-   $Html = Elm.Html.make(_elm),
-   $Json$Decode = Elm.Json.Decode.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $VirtualDom = Elm.VirtualDom.make(_elm);
-   var keyCode = A2($Json$Decode._op[":="],
-   "keyCode",
-   $Json$Decode.$int);
-   var targetChecked = A2($Json$Decode.at,
-   _L.fromArray(["target"
-                ,"checked"]),
-   $Json$Decode.bool);
-   var targetValue = A2($Json$Decode.at,
-   _L.fromArray(["target"
-                ,"value"]),
-   $Json$Decode.string);
-   var defaultOptions = $VirtualDom.defaultOptions;
-   var Options = F2(function (a,
-   b) {
-      return {_: {}
-             ,preventDefault: b
-             ,stopPropagation: a};
-   });
-   var onWithOptions = $VirtualDom.onWithOptions;
-   var on = $VirtualDom.on;
-   var messageOn = F3(function (name,
-   addr,
-   msg) {
-      return A3(on,
-      name,
-      $Json$Decode.value,
-      function (_v0) {
-         return function () {
-            return A2($Signal.message,
-            addr,
-            msg);
-         }();
-      });
-   });
-   var onClick = messageOn("click");
-   var onDoubleClick = messageOn("dblclick");
-   var onMouseMove = messageOn("mousemove");
-   var onMouseDown = messageOn("mousedown");
-   var onMouseUp = messageOn("mouseup");
-   var onMouseEnter = messageOn("mouseenter");
-   var onMouseLeave = messageOn("mouseleave");
-   var onMouseOver = messageOn("mouseover");
-   var onMouseOut = messageOn("mouseout");
-   var onBlur = messageOn("blur");
-   var onFocus = messageOn("focus");
-   var onSubmit = messageOn("submit");
-   var onKey = F3(function (name,
-   addr,
-   handler) {
-      return A3(on,
-      name,
-      keyCode,
-      function (code) {
-         return A2($Signal.message,
-         addr,
-         handler(code));
-      });
-   });
-   var onKeyUp = onKey("keyup");
-   var onKeyDown = onKey("keydown");
-   var onKeyPress = onKey("keypress");
-   _elm.Html.Events.values = {_op: _op
-                             ,onBlur: onBlur
-                             ,onFocus: onFocus
-                             ,onSubmit: onSubmit
-                             ,onKeyUp: onKeyUp
-                             ,onKeyDown: onKeyDown
-                             ,onKeyPress: onKeyPress
-                             ,onClick: onClick
-                             ,onDoubleClick: onDoubleClick
-                             ,onMouseMove: onMouseMove
-                             ,onMouseDown: onMouseDown
-                             ,onMouseUp: onMouseUp
-                             ,onMouseEnter: onMouseEnter
-                             ,onMouseLeave: onMouseLeave
-                             ,onMouseOver: onMouseOver
-                             ,onMouseOut: onMouseOut
-                             ,on: on
-                             ,onWithOptions: onWithOptions
-                             ,defaultOptions: defaultOptions
-                             ,targetValue: targetValue
-                             ,targetChecked: targetChecked
-                             ,keyCode: keyCode
-                             ,Options: Options};
-   return _elm.Html.Events.values;
-};
 Elm.Json = Elm.Json || {};
 Elm.Json.Decode = Elm.Json.Decode || {};
 Elm.Json.Decode.make = function (_elm) {
@@ -4240,17 +4120,283 @@ Elm.Main.make = function (_elm) {
    _L = _N.List.make(_elm),
    $moduleName = "Main",
    $Basics = Elm.Basics.make(_elm),
-   $Counter = Elm.Counter.make(_elm),
+   $Board = Elm.Board.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $StartApp$Simple = Elm.StartApp.Simple.make(_elm);
-   var main = $StartApp$Simple.start({_: {}
-                                     ,model: 0
-                                     ,update: $Counter.update
-                                     ,view: $Counter.view});
+   $Signal = Elm.Signal.make(_elm);
+   var squareStyle = function (color) {
+      return function () {
+         var bgColor = function () {
+            switch (color.ctor)
+            {case "Black":
+               return {ctor: "_Tuple2"
+                      ,_0: "background-color"
+                      ,_1: "#808080"};
+               case "White":
+               return {ctor: "_Tuple2"
+                      ,_0: "background-color"
+                      ,_1: "#0000"};}
+            _U.badCase($moduleName,
+            "between lines 33 and 37");
+         }();
+         return $Html$Attributes.style(A2($List._op["::"],
+         bgColor,
+         _L.fromArray([{ctor: "_Tuple2"
+                       ,_0: "float"
+                       ,_1: "left"}
+                      ,{ctor: "_Tuple2"
+                       ,_0: "width"
+                       ,_1: "80px"}
+                      ,{ctor: "_Tuple2"
+                       ,_0: "height"
+                       ,_1: "80px"}
+                      ,{ctor: "_Tuple2"
+                       ,_0: "border"
+                       ,_1: "1px solid #000"}])));
+      }();
+   };
+   var blackSquareStyle = squareStyle($Board.Black);
+   var whiteSquareStyle = squareStyle($Board.White);
+   var boardStyle = $Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                         ,_0: "width"
+                                                         ,_1: "710px"}
+                                                        ,{ctor: "_Tuple2"
+                                                         ,_0: "height"
+                                                         ,_1: "640px"}
+                                                        ,{ctor: "_Tuple2"
+                                                         ,_0: "margin"
+                                                         ,_1: "0.5em"}
+                                                        ,{ctor: "_Tuple2"
+                                                         ,_0: "border"
+                                                         ,_1: "2px solid #000"}]));
+   var main = A2($Html.table,
+   _L.fromArray([$Html$Attributes.id("chessBoard")
+                ,boardStyle]),
+   _L.fromArray([A2($Html.tr,
+                _L.fromArray([]),
+                _L.fromArray([A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("A8")
+                                          ,blackSquareStyle]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("B8")
+                                          ,whiteSquareStyle]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("C8")
+                                          ,blackSquareStyle]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("D8")
+                                          ,whiteSquareStyle]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("E8")
+                                          ,blackSquareStyle]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("F8")
+                                          ,whiteSquareStyle]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("G8")
+                                          ,blackSquareStyle]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("H8")
+                                          ,whiteSquareStyle]),
+                             _L.fromArray([]))]))
+                ,A2($Html.tr,
+                _L.fromArray([]),
+                _L.fromArray([A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("A7")
+                                          ,blackSquareStyle]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("B7")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("C7")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("D7")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("E7")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("F7")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("G7")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("H7")]),
+                             _L.fromArray([]))]))
+                ,A2($Html.tr,
+                _L.fromArray([]),
+                _L.fromArray([A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("A6")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("B6")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("C6")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("D6")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("E6")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("F6")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("G6")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("H6")]),
+                             _L.fromArray([]))]))
+                ,A2($Html.tr,
+                _L.fromArray([]),
+                _L.fromArray([A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("A5")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("B5")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("C5")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("D5")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("E5")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("F5")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("G5")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("H5")]),
+                             _L.fromArray([]))]))
+                ,A2($Html.tr,
+                _L.fromArray([]),
+                _L.fromArray([A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("A4")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("B4")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("C4")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("D4")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("E4")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("F4")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("G4")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("H4")]),
+                             _L.fromArray([]))]))
+                ,A2($Html.tr,
+                _L.fromArray([]),
+                _L.fromArray([A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("A3")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("B3")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("C3")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("D3")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("E3")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("F3")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("G3")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("H3")]),
+                             _L.fromArray([]))]))
+                ,A2($Html.tr,
+                _L.fromArray([]),
+                _L.fromArray([A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("A2")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("B2")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("C2")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("D2")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("E2")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("F2")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("G2")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("H2")]),
+                             _L.fromArray([]))]))
+                ,A2($Html.tr,
+                _L.fromArray([]),
+                _L.fromArray([A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("A1")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("B1")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("C1")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("D1")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("E1")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("F1")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("G1")]),
+                             _L.fromArray([]))
+                             ,A2($Html.td,
+                             _L.fromArray([$Html$Attributes.id("H1")]),
+                             _L.fromArray([]))]))]));
    _elm.Main.values = {_op: _op
+                      ,boardStyle: boardStyle
+                      ,squareStyle: squareStyle
+                      ,blackSquareStyle: blackSquareStyle
+                      ,whiteSquareStyle: whiteSquareStyle
                       ,main: main};
    return _elm.Main.values;
 };
@@ -12342,63 +12488,6 @@ Elm.Signal.make = function (_elm) {
                         ,forwardTo: forwardTo
                         ,Mailbox: Mailbox};
    return _elm.Signal.values;
-};
-Elm.StartApp = Elm.StartApp || {};
-Elm.StartApp.Simple = Elm.StartApp.Simple || {};
-Elm.StartApp.Simple.make = function (_elm) {
-   "use strict";
-   _elm.StartApp = _elm.StartApp || {};
-   _elm.StartApp.Simple = _elm.StartApp.Simple || {};
-   if (_elm.StartApp.Simple.values)
-   return _elm.StartApp.Simple.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   $moduleName = "StartApp.Simple",
-   $Basics = Elm.Basics.make(_elm),
-   $Html = Elm.Html.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var start = function (config) {
-      return function () {
-         var actions = $Signal.mailbox($Maybe.Nothing);
-         var address = A2($Signal.forwardTo,
-         actions.address,
-         $Maybe.Just);
-         var model = A3($Signal.foldp,
-         F2(function (_v0,model) {
-            return function () {
-               switch (_v0.ctor)
-               {case "Just":
-                  return A2(config.update,
-                    _v0._0,
-                    model);}
-               _U.badCase($moduleName,
-               "on line 91, column 34 to 60");
-            }();
-         }),
-         config.model,
-         actions.signal);
-         return A2($Signal.map,
-         config.view(address),
-         model);
-      }();
-   };
-   var Config = F3(function (a,
-   b,
-   c) {
-      return {_: {}
-             ,model: a
-             ,update: c
-             ,view: b};
-   });
-   _elm.StartApp.Simple.values = {_op: _op
-                                 ,Config: Config
-                                 ,start: start};
-   return _elm.StartApp.Simple.values;
 };
 Elm.String = Elm.String || {};
 Elm.String.make = function (_elm) {
