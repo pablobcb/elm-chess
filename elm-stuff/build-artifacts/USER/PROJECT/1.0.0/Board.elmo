@@ -63,7 +63,9 @@ Elm.Board.make = function (_elm) {
       }();
    };
    var makeInitialBoard = function () {
-      var emptyRow = $List.repeat(8)($Maybe.Nothing);
+      var emptyRow = A2($List.repeat,
+      8,
+      $Maybe.Nothing);
       var pawnRow = function (color) {
          return $List.repeat(8)($Maybe.Just(A3(pieceInstance,
          Pawn,

@@ -49,7 +49,7 @@ zip = List.map2 (,)
 
 makeInitialBoard =
   let pawnRow color= repeat 8 <| Just <| pieceInstance Pawn color False
-      emptyRow = repeat 8 <| Nothing
+      emptyRow = repeat 8 Nothing
   in 
     Dict.fromList  <| [
       ( "A8", Just <| pieceInstance Rook Black False )
