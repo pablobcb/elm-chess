@@ -17,7 +17,7 @@ import Array exposing ( Array(..) )
 import Board exposing (..)
 
 
-           
+----------------------------- Style --------------------------------           
 
 
 boardStyle : Attribute
@@ -25,7 +25,7 @@ boardStyle =
   style [ ("width" , "640px")
         , ("height", "640px")
         , ("margin", "0.5em")
-        , ("border", "2px solid #000")
+        , ("border", "1px solid #000")
         ]
 
 squareStyle : Color -> Attribute
@@ -40,11 +40,12 @@ squareStyle color =
                          , ("border", "1px solid #000")
                          ]
 
+blackSquareStyle : Attribute
 blackSquareStyle = squareStyle Black
+
+whiteSquareStyle : Attribute
 whiteSquareStyle = squareStyle White 
         
---Square : Square -> Html
---makeSquare square = td
 
 main =
   table [ id "chessBoard", colspan 8, rowspan 8, boardStyle ]

@@ -52,7 +52,7 @@ Elm.Main.make = function (_elm) {
    var whiteSquareStyle = squareStyle($Board.White);
    var boardStyle = $Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
                                                          ,_0: "width"
-                                                         ,_1: "710px"}
+                                                         ,_1: "640px"}
                                                         ,{ctor: "_Tuple2"
                                                          ,_0: "height"
                                                          ,_1: "640px"}
@@ -61,9 +61,11 @@ Elm.Main.make = function (_elm) {
                                                          ,_1: "0.5em"}
                                                         ,{ctor: "_Tuple2"
                                                          ,_0: "border"
-                                                         ,_1: "2px solid #000"}]));
+                                                         ,_1: "1px solid #000"}]));
    var main = A2($Html.table,
    _L.fromArray([$Html$Attributes.id("chessBoard")
+                ,$Html$Attributes.colspan(8)
+                ,$Html$Attributes.rowspan(8)
                 ,boardStyle]),
    _L.fromArray([A2($Html.tr,
                 _L.fromArray([]),

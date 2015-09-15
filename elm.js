@@ -281,23 +281,37 @@ Elm.Board.make = function (_elm) {
    _U = _N.Utils.make(_elm),
    _L = _N.List.make(_elm),
    $moduleName = "Board",
-   $Array = Elm.Array.make(_elm),
    $Basics = Elm.Basics.make(_elm),
+   $Dict = Elm.Dict.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
-   var Square = F2(function (a,b) {
+   var zip = $List.map2(F2(function (v0,
+   v1) {
+      return {ctor: "_Tuple2"
+             ,_0: v0
+             ,_1: v1};
+   }));
+   var Dict = F2(function (a,b) {
+      return {ctor: "Dict"
+             ,_0: a
+             ,_1: b};
+   });
+   var pieceInstance = F3(function (p,
+   c,
+   m) {
       return {_: {}
-             ,color: a
-             ,piece: b};
+             ,color: c
+             ,moved: m
+             ,piece: p};
    });
    var PieceInstance = F3(function (a,
    b,
    c) {
       return {_: {}
-             ,color: b
-             ,moved: c
+             ,color: c
+             ,moved: b
              ,piece: a};
    });
    var King = {ctor: "King"};
@@ -306,6 +320,9 @@ Elm.Board.make = function (_elm) {
    var Bishop = {ctor: "Bishop"};
    var Knight = {ctor: "Knight"};
    var Pawn = {ctor: "Pawn"};
+   var Player = function (a) {
+      return {_: {},color: a};
+   };
    var White = {ctor: "White"};
    var Black = {ctor: "Black"};
    var other = function (color) {
@@ -314,13 +331,186 @@ Elm.Board.make = function (_elm) {
          {case "Black": return White;
             case "White": return Black;}
          _U.badCase($moduleName,
-         "between lines 12 and 14");
+         "between lines 13 and 15");
       }();
    };
+   var makeInitialBoard = function () {
+      var emptyRow = $List.repeat(8)($Maybe.Nothing);
+      var pawnRow = function (color) {
+         return $List.repeat(8)($Maybe.Just(A3(pieceInstance,
+         Pawn,
+         color,
+         false)));
+      };
+      return $Dict.fromList(A2($Basics._op["++"],
+      _L.fromArray([{ctor: "_Tuple2"
+                    ,_0: "A8"
+                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    Rook,
+                    Black,
+                    false))}
+                   ,{ctor: "_Tuple2"
+                    ,_0: "B8"
+                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    Knight,
+                    Black,
+                    false))}
+                   ,{ctor: "_Tuple2"
+                    ,_0: "C8"
+                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    Bishop,
+                    Black,
+                    false))}
+                   ,{ctor: "_Tuple2"
+                    ,_0: "D8"
+                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    King,
+                    Black,
+                    false))}
+                   ,{ctor: "_Tuple2"
+                    ,_0: "E8"
+                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    Queen,
+                    Black,
+                    false))}
+                   ,{ctor: "_Tuple2"
+                    ,_0: "F8"
+                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    Bishop,
+                    Black,
+                    false))}
+                   ,{ctor: "_Tuple2"
+                    ,_0: "G8"
+                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    Knight,
+                    Black,
+                    false))}
+                   ,{ctor: "_Tuple2"
+                    ,_0: "H8"
+                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    Rook,
+                    Black,
+                    false))}]),
+      A2($Basics._op["++"],
+      A2(zip,
+      _L.fromArray(["A7"
+                   ,"B7"
+                   ,"C7"
+                   ,"D7"
+                   ,"E7"
+                   ,"F7"
+                   ,"G7"
+                   ,"H7"]),
+      pawnRow(Black)),
+      A2($Basics._op["++"],
+      A2(zip,
+      _L.fromArray(["A6"
+                   ,"B6"
+                   ,"C6"
+                   ,"D6"
+                   ,"E6"
+                   ,"F6"
+                   ,"G6"
+                   ,"H6"]),
+      emptyRow),
+      A2($Basics._op["++"],
+      A2(zip,
+      _L.fromArray(["A5"
+                   ,"B5"
+                   ,"C5"
+                   ,"D5"
+                   ,"E5"
+                   ,"F5"
+                   ,"G5"
+                   ,"H5"]),
+      emptyRow),
+      A2($Basics._op["++"],
+      A2(zip,
+      _L.fromArray(["A4"
+                   ,"B4"
+                   ,"C4"
+                   ,"D4"
+                   ,"E4"
+                   ,"F4"
+                   ,"G4"
+                   ,"H4"]),
+      emptyRow),
+      A2($Basics._op["++"],
+      A2(zip,
+      _L.fromArray(["A3"
+                   ,"B3"
+                   ,"C3"
+                   ,"D3"
+                   ,"E3"
+                   ,"F3"
+                   ,"G3"
+                   ,"H3"]),
+      emptyRow),
+      A2($Basics._op["++"],
+      A2(zip,
+      _L.fromArray(["A2"
+                   ,"B2"
+                   ,"C2"
+                   ,"D2"
+                   ,"E2"
+                   ,"F2"
+                   ,"G2"
+                   ,"H2"]),
+      pawnRow(White)),
+      _L.fromArray([{ctor: "_Tuple2"
+                    ,_0: "A1"
+                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    Rook,
+                    White,
+                    false))}
+                   ,{ctor: "_Tuple2"
+                    ,_0: "B1"
+                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    Knight,
+                    White,
+                    false))}
+                   ,{ctor: "_Tuple2"
+                    ,_0: "C1"
+                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    Bishop,
+                    White,
+                    false))}
+                   ,{ctor: "_Tuple2"
+                    ,_0: "D1"
+                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    Queen,
+                    White,
+                    false))}
+                   ,{ctor: "_Tuple2"
+                    ,_0: "E1"
+                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    King,
+                    White,
+                    false))}
+                   ,{ctor: "_Tuple2"
+                    ,_0: "F1"
+                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    Bishop,
+                    White,
+                    false))}
+                   ,{ctor: "_Tuple2"
+                    ,_0: "G1"
+                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    Knight,
+                    White,
+                    false))}
+                   ,{ctor: "_Tuple2"
+                    ,_0: "H1"
+                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    Rook,
+                    White,
+                    false))}])))))))));
+   }();
    _elm.Board.values = {_op: _op
                        ,Black: Black
                        ,White: White
                        ,other: other
+                       ,Player: Player
                        ,Pawn: Pawn
                        ,Knight: Knight
                        ,Bishop: Bishop
@@ -328,7 +518,10 @@ Elm.Board.make = function (_elm) {
                        ,Queen: Queen
                        ,King: King
                        ,PieceInstance: PieceInstance
-                       ,Square: Square};
+                       ,pieceInstance: pieceInstance
+                       ,Dict: Dict
+                       ,zip: zip
+                       ,makeInitialBoard: makeInitialBoard};
    return _elm.Board.values;
 };
 Elm.Char = Elm.Char || {};
@@ -4162,7 +4355,7 @@ Elm.Main.make = function (_elm) {
    var whiteSquareStyle = squareStyle($Board.White);
    var boardStyle = $Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
                                                          ,_0: "width"
-                                                         ,_1: "710px"}
+                                                         ,_1: "640px"}
                                                         ,{ctor: "_Tuple2"
                                                          ,_0: "height"
                                                          ,_1: "640px"}
@@ -4171,9 +4364,11 @@ Elm.Main.make = function (_elm) {
                                                          ,_1: "0.5em"}
                                                         ,{ctor: "_Tuple2"
                                                          ,_0: "border"
-                                                         ,_1: "2px solid #000"}]));
+                                                         ,_1: "1px solid #000"}]));
    var main = A2($Html.table,
    _L.fromArray([$Html$Attributes.id("chessBoard")
+                ,$Html$Attributes.colspan(8)
+                ,$Html$Attributes.rowspan(8)
                 ,boardStyle]),
    _L.fromArray([A2($Html.tr,
                 _L.fromArray([]),
