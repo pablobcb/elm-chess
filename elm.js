@@ -4068,6 +4068,16 @@ Elm.Main.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $String = Elm.String.make(_elm);
+   var getRow = F2(function (board,
+   positions) {
+      return A2($List.map,
+      function (key) {
+         return A2($Dict.get,
+         key,
+         board);
+      },
+      positions);
+   });
    var renderPiece = function (piece) {
       return $Html.text($String.fromChar(function () {
          var _v0 = piece.figure;
@@ -4081,7 +4091,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♗");}
                  _U.badCase($moduleName,
-                 "between lines 76 and 80");
+                 "between lines 78 and 82");
               }();
             case "King":
             return function () {
@@ -4092,7 +4102,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♔");}
                  _U.badCase($moduleName,
-                 "between lines 64 and 68");
+                 "between lines 66 and 70");
               }();
             case "Knight":
             return function () {
@@ -4103,7 +4113,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♘");}
                  _U.badCase($moduleName,
-                 "between lines 80 and 84");
+                 "between lines 82 and 86");
               }();
             case "Pawn":
             return function () {
@@ -4114,7 +4124,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♙");}
                  _U.badCase($moduleName,
-                 "between lines 84 and 86");
+                 "between lines 86 and 88");
               }();
             case "Queen":
             return function () {
@@ -4125,7 +4135,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♕");}
                  _U.badCase($moduleName,
-                 "between lines 68 and 72");
+                 "between lines 70 and 74");
               }();
             case "Rook":
             return function () {
@@ -4136,10 +4146,10 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♖");}
                  _U.badCase($moduleName,
-                 "between lines 72 and 76");
+                 "between lines 74 and 78");
               }();}
          _U.badCase($moduleName,
-         "between lines 63 and 86");
+         "between lines 65 and 88");
       }()));
    };
    var center = _L.fromArray([{ctor: "_Tuple2"
@@ -4193,7 +4203,7 @@ Elm.Main.make = function (_elm) {
             case "Nothing":
             return _L.fromArray([]);}
          _U.badCase($moduleName,
-         "between lines 100 and 102");
+         "between lines 93 and 95");
       }());
    };
    var renderRow = function (squares) {
@@ -4208,91 +4218,80 @@ Elm.Main.make = function (_elm) {
                  _L.fromArray([]),
                  _L.fromArray([]));}
             _U.badCase($moduleName,
-            "between lines 93 and 95");
+            "between lines 101 and 103");
          }();
       },
       squares));
    };
    var renderBoard = function (board) {
-      return function () {
-         var getRow = function (positions) {
-            return A2($List.map,
-            function (key) {
-               return A2($Dict.get,
-               key,
-               board);
-            },
-            positions);
-         };
-         return A2($Html.table,
-         _L.fromArray([$Html$Attributes.id("chessBoard")]),
-         _L.fromArray([A2($Html.tr,
-         _L.fromArray([]),
-         _L.fromArray([renderRow(getRow(_L.fromArray(["A1"
-                                                     ,"B1"
-                                                     ,"C1"
-                                                     ,"D1"
-                                                     ,"E1"
-                                                     ,"F1"
-                                                     ,"G1"
-                                                     ,"H1"])))
-                      ,renderRow(getRow(_L.fromArray(["A2"
-                                                     ,"B2"
-                                                     ,"C2"
-                                                     ,"D2"
-                                                     ,"E2"
-                                                     ,"F2"
-                                                     ,"G2"
-                                                     ,"H2"])))
-                      ,renderRow(getRow(_L.fromArray(["A3"
-                                                     ,"B3"
-                                                     ,"C3"
-                                                     ,"D3"
-                                                     ,"E3"
-                                                     ,"F3"
-                                                     ,"G3"
-                                                     ,"H3"])))
-                      ,renderRow(getRow(_L.fromArray(["A4"
-                                                     ,"B4"
-                                                     ,"C4"
-                                                     ,"D4"
-                                                     ,"E4"
-                                                     ,"F4"
-                                                     ,"G4"
-                                                     ,"H4"])))
-                      ,renderRow(getRow(_L.fromArray(["A5"
-                                                     ,"B5"
-                                                     ,"C5"
-                                                     ,"D5"
-                                                     ,"E5"
-                                                     ,"F5"
-                                                     ,"G5"
-                                                     ,"H5"])))
-                      ,renderRow(getRow(_L.fromArray(["A6"
-                                                     ,"B6"
-                                                     ,"C6"
-                                                     ,"D6"
-                                                     ,"E6"
-                                                     ,"F6"
-                                                     ,"G6"
-                                                     ,"H6"])))
-                      ,renderRow(getRow(_L.fromArray(["A7"
-                                                     ,"B7"
-                                                     ,"C7"
-                                                     ,"D7"
-                                                     ,"E7"
-                                                     ,"F7"
-                                                     ,"G7"
-                                                     ,"H7"])))
-                      ,renderRow(getRow(_L.fromArray(["A8"
-                                                     ,"B8"
-                                                     ,"C8"
-                                                     ,"D8"
-                                                     ,"E8"
-                                                     ,"F8"
-                                                     ,"G8"
-                                                     ,"H8"])))]))]));
-      }();
+      return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))(A2($List.map,
+      function ($) {
+         return renderRow(getRow(board)($));
+      },
+      _L.fromArray([_L.fromArray(["A1"
+                                 ,"B1"
+                                 ,"C1"
+                                 ,"D1"
+                                 ,"E1"
+                                 ,"F1"
+                                 ,"G1"
+                                 ,"H1"])
+                   ,_L.fromArray(["A2"
+                                 ,"B2"
+                                 ,"C2"
+                                 ,"D2"
+                                 ,"E2"
+                                 ,"F2"
+                                 ,"G2"
+                                 ,"H2"])
+                   ,_L.fromArray(["A3"
+                                 ,"B3"
+                                 ,"C3"
+                                 ,"D3"
+                                 ,"E3"
+                                 ,"F3"
+                                 ,"G3"
+                                 ,"H3"])
+                   ,_L.fromArray(["A4"
+                                 ,"B4"
+                                 ,"C4"
+                                 ,"D4"
+                                 ,"E4"
+                                 ,"F4"
+                                 ,"G4"
+                                 ,"H4"])
+                   ,_L.fromArray(["A5"
+                                 ,"B5"
+                                 ,"C5"
+                                 ,"D5"
+                                 ,"E5"
+                                 ,"F5"
+                                 ,"G5"
+                                 ,"H5"])
+                   ,_L.fromArray(["A6"
+                                 ,"B6"
+                                 ,"C6"
+                                 ,"D6"
+                                 ,"E6"
+                                 ,"F6"
+                                 ,"G6"
+                                 ,"H6"])
+                   ,_L.fromArray(["A7"
+                                 ,"B7"
+                                 ,"C7"
+                                 ,"D7"
+                                 ,"E7"
+                                 ,"F7"
+                                 ,"G7"
+                                 ,"H7"])
+                   ,_L.fromArray(["A8"
+                                 ,"B8"
+                                 ,"C8"
+                                 ,"D8"
+                                 ,"E8"
+                                 ,"F8"
+                                 ,"G8"
+                                 ,"H8"])])));
    };
    var main = renderBoard($Model.makeInitialBoard);
    var Click = function (a) {
@@ -4304,8 +4303,9 @@ Elm.Main.make = function (_elm) {
                       ,boardStyle: boardStyle
                       ,squareStyle: squareStyle
                       ,renderPiece: renderPiece
-                      ,renderRow: renderRow
                       ,renderSquare: renderSquare
+                      ,renderRow: renderRow
+                      ,getRow: getRow
                       ,renderBoard: renderBoard
                       ,main: main};
    return _elm.Main.values;
@@ -4453,14 +4453,82 @@ Elm.Model.make = function (_elm) {
       }();
    };
    var makeInitialBoard = function () {
-      var squareWith = F3(function (squareColor,
-      figure,
-      pieceColor) {
-         return square(squareColor)($Maybe.Just(A3(piece,
-         figure,
-         pieceColor,
-         false)));
-      });
+      var firstWhiteRow = _L.fromArray([{ctor: "_Tuple3"
+                                        ,_0: Black
+                                        ,_1: Rook
+                                        ,_2: White}
+                                       ,{ctor: "_Tuple3"
+                                        ,_0: White
+                                        ,_1: Knight
+                                        ,_2: White}
+                                       ,{ctor: "_Tuple3"
+                                        ,_0: Black
+                                        ,_1: Bishop
+                                        ,_2: White}
+                                       ,{ctor: "_Tuple3"
+                                        ,_0: White
+                                        ,_1: Queen
+                                        ,_2: White}
+                                       ,{ctor: "_Tuple3"
+                                        ,_0: Black
+                                        ,_1: King
+                                        ,_2: White}
+                                       ,{ctor: "_Tuple3"
+                                        ,_0: White
+                                        ,_1: Bishop
+                                        ,_2: White}
+                                       ,{ctor: "_Tuple3"
+                                        ,_0: Black
+                                        ,_1: Knight
+                                        ,_2: White}
+                                       ,{ctor: "_Tuple3"
+                                        ,_0: White
+                                        ,_1: Rook
+                                        ,_2: White}]);
+      var firstBlackRow = _L.fromArray([{ctor: "_Tuple3"
+                                        ,_0: Black
+                                        ,_1: Rook
+                                        ,_2: Black}
+                                       ,{ctor: "_Tuple3"
+                                        ,_0: White
+                                        ,_1: Knight
+                                        ,_2: Black}
+                                       ,{ctor: "_Tuple3"
+                                        ,_0: Black
+                                        ,_1: Bishop
+                                        ,_2: Black}
+                                       ,{ctor: "_Tuple3"
+                                        ,_0: White
+                                        ,_1: King
+                                        ,_2: Black}
+                                       ,{ctor: "_Tuple3"
+                                        ,_0: Black
+                                        ,_1: Queen
+                                        ,_2: Black}
+                                       ,{ctor: "_Tuple3"
+                                        ,_0: White
+                                        ,_1: Bishop
+                                        ,_2: Black}
+                                       ,{ctor: "_Tuple3"
+                                        ,_0: Black
+                                        ,_1: Knight
+                                        ,_2: Black}
+                                       ,{ctor: "_Tuple3"
+                                        ,_0: White
+                                        ,_1: Rook
+                                        ,_2: Black}]);
+      var makeSquare = function (_v1) {
+         return function () {
+            switch (_v1.ctor)
+            {case "_Tuple3":
+               return square(_v1._0)($Maybe.Just(A3(piece,
+                 _v1._1,
+                 _v1._2,
+                 false)));}
+            _U.badCase($moduleName,
+            "on line 65, column 9 to 68");
+         }();
+      };
       var emptyRow = function (color) {
          return A3($List.map2,
          square,
@@ -4486,54 +4554,18 @@ Elm.Model.make = function (_elm) {
          false))));
       });
       return $Dict.fromList(A2($Basics._op["++"],
-      _L.fromArray([{ctor: "_Tuple2"
-                    ,_0: "A8"
-                    ,_1: A3(squareWith,
-                    Black,
-                    Rook,
-                    Black)}
-                   ,{ctor: "_Tuple2"
-                    ,_0: "B8"
-                    ,_1: A3(squareWith,
-                    White,
-                    Knight,
-                    Black)}
-                   ,{ctor: "_Tuple2"
-                    ,_0: "C8"
-                    ,_1: A3(squareWith,
-                    Black,
-                    Bishop,
-                    Black)}
-                   ,{ctor: "_Tuple2"
-                    ,_0: "D8"
-                    ,_1: A3(squareWith,
-                    White,
-                    King,
-                    Black)}
-                   ,{ctor: "_Tuple2"
-                    ,_0: "E8"
-                    ,_1: A3(squareWith,
-                    Black,
-                    Queen,
-                    Black)}
-                   ,{ctor: "_Tuple2"
-                    ,_0: "F8"
-                    ,_1: A3(squareWith,
-                    White,
-                    Bishop,
-                    Black)}
-                   ,{ctor: "_Tuple2"
-                    ,_0: "G8"
-                    ,_1: A3(squareWith,
-                    Black,
-                    Knight,
-                    Black)}
-                   ,{ctor: "_Tuple2"
-                    ,_0: "H8"
-                    ,_1: A3(squareWith,
-                    White,
-                    Rook,
-                    Black)}]),
+      A2(zip,
+      _L.fromArray(["A8"
+                   ,"B8"
+                   ,"C8"
+                   ,"D8"
+                   ,"E8"
+                   ,"F8"
+                   ,"G8"
+                   ,"H8"]),
+      A2($List.map,
+      makeSquare,
+      firstBlackRow)),
       A2($Basics._op["++"],
       A2(zip,
       _L.fromArray(["A7"
@@ -4600,54 +4632,18 @@ Elm.Model.make = function (_elm) {
                    ,"G2"
                    ,"H2"]),
       A2(pawnRow,White,White)),
-      _L.fromArray([{ctor: "_Tuple2"
-                    ,_0: "A1"
-                    ,_1: A3(squareWith,
-                    Black,
-                    Rook,
-                    White)}
-                   ,{ctor: "_Tuple2"
-                    ,_0: "B1"
-                    ,_1: A3(squareWith,
-                    White,
-                    Knight,
-                    White)}
-                   ,{ctor: "_Tuple2"
-                    ,_0: "C1"
-                    ,_1: A3(squareWith,
-                    Black,
-                    Bishop,
-                    White)}
-                   ,{ctor: "_Tuple2"
-                    ,_0: "D1"
-                    ,_1: A3(squareWith,
-                    White,
-                    Queen,
-                    White)}
-                   ,{ctor: "_Tuple2"
-                    ,_0: "E1"
-                    ,_1: A3(squareWith,
-                    Black,
-                    King,
-                    White)}
-                   ,{ctor: "_Tuple2"
-                    ,_0: "F1"
-                    ,_1: A3(squareWith,
-                    White,
-                    Bishop,
-                    White)}
-                   ,{ctor: "_Tuple2"
-                    ,_0: "G1"
-                    ,_1: A3(squareWith,
-                    Black,
-                    Knight,
-                    White)}
-                   ,{ctor: "_Tuple2"
-                    ,_0: "H1"
-                    ,_1: A3(squareWith,
-                    White,
-                    Rook,
-                    White)}])))))))));
+      A2(zip,
+      _L.fromArray(["A1"
+                   ,"B1"
+                   ,"C1"
+                   ,"D1"
+                   ,"E1"
+                   ,"F1"
+                   ,"G1"
+                   ,"H1"]),
+      A2($List.map,
+      makeSquare,
+      firstWhiteRow))))))))));
    }();
    _elm.Model.values = {_op: _op
                        ,Black: Black
