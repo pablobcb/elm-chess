@@ -10,11 +10,12 @@ Elm.Main.make = function (_elm) {
    _L = _N.List.make(_elm),
    $moduleName = "Main",
    $Basics = Elm.Basics.make(_elm),
-   $Board = Elm.Board.make(_elm),
+   $Dict = Elm.Dict.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
+   $Model = Elm.Model.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $String = Elm.String.make(_elm);
@@ -31,7 +32,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♗");}
                  _U.badCase($moduleName,
-                 "between lines 75 and 79");
+                 "between lines 76 and 80");
               }();
             case "King":
             return function () {
@@ -42,7 +43,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♔");}
                  _U.badCase($moduleName,
-                 "between lines 63 and 67");
+                 "between lines 64 and 68");
               }();
             case "Knight":
             return function () {
@@ -53,7 +54,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♘");}
                  _U.badCase($moduleName,
-                 "between lines 79 and 83");
+                 "between lines 80 and 84");
               }();
             case "Pawn":
             return function () {
@@ -64,7 +65,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♙");}
                  _U.badCase($moduleName,
-                 "between lines 83 and 85");
+                 "between lines 84 and 86");
               }();
             case "Queen":
             return function () {
@@ -75,7 +76,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♕");}
                  _U.badCase($moduleName,
-                 "between lines 67 and 71");
+                 "between lines 68 and 72");
               }();
             case "Rook":
             return function () {
@@ -86,10 +87,10 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♖");}
                  _U.badCase($moduleName,
-                 "between lines 71 and 75");
+                 "between lines 72 and 76");
               }();}
          _U.badCase($moduleName,
-         "between lines 62 and 85");
+         "between lines 63 and 86");
       }()));
    };
    var center = _L.fromArray([{ctor: "_Tuple2"
@@ -114,7 +115,7 @@ Elm.Main.make = function (_elm) {
                       ,_0: "background-color"
                       ,_1: "#0000"};}
             _U.badCase($moduleName,
-            "between lines 47 and 51");
+            "between lines 48 and 52");
          }();
          return $Html$Attributes.style(A2($List._op["::"],
          bgColor,
@@ -145,74 +146,91 @@ Elm.Main.make = function (_elm) {
             case "Nothing":
             return _L.fromArray([]);}
          _U.badCase($moduleName,
-         "between lines 89 and 91");
+         "between lines 90 and 92");
       }());
+   });
+   var f = F2(function (pos,
+   board) {
+      return function () {
+         var _v10 = A2($Dict.get,
+         pos,
+         board);
+         switch (_v10.ctor)
+         {case "Just":
+            return $Maybe.Just(A2(renderSquare,
+              pos,
+              _v10._0));
+            case "Nothing":
+            return $Maybe.Nothing;}
+         _U.badCase($moduleName,
+         "between lines 99 and 101");
+      }();
    });
    var main = A2($Html.table,
    _L.fromArray([$Html$Attributes.id("chessBoard")]),
    _L.fromArray([A2($Html.tr,
                 _L.fromArray([]),
-                _L.fromArray([renderSquare("A8")($Board.square($Board.Black)($Maybe.Just(A3($Board.piece,
-                             $Board.King,
-                             $Board.Black,
+                _L.fromArray([renderSquare("A8")($Model.square($Model.White)($Maybe.Just(A3($Model.piece,
+                             $Model.King,
+                             $Model.White,
                              false))))
-                             ,renderSquare("B8")($Board.square($Board.White)($Maybe.Just(A3($Board.piece,
-                             $Board.King,
-                             $Board.White,
+                             ,renderSquare("B8")($Model.square($Model.White)($Maybe.Just(A3($Model.piece,
+                             $Model.King,
+                             $Model.White,
                              false))))
-                             ,renderSquare("C8")($Board.square($Board.Black)($Maybe.Just(A3($Board.piece,
-                             $Board.Queen,
-                             $Board.Black,
+                             ,renderSquare("C8")($Model.square($Model.Black)($Maybe.Just(A3($Model.piece,
+                             $Model.Queen,
+                             $Model.Black,
                              false))))
-                             ,renderSquare("D8")($Board.square($Board.White)($Maybe.Just(A3($Board.piece,
-                             $Board.Queen,
-                             $Board.White,
+                             ,renderSquare("D8")($Model.square($Model.White)($Maybe.Just(A3($Model.piece,
+                             $Model.Queen,
+                             $Model.White,
                              false))))
-                             ,renderSquare("E8")($Board.square($Board.Black)($Maybe.Just(A3($Board.piece,
-                             $Board.Bishop,
-                             $Board.Black,
+                             ,renderSquare("E8")($Model.square($Model.Black)($Maybe.Just(A3($Model.piece,
+                             $Model.Bishop,
+                             $Model.Black,
                              false))))
-                             ,renderSquare("F8")($Board.square($Board.White)($Maybe.Just(A3($Board.piece,
-                             $Board.Bishop,
-                             $Board.White,
+                             ,renderSquare("F8")($Model.square($Model.White)($Maybe.Just(A3($Model.piece,
+                             $Model.Bishop,
+                             $Model.White,
                              false))))
-                             ,renderSquare("G8")($Board.square($Board.Black)($Maybe.Just(A3($Board.piece,
-                             $Board.Knight,
-                             $Board.Black,
+                             ,renderSquare("G8")($Model.square($Model.Black)($Maybe.Just(A3($Model.piece,
+                             $Model.Knight,
+                             $Model.Black,
                              false))))
-                             ,renderSquare("H8")($Board.square($Board.White)($Maybe.Just(A3($Board.piece,
-                             $Board.Knight,
-                             $Board.White,
+                             ,renderSquare("H8")($Model.square($Model.White)($Maybe.Just(A3($Model.piece,
+                             $Model.Knight,
+                             $Model.White,
                              false))))]))
                 ,A2($Html.tr,
                 _L.fromArray([]),
-                _L.fromArray([renderSquare("A7")($Board.square($Board.White)($Maybe.Just(A3($Board.piece,
-                             $Board.Rook,
-                             $Board.White,
+                _L.fromArray([renderSquare("A7")($Model.square($Model.White)($Maybe.Just(A3($Model.piece,
+                             $Model.Rook,
+                             $Model.White,
                              false))))
-                             ,renderSquare("B7")($Board.square($Board.Black)($Maybe.Just(A3($Board.piece,
-                             $Board.Rook,
-                             $Board.Black,
+                             ,renderSquare("B7")($Model.square($Model.Black)($Maybe.Just(A3($Model.piece,
+                             $Model.Rook,
+                             $Model.Black,
                              false))))
-                             ,renderSquare("C7")($Board.square($Board.White)($Maybe.Just(A3($Board.piece,
-                             $Board.Pawn,
-                             $Board.Black,
+                             ,renderSquare("C7")($Model.square($Model.White)($Maybe.Just(A3($Model.piece,
+                             $Model.Pawn,
+                             $Model.Black,
                              false))))
-                             ,renderSquare("D7")($Board.square($Board.Black)($Maybe.Just(A3($Board.piece,
-                             $Board.Pawn,
-                             $Board.White,
+                             ,renderSquare("D7")($Model.square($Model.Black)($Maybe.Just(A3($Model.piece,
+                             $Model.Pawn,
+                             $Model.White,
                              false))))
-                             ,renderSquare("E7")(A2($Board.square,
-                             $Board.White,
+                             ,renderSquare("E7")(A2($Model.square,
+                             $Model.White,
                              $Maybe.Nothing))
-                             ,renderSquare("F7")(A2($Board.square,
-                             $Board.White,
+                             ,renderSquare("F7")(A2($Model.square,
+                             $Model.White,
                              $Maybe.Nothing))
-                             ,renderSquare("G7")(A2($Board.square,
-                             $Board.White,
+                             ,renderSquare("G7")(A2($Model.square,
+                             $Model.White,
                              $Maybe.Nothing))
-                             ,renderSquare("H7")(A2($Board.square,
-                             $Board.White,
+                             ,renderSquare("H7")(A2($Model.square,
+                             $Model.White,
                              $Maybe.Nothing))]))
                 ,A2($Html.tr,
                 _L.fromArray([]),
@@ -380,6 +398,7 @@ Elm.Main.make = function (_elm) {
                       ,squareStyle: squareStyle
                       ,renderPiece: renderPiece
                       ,renderSquare: renderSquare
+                      ,f: f
                       ,main: main};
    return _elm.Main.values;
 };

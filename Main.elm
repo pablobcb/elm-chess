@@ -15,8 +15,9 @@ import Maybe exposing  ( Maybe(..) )
 import Array exposing  ( Array(..) )
 import Text exposing   ( Text(..) )
 import String exposing ( fromChar )
+import Dict exposing (..)
 
-import Board exposing (..)
+import Model exposing (..)
 
 
 --============================ Update ==============================
@@ -94,12 +95,16 @@ renderSquare id' square =
 -- case get id board of
 -- Just 
 -- List.map get ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"] board
+f pos board =
+  case get pos board of
+    Just square -> Just <| renderSquare pos square
+    Nothing -> Nothing
 
-main =
-  --let board = makeInitialBoard in
+main = 
   table [ id "chessBoard" ]
         [ tr [] 
-          [ renderSquare "A8" <| square Black <| Just <| piece King   Black False 
+          --[ f "A8" makeInitialBoard
+          [ renderSquare "A8" <| square White <| Just <| piece King   White False
           , renderSquare "B8" <| square White <| Just <| piece King   White False
           , renderSquare "C8" <| square Black <| Just <| piece Queen  Black False
           , renderSquare "D8" <| square White <| Just <| piece Queen  White False

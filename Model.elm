@@ -1,4 +1,4 @@
-module Board where
+module Model where
 
 import Maybe exposing (..)
 import Dict exposing (..)
@@ -56,7 +56,7 @@ makeInitialBoard =
         (repeat 8 <| Just <| piece Pawn pawnColor False)
 
       emptyRow color = List.map2 square 
-        (concat <| repeat 4 [color, other color]) 
+        (concat <| repeat 4 [color, other color])
         (repeat 8 Nothing)
 
   in Dict.fromList <| [
