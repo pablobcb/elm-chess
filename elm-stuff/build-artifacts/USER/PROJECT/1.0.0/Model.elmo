@@ -15,12 +15,6 @@ Elm.Model.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
-   var zip = $List.map2(F2(function (v0,
-   v1) {
-      return {ctor: "_Tuple2"
-             ,_0: v0
-             ,_1: v1};
-   }));
    var square = F2(function (c,p) {
       return {_: {}
              ,color: c
@@ -68,6 +62,12 @@ Elm.Model.make = function (_elm) {
       }();
    };
    var makeInitialBoard = function () {
+      var zip = $List.map2(F2(function (v0,
+      v1) {
+         return {ctor: "_Tuple2"
+                ,_0: v0
+                ,_1: v1};
+      }));
       var firstWhiteRow = _L.fromArray([{ctor: "_Tuple3"
                                         ,_0: Black
                                         ,_1: Rook
@@ -275,7 +275,6 @@ Elm.Model.make = function (_elm) {
                        ,piece: piece
                        ,Square: Square
                        ,square: square
-                       ,zip: zip
                        ,makeInitialBoard: makeInitialBoard};
    return _elm.Model.values;
 };

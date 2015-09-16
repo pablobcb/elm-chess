@@ -4224,74 +4224,85 @@ Elm.Main.make = function (_elm) {
       squares));
    };
    var renderBoard = function (board) {
-      return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))(A2($List.map,
-      function ($) {
-         return renderRow(getRow(board)($));
-      },
-      _L.fromArray([_L.fromArray(["A1"
-                                 ,"B1"
-                                 ,"C1"
-                                 ,"D1"
-                                 ,"E1"
-                                 ,"F1"
-                                 ,"G1"
-                                 ,"H1"])
-                   ,_L.fromArray(["A2"
-                                 ,"B2"
-                                 ,"C2"
-                                 ,"D2"
-                                 ,"E2"
-                                 ,"F2"
-                                 ,"G2"
-                                 ,"H2"])
-                   ,_L.fromArray(["A3"
-                                 ,"B3"
-                                 ,"C3"
-                                 ,"D3"
-                                 ,"E3"
-                                 ,"F3"
-                                 ,"G3"
-                                 ,"H3"])
-                   ,_L.fromArray(["A4"
-                                 ,"B4"
-                                 ,"C4"
-                                 ,"D4"
-                                 ,"E4"
-                                 ,"F4"
-                                 ,"G4"
-                                 ,"H4"])
-                   ,_L.fromArray(["A5"
-                                 ,"B5"
-                                 ,"C5"
-                                 ,"D5"
-                                 ,"E5"
-                                 ,"F5"
-                                 ,"G5"
-                                 ,"H5"])
-                   ,_L.fromArray(["A6"
-                                 ,"B6"
-                                 ,"C6"
-                                 ,"D6"
-                                 ,"E6"
-                                 ,"F6"
-                                 ,"G6"
-                                 ,"H6"])
-                   ,_L.fromArray(["A7"
-                                 ,"B7"
-                                 ,"C7"
-                                 ,"D7"
-                                 ,"E7"
-                                 ,"F7"
-                                 ,"G7"
-                                 ,"H7"])
-                   ,_L.fromArray(["A8"
-                                 ,"B8"
-                                 ,"C8"
-                                 ,"D8"
-                                 ,"E8"
-                                 ,"F8"
-                                 ,"G8"
-                                 ,"H8"])])));
+      return function () {
+         var getRow = function (positions) {
+            return A2($List.map,
+            function (key) {
+               return A2($Dict.get,
+               key,
+               board);
+            },
+            positions);
+         };
+         return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))(A2($List.map,
+         function ($) {
+            return renderRow(getRow($));
+         },
+         _L.fromArray([_L.fromArray(["A1"
+                                    ,"B1"
+                                    ,"C1"
+                                    ,"D1"
+                                    ,"E1"
+                                    ,"F1"
+                                    ,"G1"
+                                    ,"H1"])
+                      ,_L.fromArray(["A2"
+                                    ,"B2"
+                                    ,"C2"
+                                    ,"D2"
+                                    ,"E2"
+                                    ,"F2"
+                                    ,"G2"
+                                    ,"H2"])
+                      ,_L.fromArray(["A3"
+                                    ,"B3"
+                                    ,"C3"
+                                    ,"D3"
+                                    ,"E3"
+                                    ,"F3"
+                                    ,"G3"
+                                    ,"H3"])
+                      ,_L.fromArray(["A4"
+                                    ,"B4"
+                                    ,"C4"
+                                    ,"D4"
+                                    ,"E4"
+                                    ,"F4"
+                                    ,"G4"
+                                    ,"H4"])
+                      ,_L.fromArray(["A5"
+                                    ,"B5"
+                                    ,"C5"
+                                    ,"D5"
+                                    ,"E5"
+                                    ,"F5"
+                                    ,"G5"
+                                    ,"H5"])
+                      ,_L.fromArray(["A6"
+                                    ,"B6"
+                                    ,"C6"
+                                    ,"D6"
+                                    ,"E6"
+                                    ,"F6"
+                                    ,"G6"
+                                    ,"H6"])
+                      ,_L.fromArray(["A7"
+                                    ,"B7"
+                                    ,"C7"
+                                    ,"D7"
+                                    ,"E7"
+                                    ,"F7"
+                                    ,"G7"
+                                    ,"H7"])
+                      ,_L.fromArray(["A8"
+                                    ,"B8"
+                                    ,"C8"
+                                    ,"D8"
+                                    ,"E8"
+                                    ,"F8"
+                                    ,"G8"
+                                    ,"H8"])])));
+      }();
    };
    var main = renderBoard($Model.makeInitialBoard);
    var Click = function (a) {
@@ -4400,12 +4411,6 @@ Elm.Model.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
-   var zip = $List.map2(F2(function (v0,
-   v1) {
-      return {ctor: "_Tuple2"
-             ,_0: v0
-             ,_1: v1};
-   }));
    var square = F2(function (c,p) {
       return {_: {}
              ,color: c
@@ -4453,6 +4458,12 @@ Elm.Model.make = function (_elm) {
       }();
    };
    var makeInitialBoard = function () {
+      var zip = $List.map2(F2(function (v0,
+      v1) {
+         return {ctor: "_Tuple2"
+                ,_0: v0
+                ,_1: v1};
+      }));
       var firstWhiteRow = _L.fromArray([{ctor: "_Tuple3"
                                         ,_0: Black
                                         ,_1: Rook
@@ -4660,7 +4671,6 @@ Elm.Model.make = function (_elm) {
                        ,piece: piece
                        ,Square: Square
                        ,square: square
-                       ,zip: zip
                        ,makeInitialBoard: makeInitialBoard};
    return _elm.Model.values;
 };
