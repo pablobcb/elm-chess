@@ -71,8 +71,8 @@ Elm.Model.make = function (_elm) {
       var firstRow = _L.fromArray([Rook
                                   ,Knight
                                   ,Bishop
-                                  ,King
                                   ,Queen
+                                  ,King
                                   ,Bishop
                                   ,Knight
                                   ,Rook]);

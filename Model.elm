@@ -65,7 +65,7 @@ makeInitialBoard =
         square squareColor << Just <| piece figure pieceColor False
 
 
-      firstRow = [Rook, Knight, Bishop, King, Queen, Bishop, Knight, Rook]
+      firstRow = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
 
       zip = List.map2 (,)
 

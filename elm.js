@@ -4091,7 +4091,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♗");}
                  _U.badCase($moduleName,
-                 "between lines 76 and 80");
+                 "between lines 73 and 77");
               }();
             case "King":
             return function () {
@@ -4102,7 +4102,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♔");}
                  _U.badCase($moduleName,
-                 "between lines 64 and 68");
+                 "between lines 61 and 65");
               }();
             case "Knight":
             return function () {
@@ -4113,7 +4113,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♘");}
                  _U.badCase($moduleName,
-                 "between lines 80 and 84");
+                 "between lines 77 and 81");
               }();
             case "Pawn":
             return function () {
@@ -4124,7 +4124,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♙");}
                  _U.badCase($moduleName,
-                 "between lines 84 and 86");
+                 "between lines 81 and 83");
               }();
             case "Queen":
             return function () {
@@ -4135,7 +4135,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♕");}
                  _U.badCase($moduleName,
-                 "between lines 68 and 72");
+                 "between lines 65 and 69");
               }();
             case "Rook":
             return function () {
@@ -4146,10 +4146,10 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♖");}
                  _U.badCase($moduleName,
-                 "between lines 72 and 76");
+                 "between lines 69 and 73");
               }();}
          _U.badCase($moduleName,
-         "between lines 63 and 86");
+         "between lines 60 and 83");
       }()));
    };
    var center = _L.fromArray([{ctor: "_Tuple2"
@@ -4179,7 +4179,7 @@ Elm.Main.make = function (_elm) {
                       ,_0: "background-color"
                       ,_1: "#0000"};}
             _U.badCase($moduleName,
-            "between lines 47 and 51");
+            "between lines 44 and 48");
          }();
          return $Html$Attributes.style(A2($List._op["::"],
          bgColor,
@@ -4208,7 +4208,7 @@ Elm.Main.make = function (_elm) {
             case "Nothing":
             return _L.fromArray([]);}
          _U.badCase($moduleName,
-         "between lines 91 and 93");
+         "between lines 88 and 90");
       }());
    };
    var renderRow = function (squares) {
@@ -4223,7 +4223,7 @@ Elm.Main.make = function (_elm) {
                  _L.fromArray([]),
                  _L.fromArray([]));}
             _U.badCase($moduleName,
-            "between lines 99 and 101");
+            "between lines 96 and 98");
          }();
       },
       squares));
@@ -4240,7 +4240,12 @@ Elm.Main.make = function (_elm) {
             positions);
          };
          return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")
-                                         ,boardStyle]))(A2($List.map,
+                                         ,$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                                               ,_0: "border"
+                                                                               ,_1: "2px solid #000"}
+                                                                              ,{ctor: "_Tuple2"
+                                                                               ,_0: "user-select"
+                                                                               ,_1: "none"}]))]))(A2($List.map,
          function ($) {
             return renderRow(getRow($));
          },
@@ -4473,8 +4478,8 @@ Elm.Model.make = function (_elm) {
       var firstRow = _L.fromArray([Rook
                                   ,Knight
                                   ,Bishop
-                                  ,King
                                   ,Queen
+                                  ,King
                                   ,Bishop
                                   ,Knight
                                   ,Rook]);
