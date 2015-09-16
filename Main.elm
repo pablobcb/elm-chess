@@ -33,13 +33,12 @@ center = [ ("text-align", "center"), ("vertical-align", "middle") ]
 boardStyle : Attribute
 boardStyle =
     style <|
-      [ 
-      
+      [ ("border", "2px solid #000")
+      , ("user-select", "none")
+       --, ("width", "640px"'')
       ] ++ center
---    style [ ("width" , "640px")
---          , ("height", "640px")
+--    style [ 
 --          , ("border", "1x solid #000")
-          -- ("margin", "1px")
 --          ]
 
 
@@ -53,7 +52,6 @@ squareStyle color =
     [ ("float", "left")
     , ("width", "80px")
     , ("height", "80px")
-    --, ("border", "1px solid #000")
     , ("font-size", "400%")
     ] ++ center
 
@@ -110,7 +108,7 @@ getRow board positions = List.map (\key -> Dict.get key board) positions
 renderBoard : Board -> Html
 renderBoard board =
   let getRow positions = List.map (\key -> Dict.get key board) positions
-  in table [ id "chessBoard" ] <| List.map (renderRow << getRow)
+  in table [ id "chessBoard", boardStyle ] <| List.map (renderRow << getRow)
     [ ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"]
     , ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"]
     , ["A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3"]

@@ -4091,7 +4091,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♗");}
                  _U.badCase($moduleName,
-                 "between lines 78 and 82");
+                 "between lines 76 and 80");
               }();
             case "King":
             return function () {
@@ -4102,7 +4102,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♔");}
                  _U.badCase($moduleName,
-                 "between lines 66 and 70");
+                 "between lines 64 and 68");
               }();
             case "Knight":
             return function () {
@@ -4113,7 +4113,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♘");}
                  _U.badCase($moduleName,
-                 "between lines 82 and 86");
+                 "between lines 80 and 84");
               }();
             case "Pawn":
             return function () {
@@ -4124,7 +4124,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♙");}
                  _U.badCase($moduleName,
-                 "between lines 86 and 88");
+                 "between lines 84 and 86");
               }();
             case "Queen":
             return function () {
@@ -4135,7 +4135,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♕");}
                  _U.badCase($moduleName,
-                 "between lines 70 and 74");
+                 "between lines 68 and 72");
               }();
             case "Rook":
             return function () {
@@ -4146,10 +4146,10 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♖");}
                  _U.badCase($moduleName,
-                 "between lines 74 and 78");
+                 "between lines 72 and 76");
               }();}
          _U.badCase($moduleName,
-         "between lines 65 and 88");
+         "between lines 63 and 86");
       }()));
    };
    var center = _L.fromArray([{ctor: "_Tuple2"
@@ -4159,7 +4159,12 @@ Elm.Main.make = function (_elm) {
                               ,_0: "vertical-align"
                               ,_1: "middle"}]);
    var boardStyle = $Html$Attributes.style(A2($Basics._op["++"],
-   _L.fromArray([]),
+   _L.fromArray([{ctor: "_Tuple2"
+                 ,_0: "border"
+                 ,_1: "2px solid #000"}
+                ,{ctor: "_Tuple2"
+                 ,_0: "user-select"
+                 ,_1: "none"}]),
    center));
    var squareStyle = function (color) {
       return function () {
@@ -4174,7 +4179,7 @@ Elm.Main.make = function (_elm) {
                       ,_0: "background-color"
                       ,_1: "#0000"};}
             _U.badCase($moduleName,
-            "between lines 48 and 52");
+            "between lines 47 and 51");
          }();
          return $Html$Attributes.style(A2($List._op["::"],
          bgColor,
@@ -4203,7 +4208,7 @@ Elm.Main.make = function (_elm) {
             case "Nothing":
             return _L.fromArray([]);}
          _U.badCase($moduleName,
-         "between lines 93 and 95");
+         "between lines 91 and 93");
       }());
    };
    var renderRow = function (squares) {
@@ -4218,7 +4223,7 @@ Elm.Main.make = function (_elm) {
                  _L.fromArray([]),
                  _L.fromArray([]));}
             _U.badCase($moduleName,
-            "between lines 101 and 103");
+            "between lines 99 and 101");
          }();
       },
       squares));
@@ -4234,7 +4239,8 @@ Elm.Main.make = function (_elm) {
             },
             positions);
          };
-         return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))(A2($List.map,
+         return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")
+                                         ,boardStyle]))(A2($List.map,
          function ($) {
             return renderRow(getRow($));
          },
@@ -4464,82 +4470,22 @@ Elm.Model.make = function (_elm) {
                 ,_0: v0
                 ,_1: v1};
       }));
-      var firstWhiteRow = _L.fromArray([{ctor: "_Tuple3"
-                                        ,_0: Black
-                                        ,_1: Rook
-                                        ,_2: White}
-                                       ,{ctor: "_Tuple3"
-                                        ,_0: White
-                                        ,_1: Knight
-                                        ,_2: White}
-                                       ,{ctor: "_Tuple3"
-                                        ,_0: Black
-                                        ,_1: Bishop
-                                        ,_2: White}
-                                       ,{ctor: "_Tuple3"
-                                        ,_0: White
-                                        ,_1: Queen
-                                        ,_2: White}
-                                       ,{ctor: "_Tuple3"
-                                        ,_0: Black
-                                        ,_1: King
-                                        ,_2: White}
-                                       ,{ctor: "_Tuple3"
-                                        ,_0: White
-                                        ,_1: Bishop
-                                        ,_2: White}
-                                       ,{ctor: "_Tuple3"
-                                        ,_0: Black
-                                        ,_1: Knight
-                                        ,_2: White}
-                                       ,{ctor: "_Tuple3"
-                                        ,_0: White
-                                        ,_1: Rook
-                                        ,_2: White}]);
-      var firstBlackRow = _L.fromArray([{ctor: "_Tuple3"
-                                        ,_0: Black
-                                        ,_1: Rook
-                                        ,_2: Black}
-                                       ,{ctor: "_Tuple3"
-                                        ,_0: White
-                                        ,_1: Knight
-                                        ,_2: Black}
-                                       ,{ctor: "_Tuple3"
-                                        ,_0: Black
-                                        ,_1: Bishop
-                                        ,_2: Black}
-                                       ,{ctor: "_Tuple3"
-                                        ,_0: White
-                                        ,_1: King
-                                        ,_2: Black}
-                                       ,{ctor: "_Tuple3"
-                                        ,_0: Black
-                                        ,_1: Queen
-                                        ,_2: Black}
-                                       ,{ctor: "_Tuple3"
-                                        ,_0: White
-                                        ,_1: Bishop
-                                        ,_2: Black}
-                                       ,{ctor: "_Tuple3"
-                                        ,_0: Black
-                                        ,_1: Knight
-                                        ,_2: Black}
-                                       ,{ctor: "_Tuple3"
-                                        ,_0: White
-                                        ,_1: Rook
-                                        ,_2: Black}]);
-      var makeSquare = function (_v1) {
-         return function () {
-            switch (_v1.ctor)
-            {case "_Tuple3":
-               return square(_v1._0)($Maybe.Just(A3(piece,
-                 _v1._1,
-                 _v1._2,
-                 false)));}
-            _U.badCase($moduleName,
-            "on line 65, column 9 to 68");
-         }();
-      };
+      var firstRow = _L.fromArray([Rook
+                                  ,Knight
+                                  ,Bishop
+                                  ,King
+                                  ,Queen
+                                  ,Bishop
+                                  ,Knight
+                                  ,Rook]);
+      var makeSquare = F3(function (pieceColor,
+      squareColor,
+      figure) {
+         return square(squareColor)($Maybe.Just(A3(piece,
+         figure,
+         pieceColor,
+         false)));
+      });
       var emptyRow = function (color) {
          return A3($List.map2,
          square,
@@ -4574,9 +4520,12 @@ Elm.Model.make = function (_elm) {
                    ,"F8"
                    ,"G8"
                    ,"H8"]),
-      A2($List.map,
-      makeSquare,
-      firstBlackRow)),
+      A3($List.map2,
+      makeSquare(Black),
+      $List.concat(A2($List.repeat,
+      4,
+      _L.fromArray([White,Black]))),
+      firstRow)),
       A2($Basics._op["++"],
       A2(zip,
       _L.fromArray(["A7"
@@ -4587,7 +4536,7 @@ Elm.Model.make = function (_elm) {
                    ,"F7"
                    ,"G7"
                    ,"H7"]),
-      A2(pawnRow,Black,White)),
+      A2(pawnRow,Black,Black)),
       A2($Basics._op["++"],
       A2(zip,
       _L.fromArray(["A6"
@@ -4652,9 +4601,12 @@ Elm.Model.make = function (_elm) {
                    ,"F1"
                    ,"G1"
                    ,"H1"]),
-      A2($List.map,
-      makeSquare,
-      firstWhiteRow))))))))));
+      A3($List.map2,
+      makeSquare(White),
+      $List.concat(A2($List.repeat,
+      4,
+      _L.fromArray([Black,White]))),
+      firstRow))))))))));
    }();
    _elm.Model.values = {_op: _op
                        ,Black: Black

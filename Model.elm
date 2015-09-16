@@ -61,40 +61,20 @@ makeInitialBoard =
         (repeat 8 Nothing)
 
 
-      makeSquare (squareColor, figure, pieceColor) =
+      makeSquare pieceColor squareColor figure =
         square squareColor << Just <| piece figure pieceColor False
 
 
-      firstBlackRow = [ (Black, Rook  , Black) 
-                      , (White, Knight, Black) 
-                      , (Black, Bishop, Black)
-                      , (White, King  , Black)
-                      , (Black, Queen , Black)
-                      , (White, Bishop, Black)
-                      , (Black, Knight, Black)
-                      , (White, Rook  , Black)
-                      ]
+      firstRow = [Rook, Knight, Bishop, King, Queen, Bishop, Knight, Rook]
 
-
-      firstWhiteRow = [ (Black, Rook  , White)
-                      , (White, Knight, White)
-                      , (Black, Bishop, White)
-                      , (White, Queen , White)
-                      , (Black, King  , White)
-                      , (White, Bishop, White)
-                      , (Black, Knight, White)
-                      , (White, Rook  , White)
-                      ]
-
-                      
       zip = List.map2 (,)
 
   in Dict.fromList <| 
     zip ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"] 
-        (List.map makeSquare firstBlackRow)           ++
+        (List.map2 (makeSquare Black) (concat <| repeat 4 [White, Black]) firstRow) ++
 
     zip ["A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7"]
-        (pawnRow Black White)                         ++
+        (pawnRow Black Black)                         ++
 
     zip ["A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6"]
         (emptyRow White)                              ++
@@ -112,6 +92,6 @@ makeInitialBoard =
         (pawnRow White White)                         ++
 
     zip ["A1", "B1",  "C1","D1", "E1", "F1", "G1", "H1"] 
-        (List.map makeSquare firstWhiteRow)
+        (List.map2 (makeSquare White) (concat <| repeat 4 [Black, White]) firstRow)
                                                             
     
