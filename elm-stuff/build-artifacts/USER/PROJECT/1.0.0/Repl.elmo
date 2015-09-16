@@ -15,21 +15,35 @@ Elm.Repl.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
    var tsol = {ctor: "_Tuple0"};
-   var l2 = _L.fromArray(["black"
-                         ,"white"]);
-   var l1 = _L.fromArray([1
-                         ,2
-                         ,3
-                         ,4]);
-   var Magrissimo = {ctor: "Magrissimo"};
-   var Magrao = {ctor: "Magrao"};
-   var Magrin = {ctor: "Magrin"};
+   var square = F2(function (c,p) {
+      return {_: {}
+             ,color: c
+             ,piece: p};
+   });
+   var l = _L.fromArray(["A7"
+                        ,"B7"
+                        ,"C7"
+                        ,"D7"
+                        ,"E7"
+                        ,"F7"
+                        ,"G7"
+                        ,"H7"]);
+   var White = {ctor: "White"};
+   var Black = {ctor: "Black"};
+   var deltron3030 = A2($List.map2,
+   square,
+   $List.concat(A2($List.repeat,
+   4,
+   _L.fromArray([Black
+                ,White]))))(A2($List.repeat,
+   8,
+   $Maybe.Nothing));
    _elm.Repl.values = {_op: _op
-                      ,Magrin: Magrin
-                      ,Magrao: Magrao
-                      ,Magrissimo: Magrissimo
-                      ,l1: l1
-                      ,l2: l2
+                      ,Black: Black
+                      ,White: White
+                      ,deltron3030: deltron3030
+                      ,l: l
+                      ,square: square
                       ,tsol: tsol};
    return _elm.Repl.values;
 };

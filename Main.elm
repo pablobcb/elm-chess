@@ -19,16 +19,28 @@ import String exposing ( fromChar )
 import Board exposing (..)
 
 
------------------------------ Style --------------------------------           
+--============================ Update ==============================
+type alias Position = String
+type Action = Click Position
+--============================ View ================================
 
+
+------------------------------ Style -------------------------------           
+
+center = [ ("text-align", "center"), ("vertical-align", "middle") ]
 
 boardStyle : Attribute
 boardStyle =
-    style [ ("width" , "640px")
-        , ("height", "640px")
-        , ("margin", "0.5em")
-        , ("border", "1px solid #000")
-        ]
+    style <|
+      [ 
+      
+      ] ++ center
+--    style [ ("width" , "640px")
+--          , ("height", "640px")
+--          , ("border", "1x solid #000")
+          -- ("margin", "1px")
+--          ]
+
 
 squareStyle : Color -> Attribute
 squareStyle color =
@@ -36,18 +48,16 @@ squareStyle color =
         Black -> ("background-color", "#808080")
         White -> ("background-color", "#0000")
   
-  in style <| bgColor :: [ ("float", "left")
-                         , ("width", "80px")
-                         , ("height", "80px")
-                         --, ("border", "1px solid #000")
-                         , ("font-size", "400%")
-                         , ("text-align", "center")
-                         , ("vertical-align", "middle")
-                         ]
+  in style <| bgColor ::
+    [ ("float", "left")
+    , ("width", "80px")
+    , ("height", "80px")
+    --, ("border", "1px solid #000")
+    , ("font-size", "400%")
+    ] ++ center
 
-
---main = text (String.fromChar '\x2658')
-
+------------------------- Render----------------------------------
+renderPiece : Piece -> Html
 renderPiece piece = text <| String.fromChar <| 
   case piece.figure of
     King -> case piece.color of
@@ -73,27 +83,40 @@ renderPiece piece = text <| String.fromChar <|
     Pawn -> case piece.color of
       Black -> '\x265F'
       White -> '\x2659'
+
+renderSquare : Position -> Square -> Html
+renderSquare id' square = 
+  td [ id id', squareStyle square.color ] <| case square.piece of
+    Just piece -> [ renderPiece piece]
+    Nothing -> []
+
+--f id board =
+-- case get id board of
+-- Just 
+-- List.map get ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"] board
+
 main =
-  table [ id "chessBoard"]
+  --let board = makeInitialBoard in
+  table [ id "chessBoard" ]
         [ tr [] 
-          [ td [ id "A8", squareStyle Black ] [ renderPiece <| piece King   Black False ]
-          , td [ id "B8", squareStyle White ] [ renderPiece <| piece King   White False ]
-          , td [ id "C8", squareStyle Black ] [ renderPiece <| piece Queen  Black False ]
-          , td [ id "D8", squareStyle White ] [ renderPiece <| piece Queen  White False ]
-          , td [ id "E8", squareStyle Black ] [ renderPiece <| piece Bishop Black False ]
-          , td [ id "F8", squareStyle White ] [ renderPiece <| piece Bishop White False ]
-          , td [ id "G8", squareStyle Black ] [ renderPiece <| piece Knight Black False ]
-          , td [ id "H8", squareStyle White ] [ renderPiece <| piece Knight White False ]
+          [ renderSquare "A8" <| square Black <| Just <| piece King   Black False 
+          , renderSquare "B8" <| square White <| Just <| piece King   White False
+          , renderSquare "C8" <| square Black <| Just <| piece Queen  Black False
+          , renderSquare "D8" <| square White <| Just <| piece Queen  White False
+          , renderSquare "E8" <| square Black <| Just <| piece Bishop Black False
+          , renderSquare "F8" <| square White <| Just <| piece Bishop White False
+          , renderSquare "G8" <| square Black <| Just <| piece Knight Black False
+          , renderSquare "H8" <| square White <| Just <| piece Knight White False
           ]
         , tr []
-          [ td [ id "A7", squareStyle White ] [ renderPiece <| piece Rook White False ]
-          , td [ id "B7", squareStyle Black ] [ renderPiece <| piece Rook Black False ]
-          , td [ id "C7", squareStyle White ] [ renderPiece <| piece Pawn Black False ]
-          , td [ id "D7", squareStyle Black ] [ renderPiece <| piece Pawn White False ]
-          , td [ id "E7" ] []
-          , td [ id "F7" ] []
-          , td [ id "G7" ] []
-          , td [ id "H7" ] []
+          [ renderSquare "A7" <| square White <| Just <| piece Rook White False
+          , renderSquare "B7" <| square Black <| Just <| piece Rook Black False
+          , renderSquare "C7" <| square White <| Just <| piece Pawn Black False
+          , renderSquare "D7" <| square Black <| Just <| piece Pawn White False
+          , renderSquare "E7" <| square White Nothing
+          , renderSquare "F7" <| square White Nothing
+          , renderSquare "G7" <| square White Nothing
+          , renderSquare "H7" <| square White Nothing
           ]
         , tr []
           [ td [ id "A6" ] []
