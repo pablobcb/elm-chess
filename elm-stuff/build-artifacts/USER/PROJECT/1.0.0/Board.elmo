@@ -26,21 +26,21 @@ Elm.Board.make = function (_elm) {
              ,_0: a
              ,_1: b};
    });
-   var pieceInstance = F3(function (p,
+   var piece = F3(function (p,
    c,
    m) {
       return {_: {}
              ,color: c
-             ,moved: m
-             ,piece: p};
+             ,figure: p
+             ,moved: m};
    });
-   var PieceInstance = F3(function (a,
+   var Piece = F3(function (a,
    b,
    c) {
       return {_: {}
              ,color: c
-             ,moved: b
-             ,piece: a};
+             ,figure: a
+             ,moved: b};
    });
    var King = {ctor: "King"};
    var Queen = {ctor: "Queen"};
@@ -67,7 +67,7 @@ Elm.Board.make = function (_elm) {
       8,
       $Maybe.Nothing);
       var pawnRow = function (color) {
-         return $List.repeat(8)($Maybe.Just(A3(pieceInstance,
+         return $List.repeat(8)($Maybe.Just(A3(piece,
          Pawn,
          color,
          false)));
@@ -75,49 +75,49 @@ Elm.Board.make = function (_elm) {
       return $Dict.fromList(A2($Basics._op["++"],
       _L.fromArray([{ctor: "_Tuple2"
                     ,_0: "A8"
-                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    ,_1: $Maybe.Just(A3(piece,
                     Rook,
                     Black,
                     false))}
                    ,{ctor: "_Tuple2"
                     ,_0: "B8"
-                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    ,_1: $Maybe.Just(A3(piece,
                     Knight,
                     Black,
                     false))}
                    ,{ctor: "_Tuple2"
                     ,_0: "C8"
-                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    ,_1: $Maybe.Just(A3(piece,
                     Bishop,
                     Black,
                     false))}
                    ,{ctor: "_Tuple2"
                     ,_0: "D8"
-                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    ,_1: $Maybe.Just(A3(piece,
                     King,
                     Black,
                     false))}
                    ,{ctor: "_Tuple2"
                     ,_0: "E8"
-                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    ,_1: $Maybe.Just(A3(piece,
                     Queen,
                     Black,
                     false))}
                    ,{ctor: "_Tuple2"
                     ,_0: "F8"
-                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    ,_1: $Maybe.Just(A3(piece,
                     Bishop,
                     Black,
                     false))}
                    ,{ctor: "_Tuple2"
                     ,_0: "G8"
-                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    ,_1: $Maybe.Just(A3(piece,
                     Knight,
                     Black,
                     false))}
                    ,{ctor: "_Tuple2"
                     ,_0: "H8"
-                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    ,_1: $Maybe.Just(A3(piece,
                     Rook,
                     Black,
                     false))}]),
@@ -189,49 +189,49 @@ Elm.Board.make = function (_elm) {
       pawnRow(White)),
       _L.fromArray([{ctor: "_Tuple2"
                     ,_0: "A1"
-                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    ,_1: $Maybe.Just(A3(piece,
                     Rook,
                     White,
                     false))}
                    ,{ctor: "_Tuple2"
                     ,_0: "B1"
-                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    ,_1: $Maybe.Just(A3(piece,
                     Knight,
                     White,
                     false))}
                    ,{ctor: "_Tuple2"
                     ,_0: "C1"
-                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    ,_1: $Maybe.Just(A3(piece,
                     Bishop,
                     White,
                     false))}
                    ,{ctor: "_Tuple2"
                     ,_0: "D1"
-                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    ,_1: $Maybe.Just(A3(piece,
                     Queen,
                     White,
                     false))}
                    ,{ctor: "_Tuple2"
                     ,_0: "E1"
-                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    ,_1: $Maybe.Just(A3(piece,
                     King,
                     White,
                     false))}
                    ,{ctor: "_Tuple2"
                     ,_0: "F1"
-                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    ,_1: $Maybe.Just(A3(piece,
                     Bishop,
                     White,
                     false))}
                    ,{ctor: "_Tuple2"
                     ,_0: "G1"
-                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    ,_1: $Maybe.Just(A3(piece,
                     Knight,
                     White,
                     false))}
                    ,{ctor: "_Tuple2"
                     ,_0: "H1"
-                    ,_1: $Maybe.Just(A3(pieceInstance,
+                    ,_1: $Maybe.Just(A3(piece,
                     Rook,
                     White,
                     false))}])))))))));
@@ -247,8 +247,8 @@ Elm.Board.make = function (_elm) {
                        ,Rook: Rook
                        ,Queen: Queen
                        ,King: King
-                       ,PieceInstance: PieceInstance
-                       ,pieceInstance: pieceInstance
+                       ,Piece: Piece
+                       ,piece: piece
                        ,Dict: Dict
                        ,zip: zip
                        ,makeInitialBoard: makeInitialBoard};

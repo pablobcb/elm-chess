@@ -11,8 +11,10 @@
 --    }
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Maybe exposing ( Maybe(..) )
-import Array exposing ( Array(..) )
+import Maybe exposing  ( Maybe(..) )
+import Array exposing  ( Array(..) )
+import Text exposing   ( Text(..) )
+import String exposing ( fromChar )
 
 import Board exposing (..)
 
@@ -22,7 +24,7 @@ import Board exposing (..)
 
 boardStyle : Attribute
 boardStyle =
-  style [ ("width" , "640px")
+    style [ ("width" , "640px")
         , ("height", "640px")
         , ("margin", "0.5em")
         , ("border", "1px solid #000")
@@ -37,26 +39,57 @@ squareStyle color =
   in style <| bgColor :: [ ("float", "left")
                          , ("width", "80px")
                          , ("height", "80px")
-                         , ("border", "1px solid #000")
+                         --, ("border", "1px solid #000")
+                         , ("font-size", "400%")
+                         , ("text-align", "center")
+                         , ("vertical-align", "middle")
                          ]
 
+
+--main = text (String.fromChar '\x2658')
+
+renderPiece piece = text <| String.fromChar <| 
+  case piece.figure of
+    King -> case piece.color of
+      Black -> '\x265A'
+      White -> '\x2654'
+
+    Queen -> case piece.color of
+      Black -> '\x265B'
+      White -> '\x2655'
+
+    Rook -> case piece.color of
+      Black -> '\x265C'
+      White -> '\x2656'
+
+    Bishop -> case piece.color of
+      Black -> '\x265D'
+      White -> '\x2657'
+
+    Knight -> case piece.color of
+      Black -> '\x265E'
+      White -> '\x2658'
+
+    Pawn -> case piece.color of
+      Black -> '\x265F'
+      White -> '\x2659'
 main =
-  table [ id "chessBoard", colspan 8, rowspan 8, boardStyle ]
+  table [ id "chessBoard"]
         [ tr [] 
-          [ td [ id "A8", squareStyle Black ] []
-          , td [ id "B8", squareStyle White ] []
-          , td [ id "C8", squareStyle Black ] []
-          , td [ id "D8", squareStyle White ] []
-          , td [ id "E8", squareStyle Black ] []
-          , td [ id "F8", squareStyle White ] []
-          , td [ id "G8", squareStyle Black ] []
-          , td [ id "H8", squareStyle White ] []
+          [ td [ id "A8", squareStyle Black ] [ renderPiece <| piece King   Black False ]
+          , td [ id "B8", squareStyle White ] [ renderPiece <| piece King   White False ]
+          , td [ id "C8", squareStyle Black ] [ renderPiece <| piece Queen  Black False ]
+          , td [ id "D8", squareStyle White ] [ renderPiece <| piece Queen  White False ]
+          , td [ id "E8", squareStyle Black ] [ renderPiece <| piece Bishop Black False ]
+          , td [ id "F8", squareStyle White ] [ renderPiece <| piece Bishop White False ]
+          , td [ id "G8", squareStyle Black ] [ renderPiece <| piece Knight Black False ]
+          , td [ id "H8", squareStyle White ] [ renderPiece <| piece Knight White False ]
           ]
         , tr []
-          [ td [ id "A7" , squareStyle Black ] []
-          , td [ id "B7" ] []
-          , td [ id "C7" ] []
-          , td [ id "D7" ] []
+          [ td [ id "A7", squareStyle White ] [ renderPiece <| piece Rook White False ]
+          , td [ id "B7", squareStyle Black ] [ renderPiece <| piece Rook Black False ]
+          , td [ id "C7", squareStyle White ] [ renderPiece <| piece Pawn Black False ]
+          , td [ id "D7", squareStyle Black ] [ renderPiece <| piece Pawn White False ]
           , td [ id "E7" ] []
           , td [ id "F7" ] []
           , td [ id "G7" ] []
