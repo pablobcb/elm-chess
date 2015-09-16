@@ -4198,24 +4198,26 @@ Elm.Main.make = function (_elm) {
          "between lines 90 and 92");
       }());
    });
-   var f = F2(function (pos,
-   board) {
+   var renderBoard = function (board) {
       return function () {
-         var _v10 = A2($Dict.get,
-         pos,
-         board);
-         switch (_v10.ctor)
-         {case "Just":
-            return $Maybe.Just(A2(renderSquare,
-              pos,
-              _v10._0));
-            case "Nothing":
-            return $Maybe.Nothing;}
-         _U.badCase($moduleName,
-         "between lines 99 and 101");
+         var pos = "A8";
+         return function () {
+            var _v10 = A2($Dict.get,
+            pos,
+            board);
+            switch (_v10.ctor)
+            {case "Just":
+               return $Maybe.Just(A2(renderSquare,
+                 pos,
+                 _v10._0));
+               case "Nothing":
+               return $Maybe.Nothing;}
+            _U.badCase($moduleName,
+            "between lines 100 and 102");
+         }();
       }();
-   });
-   var main = A2($Html.table,
+   };
+   var makeBoard = A2($Html.table,
    _L.fromArray([$Html$Attributes.id("chessBoard")]),
    _L.fromArray([A2($Html.tr,
                 _L.fromArray([]),
@@ -4437,6 +4439,7 @@ Elm.Main.make = function (_elm) {
                              ,A2($Html.td,
                              _L.fromArray([$Html$Attributes.id("H1")]),
                              _L.fromArray([]))]))]));
+   var main = makeBoard;
    var Click = function (a) {
       return {ctor: "Click",_0: a};
    };
@@ -4447,7 +4450,8 @@ Elm.Main.make = function (_elm) {
                       ,squareStyle: squareStyle
                       ,renderPiece: renderPiece
                       ,renderSquare: renderSquare
-                      ,f: f
+                      ,renderBoard: renderBoard
+                      ,makeBoard: makeBoard
                       ,main: main};
    return _elm.Main.values;
 };
