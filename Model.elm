@@ -59,15 +59,18 @@ makeInitialBoard =
         (concat <| repeat 4 [color, other color])
         (repeat 8 Nothing)
 
+      squareWith squareColor figure pieceColor =
+        square squareColor << Just <| piece figure pieceColor False
+
   in Dict.fromList <| [
-      ( "A8", square Black <| Just <| piece Rook   Black False )
-    , ( "B8", square White <| Just <| piece Knight Black False )
-    , ( "C8", square Black <| Just <| piece Bishop Black False )
-    , ( "D8", square White <| Just <| piece King   Black False )
-    , ( "E8", square Black <| Just <| piece Queen  Black False )
-    , ( "F8", square White <| Just <| piece Bishop Black False )
-    , ( "G8", square Black <| Just <| piece Knight Black False )
-    , ( "H8", square White <| Just <| piece Rook   Black False )
+      ( "A8", squareWith Black Rook   Black )
+    , ( "B8", squareWith White Knight Black )
+    , ( "C8", squareWith Black Bishop Black )
+    , ( "D8", squareWith White King   Black )
+    , ( "E8", squareWith Black Queen  Black )
+    , ( "F8", squareWith White Bishop Black )
+    , ( "G8", squareWith Black Knight Black )
+    , ( "H8", squareWith White Rook   Black )
     ] 
     ++ zip ["A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7"] (pawnRow Black White)
     ++ zip ["A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6"] (emptyRow White)
@@ -75,12 +78,12 @@ makeInitialBoard =
     ++ zip ["A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4"] (emptyRow White)
     ++ zip ["A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3"] (emptyRow Black)
     ++ zip ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"] (pawnRow White White) ++
-    [ ( "A1", square Black <| Just <| piece Rook   White False )
-    , ( "B1", square White <| Just <| piece Knight White False )
-    , ( "C1", square Black <| Just <| piece Bishop White False )
-    , ( "D1", square White <| Just <| piece Queen  White False )
-    , ( "E1", square Black <| Just <| piece King   White False )
-    , ( "F1", square White <| Just <| piece Bishop White False )
-    , ( "G1", square Black <| Just <| piece Knight White False )
-    , ( "H1", square White <| Just <| piece Rook   White False )
+    [ ( "A1", squareWith Black Rook   White )
+    , ( "B1", squareWith White Knight White )
+    , ( "C1", squareWith Black Bishop White )
+    , ( "D1", squareWith White Queen  White )
+    , ( "E1", squareWith Black King   White )
+    , ( "F1", squareWith White Bishop White )
+    , ( "G1", squareWith Black Knight White )
+    , ( "H1", squareWith White Rook   White )
     ] 

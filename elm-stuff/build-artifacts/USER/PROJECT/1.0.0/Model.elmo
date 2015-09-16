@@ -68,6 +68,14 @@ Elm.Model.make = function (_elm) {
       }();
    };
    var makeInitialBoard = function () {
+      var squareWith = F3(function (squareColor,
+      figure,
+      pieceColor) {
+         return square(squareColor)($Maybe.Just(A3(piece,
+         figure,
+         pieceColor,
+         false)));
+      });
       var emptyRow = function (color) {
          return A3($List.map2,
          square,
@@ -95,52 +103,52 @@ Elm.Model.make = function (_elm) {
       return $Dict.fromList(A2($Basics._op["++"],
       _L.fromArray([{ctor: "_Tuple2"
                     ,_0: "A8"
-                    ,_1: square(Black)($Maybe.Just(A3(piece,
-                    Rook,
+                    ,_1: A3(squareWith,
                     Black,
-                    false)))}
+                    Rook,
+                    Black)}
                    ,{ctor: "_Tuple2"
                     ,_0: "B8"
-                    ,_1: square(White)($Maybe.Just(A3(piece,
+                    ,_1: A3(squareWith,
+                    White,
                     Knight,
-                    Black,
-                    false)))}
+                    Black)}
                    ,{ctor: "_Tuple2"
                     ,_0: "C8"
-                    ,_1: square(Black)($Maybe.Just(A3(piece,
-                    Bishop,
+                    ,_1: A3(squareWith,
                     Black,
-                    false)))}
+                    Bishop,
+                    Black)}
                    ,{ctor: "_Tuple2"
                     ,_0: "D8"
-                    ,_1: square(White)($Maybe.Just(A3(piece,
+                    ,_1: A3(squareWith,
+                    White,
                     King,
-                    Black,
-                    false)))}
+                    Black)}
                    ,{ctor: "_Tuple2"
                     ,_0: "E8"
-                    ,_1: square(Black)($Maybe.Just(A3(piece,
-                    Queen,
+                    ,_1: A3(squareWith,
                     Black,
-                    false)))}
+                    Queen,
+                    Black)}
                    ,{ctor: "_Tuple2"
                     ,_0: "F8"
-                    ,_1: square(White)($Maybe.Just(A3(piece,
+                    ,_1: A3(squareWith,
+                    White,
                     Bishop,
-                    Black,
-                    false)))}
+                    Black)}
                    ,{ctor: "_Tuple2"
                     ,_0: "G8"
-                    ,_1: square(Black)($Maybe.Just(A3(piece,
-                    Knight,
+                    ,_1: A3(squareWith,
                     Black,
-                    false)))}
+                    Knight,
+                    Black)}
                    ,{ctor: "_Tuple2"
                     ,_0: "H8"
-                    ,_1: square(White)($Maybe.Just(A3(piece,
+                    ,_1: A3(squareWith,
+                    White,
                     Rook,
-                    Black,
-                    false)))}]),
+                    Black)}]),
       A2($Basics._op["++"],
       A2(zip,
       _L.fromArray(["A7"
@@ -209,52 +217,52 @@ Elm.Model.make = function (_elm) {
       A2(pawnRow,White,White)),
       _L.fromArray([{ctor: "_Tuple2"
                     ,_0: "A1"
-                    ,_1: square(Black)($Maybe.Just(A3(piece,
+                    ,_1: A3(squareWith,
+                    Black,
                     Rook,
-                    White,
-                    false)))}
+                    White)}
                    ,{ctor: "_Tuple2"
                     ,_0: "B1"
-                    ,_1: square(White)($Maybe.Just(A3(piece,
-                    Knight,
+                    ,_1: A3(squareWith,
                     White,
-                    false)))}
+                    Knight,
+                    White)}
                    ,{ctor: "_Tuple2"
                     ,_0: "C1"
-                    ,_1: square(Black)($Maybe.Just(A3(piece,
+                    ,_1: A3(squareWith,
+                    Black,
                     Bishop,
-                    White,
-                    false)))}
+                    White)}
                    ,{ctor: "_Tuple2"
                     ,_0: "D1"
-                    ,_1: square(White)($Maybe.Just(A3(piece,
-                    Queen,
+                    ,_1: A3(squareWith,
                     White,
-                    false)))}
+                    Queen,
+                    White)}
                    ,{ctor: "_Tuple2"
                     ,_0: "E1"
-                    ,_1: square(Black)($Maybe.Just(A3(piece,
+                    ,_1: A3(squareWith,
+                    Black,
                     King,
-                    White,
-                    false)))}
+                    White)}
                    ,{ctor: "_Tuple2"
                     ,_0: "F1"
-                    ,_1: square(White)($Maybe.Just(A3(piece,
-                    Bishop,
+                    ,_1: A3(squareWith,
                     White,
-                    false)))}
+                    Bishop,
+                    White)}
                    ,{ctor: "_Tuple2"
                     ,_0: "G1"
-                    ,_1: square(Black)($Maybe.Just(A3(piece,
+                    ,_1: A3(squareWith,
+                    Black,
                     Knight,
-                    White,
-                    false)))}
+                    White)}
                    ,{ctor: "_Tuple2"
                     ,_0: "H1"
-                    ,_1: square(White)($Maybe.Just(A3(piece,
-                    Rook,
+                    ,_1: A3(squareWith,
                     White,
-                    false)))}])))))))));
+                    Rook,
+                    White)}])))))))));
    }();
    _elm.Model.values = {_op: _op
                        ,Black: Black
