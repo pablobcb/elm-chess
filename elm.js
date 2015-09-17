@@ -3544,6 +3544,113 @@ Elm.Html.Attributes.make = function (_elm) {
                                  ,attribute: attribute};
    return _elm.Html.Attributes.values;
 };
+Elm.Html = Elm.Html || {};
+Elm.Html.Events = Elm.Html.Events || {};
+Elm.Html.Events.make = function (_elm) {
+   "use strict";
+   _elm.Html = _elm.Html || {};
+   _elm.Html.Events = _elm.Html.Events || {};
+   if (_elm.Html.Events.values)
+   return _elm.Html.Events.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Html.Events",
+   $Basics = Elm.Basics.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $VirtualDom = Elm.VirtualDom.make(_elm);
+   var keyCode = A2($Json$Decode._op[":="],
+   "keyCode",
+   $Json$Decode.$int);
+   var targetChecked = A2($Json$Decode.at,
+   _L.fromArray(["target"
+                ,"checked"]),
+   $Json$Decode.bool);
+   var targetValue = A2($Json$Decode.at,
+   _L.fromArray(["target"
+                ,"value"]),
+   $Json$Decode.string);
+   var defaultOptions = $VirtualDom.defaultOptions;
+   var Options = F2(function (a,
+   b) {
+      return {_: {}
+             ,preventDefault: b
+             ,stopPropagation: a};
+   });
+   var onWithOptions = $VirtualDom.onWithOptions;
+   var on = $VirtualDom.on;
+   var messageOn = F3(function (name,
+   addr,
+   msg) {
+      return A3(on,
+      name,
+      $Json$Decode.value,
+      function (_v0) {
+         return function () {
+            return A2($Signal.message,
+            addr,
+            msg);
+         }();
+      });
+   });
+   var onClick = messageOn("click");
+   var onDoubleClick = messageOn("dblclick");
+   var onMouseMove = messageOn("mousemove");
+   var onMouseDown = messageOn("mousedown");
+   var onMouseUp = messageOn("mouseup");
+   var onMouseEnter = messageOn("mouseenter");
+   var onMouseLeave = messageOn("mouseleave");
+   var onMouseOver = messageOn("mouseover");
+   var onMouseOut = messageOn("mouseout");
+   var onBlur = messageOn("blur");
+   var onFocus = messageOn("focus");
+   var onSubmit = messageOn("submit");
+   var onKey = F3(function (name,
+   addr,
+   handler) {
+      return A3(on,
+      name,
+      keyCode,
+      function (code) {
+         return A2($Signal.message,
+         addr,
+         handler(code));
+      });
+   });
+   var onKeyUp = onKey("keyup");
+   var onKeyDown = onKey("keydown");
+   var onKeyPress = onKey("keypress");
+   _elm.Html.Events.values = {_op: _op
+                             ,onBlur: onBlur
+                             ,onFocus: onFocus
+                             ,onSubmit: onSubmit
+                             ,onKeyUp: onKeyUp
+                             ,onKeyDown: onKeyDown
+                             ,onKeyPress: onKeyPress
+                             ,onClick: onClick
+                             ,onDoubleClick: onDoubleClick
+                             ,onMouseMove: onMouseMove
+                             ,onMouseDown: onMouseDown
+                             ,onMouseUp: onMouseUp
+                             ,onMouseEnter: onMouseEnter
+                             ,onMouseLeave: onMouseLeave
+                             ,onMouseOver: onMouseOver
+                             ,onMouseOut: onMouseOut
+                             ,on: on
+                             ,onWithOptions: onWithOptions
+                             ,defaultOptions: defaultOptions
+                             ,targetValue: targetValue
+                             ,targetChecked: targetChecked
+                             ,keyCode: keyCode
+                             ,Options: Options};
+   return _elm.Html.Events.values;
+};
 Elm.Json = Elm.Json || {};
 Elm.Json.Decode = Elm.Json.Decode || {};
 Elm.Json.Decode.make = function (_elm) {
@@ -4068,17 +4175,8 @@ Elm.Main.make = function (_elm) {
    $Model = Elm.Model.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
+   $StartApp$Simple = Elm.StartApp.Simple.make(_elm),
    $String = Elm.String.make(_elm);
-   var getRow = F2(function (board,
-   positions) {
-      return A2($List.map,
-      function (key) {
-         return $Maybe$Extra.join(A2($Dict.get,
-         key,
-         board));
-      },
-      positions);
-   });
    var getHtmlCode = function (piece) {
       return $Html.text($String.fromChar(function () {
          var _v0 = piece.figure;
@@ -4092,7 +4190,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♗");}
                  _U.badCase($moduleName,
-                 "between lines 54 and 58");
+                 "between lines 47 and 51");
               }();
             case "King":
             return function () {
@@ -4103,7 +4201,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♔");}
                  _U.badCase($moduleName,
-                 "between lines 42 and 46");
+                 "between lines 35 and 39");
               }();
             case "Knight":
             return function () {
@@ -4114,7 +4212,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♘");}
                  _U.badCase($moduleName,
-                 "between lines 58 and 62");
+                 "between lines 51 and 55");
               }();
             case "Pawn":
             return function () {
@@ -4125,7 +4223,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♙");}
                  _U.badCase($moduleName,
-                 "between lines 62 and 64");
+                 "between lines 55 and 57");
               }();
             case "Queen":
             return function () {
@@ -4136,7 +4234,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♕");}
                  _U.badCase($moduleName,
-                 "between lines 46 and 50");
+                 "between lines 39 and 43");
               }();
             case "Rook":
             return function () {
@@ -4147,123 +4245,140 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♖");}
                  _U.badCase($moduleName,
-                 "between lines 50 and 54");
+                 "between lines 43 and 47");
               }();}
          _U.badCase($moduleName,
-         "between lines 41 and 64");
+         "between lines 34 and 57");
       }()));
    };
-   var renderSquare = function (piece) {
+   var renderBoard = F2(function (address,
+   board) {
       return function () {
-         switch (piece.ctor)
-         {case "Just":
-            return A2($Html.td,
-              _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
-                                                                 ,_0: "cursor"
-                                                                 ,_1: "grab"}]))]),
-              _L.fromArray([getHtmlCode(piece._0)]));
-            case "Nothing":
-            return A2($Html.td,
-              _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
-                                                                 ,_0: "cursor"
-                                                                 ,_1: "default"}]))]),
-              _L.fromArray([]));}
-         _U.badCase($moduleName,
-         "between lines 69 and 74");
+         var renderSquare = function (piece) {
+            return function () {
+               switch (piece.ctor)
+               {case "Just":
+                  return A2($Html.td,
+                    _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                                       ,_0: "cursor"
+                                                                       ,_1: "grab"}]))]),
+                    _L.fromArray([getHtmlCode(piece._0)]));
+                  case "Nothing":
+                  return A2($Html.td,
+                    _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                                       ,_0: "cursor"
+                                                                       ,_1: "default"}]))]),
+                    _L.fromArray([]));}
+               _U.badCase($moduleName,
+               "between lines 73 and 76");
+            }();
+         };
+         var renderRow = function (pieces) {
+            return $Html.tr(_L.fromArray([]))(A2($List.map,
+            function (piece) {
+               return function () {
+                  switch (piece.ctor)
+                  {case "Nothing":
+                     return renderSquare($Maybe.Nothing);}
+                  return renderSquare(piece);
+               }();
+            },
+            pieces));
+         };
+         var getRow = function (positions) {
+            return A2($List.map,
+            function (key) {
+               return $Maybe$Extra.join(A2($Dict.get,
+               key,
+               board));
+            },
+            positions);
+         };
+         return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))(A2($List.map,
+         function ($) {
+            return renderRow(getRow($));
+         },
+         _L.fromArray([_L.fromArray(["A1"
+                                    ,"B1"
+                                    ,"C1"
+                                    ,"D1"
+                                    ,"E1"
+                                    ,"F1"
+                                    ,"G1"
+                                    ,"H1"])
+                      ,_L.fromArray(["A2"
+                                    ,"B2"
+                                    ,"C2"
+                                    ,"D2"
+                                    ,"E2"
+                                    ,"F2"
+                                    ,"G2"
+                                    ,"H2"])
+                      ,_L.fromArray(["A3"
+                                    ,"B3"
+                                    ,"C3"
+                                    ,"D3"
+                                    ,"E3"
+                                    ,"F3"
+                                    ,"G3"
+                                    ,"H3"])
+                      ,_L.fromArray(["A4"
+                                    ,"B4"
+                                    ,"C4"
+                                    ,"D4"
+                                    ,"E4"
+                                    ,"F4"
+                                    ,"G4"
+                                    ,"H4"])
+                      ,_L.fromArray(["A5"
+                                    ,"B5"
+                                    ,"C5"
+                                    ,"D5"
+                                    ,"E5"
+                                    ,"F5"
+                                    ,"G5"
+                                    ,"H5"])
+                      ,_L.fromArray(["A6"
+                                    ,"B6"
+                                    ,"C6"
+                                    ,"D6"
+                                    ,"E6"
+                                    ,"F6"
+                                    ,"G6"
+                                    ,"H6"])
+                      ,_L.fromArray(["A7"
+                                    ,"B7"
+                                    ,"C7"
+                                    ,"D7"
+                                    ,"E7"
+                                    ,"F7"
+                                    ,"G7"
+                                    ,"H7"])
+                      ,_L.fromArray(["A8"
+                                    ,"B8"
+                                    ,"C8"
+                                    ,"D8"
+                                    ,"E8"
+                                    ,"F8"
+                                    ,"G8"
+                                    ,"H8"])])));
       }();
-   };
-   var renderRow = function (pieces) {
-      return $Html.tr(_L.fromArray([]))(A2($List.map,
-      function (piece) {
-         return function () {
-            switch (piece.ctor)
-            {case "Nothing":
-               return renderSquare($Maybe.Nothing);}
-            return renderSquare(piece);
-         }();
-      },
-      pieces));
-   };
-   var renderBoard = function (board) {
-      return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))(A2($List.map,
-      function ($) {
-         return renderRow(getRow(board)($));
-      },
-      _L.fromArray([_L.fromArray(["A1"
-                                 ,"B1"
-                                 ,"C1"
-                                 ,"D1"
-                                 ,"E1"
-                                 ,"F1"
-                                 ,"G1"
-                                 ,"H1"])
-                   ,_L.fromArray(["A2"
-                                 ,"B2"
-                                 ,"C2"
-                                 ,"D2"
-                                 ,"E2"
-                                 ,"F2"
-                                 ,"G2"
-                                 ,"H2"])
-                   ,_L.fromArray(["A3"
-                                 ,"B3"
-                                 ,"C3"
-                                 ,"D3"
-                                 ,"E3"
-                                 ,"F3"
-                                 ,"G3"
-                                 ,"H3"])
-                   ,_L.fromArray(["A4"
-                                 ,"B4"
-                                 ,"C4"
-                                 ,"D4"
-                                 ,"E4"
-                                 ,"F4"
-                                 ,"G4"
-                                 ,"H4"])
-                   ,_L.fromArray(["A5"
-                                 ,"B5"
-                                 ,"C5"
-                                 ,"D5"
-                                 ,"E5"
-                                 ,"F5"
-                                 ,"G5"
-                                 ,"H5"])
-                   ,_L.fromArray(["A6"
-                                 ,"B6"
-                                 ,"C6"
-                                 ,"D6"
-                                 ,"E6"
-                                 ,"F6"
-                                 ,"G6"
-                                 ,"H6"])
-                   ,_L.fromArray(["A7"
-                                 ,"B7"
-                                 ,"C7"
-                                 ,"D7"
-                                 ,"E7"
-                                 ,"F7"
-                                 ,"G7"
-                                 ,"H7"])
-                   ,_L.fromArray(["A8"
-                                 ,"B8"
-                                 ,"C8"
-                                 ,"D8"
-                                 ,"E8"
-                                 ,"F8"
-                                 ,"G8"
-                                 ,"H8"])])));
-   };
-   var main = renderBoard($Model.makeInitialBoard);
+   });
+   var update = F2(function (action,
+   board) {
+      return board;
+   });
+   var main = $StartApp$Simple.start({_: {}
+                                     ,model: $Model.makeInitialBoard
+                                     ,update: update
+                                     ,view: renderBoard});
    var Click = function (a) {
       return {ctor: "Click",_0: a};
    };
    _elm.Main.values = {_op: _op
                       ,Click: Click
+                      ,update: update
                       ,getHtmlCode: getHtmlCode
-                      ,renderSquare: renderSquare
-                      ,renderRow: renderRow
-                      ,getRow: getRow
                       ,renderBoard: renderBoard
                       ,main: main};
    return _elm.Main.values;
@@ -12752,6 +12867,63 @@ Elm.Signal.make = function (_elm) {
                         ,forwardTo: forwardTo
                         ,Mailbox: Mailbox};
    return _elm.Signal.values;
+};
+Elm.StartApp = Elm.StartApp || {};
+Elm.StartApp.Simple = Elm.StartApp.Simple || {};
+Elm.StartApp.Simple.make = function (_elm) {
+   "use strict";
+   _elm.StartApp = _elm.StartApp || {};
+   _elm.StartApp.Simple = _elm.StartApp.Simple || {};
+   if (_elm.StartApp.Simple.values)
+   return _elm.StartApp.Simple.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "StartApp.Simple",
+   $Basics = Elm.Basics.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var start = function (config) {
+      return function () {
+         var actions = $Signal.mailbox($Maybe.Nothing);
+         var address = A2($Signal.forwardTo,
+         actions.address,
+         $Maybe.Just);
+         var model = A3($Signal.foldp,
+         F2(function (_v0,model) {
+            return function () {
+               switch (_v0.ctor)
+               {case "Just":
+                  return A2(config.update,
+                    _v0._0,
+                    model);}
+               _U.badCase($moduleName,
+               "on line 91, column 34 to 60");
+            }();
+         }),
+         config.model,
+         actions.signal);
+         return A2($Signal.map,
+         config.view(address),
+         model);
+      }();
+   };
+   var Config = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,model: a
+             ,update: c
+             ,view: b};
+   });
+   _elm.StartApp.Simple.values = {_op: _op
+                                 ,Config: Config
+                                 ,start: start};
+   return _elm.StartApp.Simple.values;
 };
 Elm.String = Elm.String || {};
 Elm.String.make = function (_elm) {

@@ -1,16 +1,9 @@
 
---import Counter exposing (update, view)
---import StartApp.Simple exposing (start)
-
-
---main =
-  --start
---    { model = 0
---    , update = update
---    , view = view
---    }
-import Html exposing (..)
+import StartApp.Simple exposing (..)
+import Signal exposing (..)
 import Html.Attributes exposing (..)
+import Html exposing (..)
+import Html.Events exposing (..)
 import Maybe exposing  ( Maybe(..) )
 import Maybe.Extra exposing (..)
 import Array exposing  ( Array(..) )
@@ -27,10 +20,10 @@ type alias Position = String
 
 type Action = Click Board
 
---update : Action -> Board -> Board
---update action board =
+update : Action -> Board -> Board
+update action board = board
 --    case action of
---      Click  -> board
+ --     Click  -> board
 
 
 --============================ View ================================
@@ -64,34 +57,24 @@ getHtmlCode piece = text <| String.fromChar <|
       White -> '\x2659'
 
 
-renderSquare : Maybe Piece -> Html
-renderSquare piece = 
-  case piece of
-    Just piece' -> td 
-      [ style [("cursor", "grab")]]--, onClick address Click ]
-      [ getHtmlCode piece']
-    
-    Nothing -> td [ style [("cursor", "default")] ] []
+--renderBoard : Signal.Address Board -> Html
+renderBoard address board =
+  let getRow positions = List.map (\key -> Maybe.Extra.join <| Dict.get key board)
+                                  positions
+      
+      renderRow pieces = 
+        tr [] <| List.map (\piece ->
+                   case piece of
+                     Nothing -> renderSquare Nothing
 
-
-renderRow : List (Maybe Piece) -> Html
-renderRow pieces = 
-  tr [] <| List.map (\piece ->
-             case piece of
-               Nothing -> renderSquare Nothing
-               _ -> renderSquare piece) pieces
-
-getRow : Board -> List Position -> List (Maybe Piece)
-getRow board positions = List.map
-    (\key -> Maybe.Extra.join <| Dict.get key board)
-    positions
-
-
-renderBoard : Board -> Html
-renderBoard board =
---  let getRow positions =
---    List.map (\key -> Dict.get key board) positions in
-     table [ id "chessBoard" ] <| List.map (renderRow << getRow board)
+                     _ -> renderSquare piece) pieces
+      
+      
+      renderSquare piece = case piece of
+                             Just piece' -> td [ style [("cursor", "grab")]] [ getHtmlCode piece']
+                             Nothing -> td [ style [("cursor", "default")] ] []
+  in
+     table [ id "chessBoard" ] <| List.map (renderRow << getRow)
            [ ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"]
            , ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"]
            , ["A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3"]
@@ -102,6 +85,8 @@ renderBoard board =
            , ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"]
            ]
 
-main : Html
-main = renderBoard makeInitialBoard
-
+main = StartApp.Simple.start
+    { model = makeInitialBoard
+    , view = renderBoard
+    , update = update
+    }
