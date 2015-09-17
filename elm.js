@@ -4281,7 +4281,8 @@ Elm.Main.make = function (_elm) {
                                                                           ,_1: "grab"}]))
                                     ,A2($Html$Events.onClick,
                                     address,
-                                    Click(position))]),
+                                    Click(position))
+                                    ,$Html$Attributes.id(position)]),
                        _L.fromArray([getHtmlCode(piece._0)]));
                      case "Nothing":
                      return A2($Html.td,
@@ -4290,80 +4291,36 @@ Elm.Main.make = function (_elm) {
                                                                           ,_1: "default"}]))]),
                        _L.fromArray([]));}
                   _U.badCase($moduleName,
-                  "between lines 63 and 69");
+                  "between lines 65 and 73");
                }();
             }();
          };
-         return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))(A2($List.map,
-         function (xs) {
+         var numbers = A2($List.map,
+         $Basics.toString,
+         _L.range(1,8));
+         var letters = _L.fromArray(["A"
+                                    ,"B"
+                                    ,"C"
+                                    ,"D"
+                                    ,"E"
+                                    ,"F"
+                                    ,"G"
+                                    ,"H"]);
+         return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))($List.map(function (xs) {
             return $Html.tr(_L.fromArray([]))(A2($List.map,
             renderSquare,
             xs));
+         })(A2($List.map,
+         function (letter) {
+            return A2($List.map,
+            function (num) {
+               return A2($String.append,
+               num,
+               letter);
+            },
+            letters);
          },
-         _L.fromArray([_L.fromArray(["A1"
-                                    ,"B1"
-                                    ,"C1"
-                                    ,"D1"
-                                    ,"E1"
-                                    ,"F1"
-                                    ,"G1"
-                                    ,"H1"])
-                      ,_L.fromArray(["A2"
-                                    ,"B2"
-                                    ,"C2"
-                                    ,"D2"
-                                    ,"E2"
-                                    ,"F2"
-                                    ,"G2"
-                                    ,"H2"])
-                      ,_L.fromArray(["A3"
-                                    ,"B3"
-                                    ,"C3"
-                                    ,"D3"
-                                    ,"E3"
-                                    ,"F3"
-                                    ,"G3"
-                                    ,"H3"])
-                      ,_L.fromArray(["A4"
-                                    ,"B4"
-                                    ,"C4"
-                                    ,"D4"
-                                    ,"E4"
-                                    ,"F4"
-                                    ,"G4"
-                                    ,"H4"])
-                      ,_L.fromArray(["A5"
-                                    ,"B5"
-                                    ,"C5"
-                                    ,"D5"
-                                    ,"E5"
-                                    ,"F5"
-                                    ,"G5"
-                                    ,"H5"])
-                      ,_L.fromArray(["A6"
-                                    ,"B6"
-                                    ,"C6"
-                                    ,"D6"
-                                    ,"E6"
-                                    ,"F6"
-                                    ,"G6"
-                                    ,"H6"])
-                      ,_L.fromArray(["A7"
-                                    ,"B7"
-                                    ,"C7"
-                                    ,"D7"
-                                    ,"E7"
-                                    ,"F7"
-                                    ,"G7"
-                                    ,"H7"])
-                      ,_L.fromArray(["A8"
-                                    ,"B8"
-                                    ,"C8"
-                                    ,"D8"
-                                    ,"E8"
-                                    ,"F8"
-                                    ,"G8"
-                                    ,"H8"])])));
+         numbers)));
       }();
    });
    var main = $StartApp$Simple.start({_: {}
