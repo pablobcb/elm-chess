@@ -71,8 +71,11 @@ renderBoard address board =
                             [ getHtmlCode piece' ]
   
   in
-     table [ id "chessBoard" ] <| List.map (\xs-> tr [] <| List.map renderSquare xs) <|
-           List.map (\letter -> List.map (\num-> String.append num letter) letters) numbers
+     table [ id "chessBoard" ] 
+          <| List.map (\squares-> tr []
+          <| List.map renderSquare squares)
+          <| List.map (\letter -> 
+             List.map (\num-> String.append num letter) letters) numbers
 
 main = StartApp.Simple.start
     { model  = makeInitialBoard

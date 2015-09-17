@@ -4306,10 +4306,10 @@ Elm.Main.make = function (_elm) {
                                     ,"F"
                                     ,"G"
                                     ,"H"]);
-         return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))($List.map(function (xs) {
+         return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))($List.map(function (squares) {
             return $Html.tr(_L.fromArray([]))(A2($List.map,
             renderSquare,
-            xs));
+            squares));
          })(A2($List.map,
          function (letter) {
             return A2($List.map,
