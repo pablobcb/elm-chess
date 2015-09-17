@@ -13,23 +13,15 @@ Elm.Main.make = function (_elm) {
    $Dict = Elm.Dict.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Maybe$Extra = Elm.Maybe.Extra.make(_elm),
    $Model = Elm.Model.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
+   $StartApp$Simple = Elm.StartApp.Simple.make(_elm),
    $String = Elm.String.make(_elm);
-   var getRow = F2(function (board,
-   positions) {
-      return A2($List.map,
-      function (key) {
-         return $Maybe$Extra.join(A2($Dict.get,
-         key,
-         board));
-      },
-      positions);
-   });
    var getHtmlCode = function (piece) {
       return $Html.text($String.fromChar(function () {
          var _v0 = piece.figure;
@@ -43,7 +35,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♗");}
                  _U.badCase($moduleName,
-                 "between lines 54 and 58");
+                 "between lines 45 and 49");
               }();
             case "King":
             return function () {
@@ -54,7 +46,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♔");}
                  _U.badCase($moduleName,
-                 "between lines 42 and 46");
+                 "between lines 33 and 37");
               }();
             case "Knight":
             return function () {
@@ -65,7 +57,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♘");}
                  _U.badCase($moduleName,
-                 "between lines 58 and 62");
+                 "between lines 49 and 53");
               }();
             case "Pawn":
             return function () {
@@ -76,7 +68,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♙");}
                  _U.badCase($moduleName,
-                 "between lines 62 and 64");
+                 "between lines 53 and 55");
               }();
             case "Queen":
             return function () {
@@ -87,7 +79,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♕");}
                  _U.badCase($moduleName,
-                 "between lines 46 and 50");
+                 "between lines 37 and 41");
               }();
             case "Rook":
             return function () {
@@ -98,123 +90,134 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♖");}
                  _U.badCase($moduleName,
-                 "between lines 50 and 54");
+                 "between lines 41 and 45");
               }();}
          _U.badCase($moduleName,
-         "between lines 41 and 64");
+         "between lines 32 and 55");
       }()));
    };
-   var renderSquare = function (piece) {
+   var update = F2(function (action,
+   board) {
       return function () {
-         switch (piece.ctor)
-         {case "Just":
-            return A2($Html.td,
-              _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
-                                                                 ,_0: "cursor"
-                                                                 ,_1: "grab"}]))]),
-              _L.fromArray([getHtmlCode(piece._0)]));
-            case "Nothing":
-            return A2($Html.td,
-              _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
-                                                                 ,_0: "cursor"
-                                                                 ,_1: "default"}]))]),
-              _L.fromArray([]));}
+         switch (action.ctor)
+         {case "Click": return board;}
          _U.badCase($moduleName,
-         "between lines 69 and 74");
+         "between lines 23 and 24");
       }();
-   };
-   var renderRow = function (pieces) {
-      return $Html.tr(_L.fromArray([]))(A2($List.map,
-      function (piece) {
-         return function () {
-            switch (piece.ctor)
-            {case "Nothing":
-               return renderSquare($Maybe.Nothing);}
-            return renderSquare(piece);
-         }();
-      },
-      pieces));
-   };
-   var renderBoard = function (board) {
-      return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))(A2($List.map,
-      function ($) {
-         return renderRow(getRow(board)($));
-      },
-      _L.fromArray([_L.fromArray(["A1"
-                                 ,"B1"
-                                 ,"C1"
-                                 ,"D1"
-                                 ,"E1"
-                                 ,"F1"
-                                 ,"G1"
-                                 ,"H1"])
-                   ,_L.fromArray(["A2"
-                                 ,"B2"
-                                 ,"C2"
-                                 ,"D2"
-                                 ,"E2"
-                                 ,"F2"
-                                 ,"G2"
-                                 ,"H2"])
-                   ,_L.fromArray(["A3"
-                                 ,"B3"
-                                 ,"C3"
-                                 ,"D3"
-                                 ,"E3"
-                                 ,"F3"
-                                 ,"G3"
-                                 ,"H3"])
-                   ,_L.fromArray(["A4"
-                                 ,"B4"
-                                 ,"C4"
-                                 ,"D4"
-                                 ,"E4"
-                                 ,"F4"
-                                 ,"G4"
-                                 ,"H4"])
-                   ,_L.fromArray(["A5"
-                                 ,"B5"
-                                 ,"C5"
-                                 ,"D5"
-                                 ,"E5"
-                                 ,"F5"
-                                 ,"G5"
-                                 ,"H5"])
-                   ,_L.fromArray(["A6"
-                                 ,"B6"
-                                 ,"C6"
-                                 ,"D6"
-                                 ,"E6"
-                                 ,"F6"
-                                 ,"G6"
-                                 ,"H6"])
-                   ,_L.fromArray(["A7"
-                                 ,"B7"
-                                 ,"C7"
-                                 ,"D7"
-                                 ,"E7"
-                                 ,"F7"
-                                 ,"G7"
-                                 ,"H7"])
-                   ,_L.fromArray(["A8"
-                                 ,"B8"
-                                 ,"C8"
-                                 ,"D8"
-                                 ,"E8"
-                                 ,"F8"
-                                 ,"G8"
-                                 ,"H8"])])));
-   };
-   var main = renderBoard($Model.makeInitialBoard);
+   });
    var Click = function (a) {
       return {ctor: "Click",_0: a};
    };
+   var renderBoard = F2(function (address,
+   board) {
+      return function () {
+         var renderSquare = function (position) {
+            return function () {
+               var piece = $Maybe$Extra.join(A2($Dict.get,
+               position,
+               board));
+               return function () {
+                  switch (piece.ctor)
+                  {case "Just":
+                     return A2($Html.td,
+                       _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                                          ,_0: "cursor"
+                                                                          ,_1: "grab"}]))
+                                    ,A2($Html$Events.onClick,
+                                    address,
+                                    Click(position))]),
+                       _L.fromArray([getHtmlCode(piece._0)]));
+                     case "Nothing":
+                     return A2($Html.td,
+                       _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                                          ,_0: "cursor"
+                                                                          ,_1: "default"}]))]),
+                       _L.fromArray([]));}
+                  _U.badCase($moduleName,
+                  "between lines 63 and 69");
+               }();
+            }();
+         };
+         return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))(A2($List.map,
+         function (xs) {
+            return $Html.tr(_L.fromArray([]))(A2($List.map,
+            renderSquare,
+            xs));
+         },
+         _L.fromArray([_L.fromArray(["A1"
+                                    ,"B1"
+                                    ,"C1"
+                                    ,"D1"
+                                    ,"E1"
+                                    ,"F1"
+                                    ,"G1"
+                                    ,"H1"])
+                      ,_L.fromArray(["A2"
+                                    ,"B2"
+                                    ,"C2"
+                                    ,"D2"
+                                    ,"E2"
+                                    ,"F2"
+                                    ,"G2"
+                                    ,"H2"])
+                      ,_L.fromArray(["A3"
+                                    ,"B3"
+                                    ,"C3"
+                                    ,"D3"
+                                    ,"E3"
+                                    ,"F3"
+                                    ,"G3"
+                                    ,"H3"])
+                      ,_L.fromArray(["A4"
+                                    ,"B4"
+                                    ,"C4"
+                                    ,"D4"
+                                    ,"E4"
+                                    ,"F4"
+                                    ,"G4"
+                                    ,"H4"])
+                      ,_L.fromArray(["A5"
+                                    ,"B5"
+                                    ,"C5"
+                                    ,"D5"
+                                    ,"E5"
+                                    ,"F5"
+                                    ,"G5"
+                                    ,"H5"])
+                      ,_L.fromArray(["A6"
+                                    ,"B6"
+                                    ,"C6"
+                                    ,"D6"
+                                    ,"E6"
+                                    ,"F6"
+                                    ,"G6"
+                                    ,"H6"])
+                      ,_L.fromArray(["A7"
+                                    ,"B7"
+                                    ,"C7"
+                                    ,"D7"
+                                    ,"E7"
+                                    ,"F7"
+                                    ,"G7"
+                                    ,"H7"])
+                      ,_L.fromArray(["A8"
+                                    ,"B8"
+                                    ,"C8"
+                                    ,"D8"
+                                    ,"E8"
+                                    ,"F8"
+                                    ,"G8"
+                                    ,"H8"])])));
+      }();
+   });
+   var main = $StartApp$Simple.start({_: {}
+                                     ,model: $Model.makeInitialBoard
+                                     ,update: update
+                                     ,view: renderBoard});
    _elm.Main.values = {_op: _op
                       ,Click: Click
+                      ,update: update
                       ,getHtmlCode: getHtmlCode
-                      ,renderSquare: renderSquare
-                      ,renderRow: renderRow
-                      ,getRow: getRow
                       ,renderBoard: renderBoard
                       ,main: main};
    return _elm.Main.values;
