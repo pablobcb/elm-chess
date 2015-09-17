@@ -12,6 +12,7 @@
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Maybe exposing  ( Maybe(..) )
+import Maybe.Extra exposing (..)
 import Array exposing  ( Array(..) )
 import Text exposing   ( Text(..) )
 import String exposing ( fromChar )
@@ -21,42 +22,15 @@ import Model exposing (..)
 
 
 --============================ Update ==============================
+type alias Board = Dict String (Maybe Piece)
 type alias Position = String
 type Action = Click Position
+
 --============================ View ================================
-
-
------------------------------- Style -------------------------------           
-
-center = [ ("text-align", "center"), ("vertical-align", "middle") ]
-
-boardStyle : Attribute
-boardStyle =
-    style <|
-      [ ("border", "2px solid #000")
-      , ("user-select", "none")
-       --, ("width", "640px"'')
-      ] ++ center
-
-
-squareStyle : Color -> Attribute
-squareStyle color =
-  let bgColor = case color of
-        Black -> ("background-color", "#808080")
-        White -> ("background-color", "#0000")
-  
-  in style <| bgColor ::
-    [ ("float", "left")
-    , ("width", "80px")
-    , ("height", "80px")
-    , ("font-size", "400%")
-    ] ++ center
-
-------------------------- Render----------------------------------
 --mover tudo que retorna html para a view
 
-renderPiece : Piece -> Html
-renderPiece piece = text <| String.fromChar <| 
+getHtmlCode : Piece -> Html
+getHtmlCode piece = text <| String.fromChar <| 
   case piece.figure of
     King -> case piece.color of
       Black -> '\x265A'
@@ -83,29 +57,31 @@ renderPiece piece = text <| String.fromChar <|
       White -> '\x2659'
 
 
-renderSquare : Square -> Html
-renderSquare square = 
-  td [ squareStyle square.color ] <| case square.piece of
-    Just piece -> [ renderPiece piece]
+renderSquare : Maybe Piece -> Html
+renderSquare piece = 
+  td [] <| case piece of
+    Just piece' -> [ getHtmlCode piece']
     Nothing -> []
 
 
-renderRow : List (Maybe Square) -> Html
-renderRow squares = 
-  tr [] <| List.map (\square ->
-             case square of
-               Just square' -> renderSquare square'
-               Nothing -> td [] []) squares
+renderRow : List (Maybe Piece) -> Html
+renderRow pieces = 
+  tr [] <| List.map (\piece ->
+             case piece of
+               Nothing -> td [] []
+               _ -> renderSquare piece) pieces
 
-
-getRow : Board -> List Position -> List (Maybe Square)
-getRow board positions = List.map (\key -> Dict.get key board) positions
+getRow : Board -> List Position -> List (Maybe Piece)
+getRow board positions = List.map
+    (\key -> Maybe.Extra.join <| Dict.get key board)
+    positions
 
 
 renderBoard : Board -> Html
 renderBoard board =
-  let getRow positions = List.map (\key -> Dict.get key board) positions
-  in table [ id "chessBoard" ] <| List.map (renderRow << getRow)
+--  let getRow positions =
+--    List.map (\key -> Dict.get key board) positions in
+     table [ id "chessBoard" ] <| List.map (renderRow << getRow board)
            [ ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"]
            , ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"]
            , ["A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3"]
@@ -115,5 +91,7 @@ renderBoard board =
            , ["A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7"]
            , ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"]
            ]
+
 main : Html
 main = renderBoard makeInitialBoard
+

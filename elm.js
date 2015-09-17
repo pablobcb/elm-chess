@@ -4064,6 +4064,7 @@ Elm.Main.make = function (_elm) {
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
+   $Maybe$Extra = Elm.Maybe.Extra.make(_elm),
    $Model = Elm.Model.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
@@ -4072,13 +4073,13 @@ Elm.Main.make = function (_elm) {
    positions) {
       return A2($List.map,
       function (key) {
-         return A2($Dict.get,
+         return $Maybe$Extra.join(A2($Dict.get,
          key,
-         board);
+         board));
       },
       positions);
    });
-   var renderPiece = function (piece) {
+   var getHtmlCode = function (piece) {
       return $Html.text($String.fromChar(function () {
          var _v0 = piece.figure;
          switch (_v0.ctor)
@@ -4091,7 +4092,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♗");}
                  _U.badCase($moduleName,
-                 "between lines 73 and 77");
+                 "between lines 47 and 51");
               }();
             case "King":
             return function () {
@@ -4102,7 +4103,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♔");}
                  _U.badCase($moduleName,
-                 "between lines 61 and 65");
+                 "between lines 35 and 39");
               }();
             case "Knight":
             return function () {
@@ -4113,7 +4114,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♘");}
                  _U.badCase($moduleName,
-                 "between lines 77 and 81");
+                 "between lines 51 and 55");
               }();
             case "Pawn":
             return function () {
@@ -4124,7 +4125,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♙");}
                  _U.badCase($moduleName,
-                 "between lines 81 and 83");
+                 "between lines 55 and 57");
               }();
             case "Queen":
             return function () {
@@ -4135,7 +4136,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♕");}
                  _U.badCase($moduleName,
-                 "between lines 65 and 69");
+                 "between lines 39 and 43");
               }();
             case "Rook":
             return function () {
@@ -4146,168 +4147,106 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♖");}
                  _U.badCase($moduleName,
-                 "between lines 69 and 73");
+                 "between lines 43 and 47");
               }();}
          _U.badCase($moduleName,
-         "between lines 60 and 83");
+         "between lines 34 and 57");
       }()));
    };
-   var center = _L.fromArray([{ctor: "_Tuple2"
-                              ,_0: "text-align"
-                              ,_1: "center"}
-                             ,{ctor: "_Tuple2"
-                              ,_0: "vertical-align"
-                              ,_1: "middle"}]);
-   var boardStyle = $Html$Attributes.style(A2($Basics._op["++"],
-   _L.fromArray([{ctor: "_Tuple2"
-                 ,_0: "border"
-                 ,_1: "2px solid #000"}
-                ,{ctor: "_Tuple2"
-                 ,_0: "user-select"
-                 ,_1: "none"}]),
-   center));
-   var squareStyle = function (color) {
-      return function () {
-         var bgColor = function () {
-            switch (color.ctor)
-            {case "Black":
-               return {ctor: "_Tuple2"
-                      ,_0: "background-color"
-                      ,_1: "#808080"};
-               case "White":
-               return {ctor: "_Tuple2"
-                      ,_0: "background-color"
-                      ,_1: "#0000"};}
-            _U.badCase($moduleName,
-            "between lines 44 and 48");
-         }();
-         return $Html$Attributes.style(A2($List._op["::"],
-         bgColor,
-         A2($Basics._op["++"],
-         _L.fromArray([{ctor: "_Tuple2"
-                       ,_0: "float"
-                       ,_1: "left"}
-                      ,{ctor: "_Tuple2"
-                       ,_0: "width"
-                       ,_1: "80px"}
-                      ,{ctor: "_Tuple2"
-                       ,_0: "height"
-                       ,_1: "80px"}
-                      ,{ctor: "_Tuple2"
-                       ,_0: "font-size"
-                       ,_1: "400%"}]),
-         center)));
-      }();
-   };
-   var renderSquare = function (square) {
-      return $Html.td(_L.fromArray([squareStyle(square.color)]))(function () {
-         var _v8 = square.piece;
-         switch (_v8.ctor)
+   var renderSquare = function (piece) {
+      return $Html.td(_L.fromArray([]))(function () {
+         switch (piece.ctor)
          {case "Just":
-            return _L.fromArray([renderPiece(_v8._0)]);
+            return _L.fromArray([getHtmlCode(piece._0)]);
             case "Nothing":
             return _L.fromArray([]);}
          _U.badCase($moduleName,
-         "between lines 88 and 90");
+         "between lines 62 and 64");
       }());
    };
-   var renderRow = function (squares) {
+   var renderRow = function (pieces) {
       return $Html.tr(_L.fromArray([]))(A2($List.map,
-      function (square) {
+      function (piece) {
          return function () {
-            switch (square.ctor)
-            {case "Just":
-               return renderSquare(square._0);
-               case "Nothing":
+            switch (piece.ctor)
+            {case "Nothing":
                return A2($Html.td,
                  _L.fromArray([]),
                  _L.fromArray([]));}
-            _U.badCase($moduleName,
-            "between lines 96 and 98");
+            return renderSquare(piece);
          }();
       },
-      squares));
+      pieces));
    };
    var renderBoard = function (board) {
-      return function () {
-         var getRow = function (positions) {
-            return A2($List.map,
-            function (key) {
-               return A2($Dict.get,
-               key,
-               board);
-            },
-            positions);
-         };
-         return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))(A2($List.map,
-         function ($) {
-            return renderRow(getRow($));
-         },
-         _L.fromArray([_L.fromArray(["A1"
-                                    ,"B1"
-                                    ,"C1"
-                                    ,"D1"
-                                    ,"E1"
-                                    ,"F1"
-                                    ,"G1"
-                                    ,"H1"])
-                      ,_L.fromArray(["A2"
-                                    ,"B2"
-                                    ,"C2"
-                                    ,"D2"
-                                    ,"E2"
-                                    ,"F2"
-                                    ,"G2"
-                                    ,"H2"])
-                      ,_L.fromArray(["A3"
-                                    ,"B3"
-                                    ,"C3"
-                                    ,"D3"
-                                    ,"E3"
-                                    ,"F3"
-                                    ,"G3"
-                                    ,"H3"])
-                      ,_L.fromArray(["A4"
-                                    ,"B4"
-                                    ,"C4"
-                                    ,"D4"
-                                    ,"E4"
-                                    ,"F4"
-                                    ,"G4"
-                                    ,"H4"])
-                      ,_L.fromArray(["A5"
-                                    ,"B5"
-                                    ,"C5"
-                                    ,"D5"
-                                    ,"E5"
-                                    ,"F5"
-                                    ,"G5"
-                                    ,"H5"])
-                      ,_L.fromArray(["A6"
-                                    ,"B6"
-                                    ,"C6"
-                                    ,"D6"
-                                    ,"E6"
-                                    ,"F6"
-                                    ,"G6"
-                                    ,"H6"])
-                      ,_L.fromArray(["A7"
-                                    ,"B7"
-                                    ,"C7"
-                                    ,"D7"
-                                    ,"E7"
-                                    ,"F7"
-                                    ,"G7"
-                                    ,"H7"])
-                      ,_L.fromArray(["A8"
-                                    ,"B8"
-                                    ,"C8"
-                                    ,"D8"
-                                    ,"E8"
-                                    ,"F8"
-                                    ,"G8"
-                                    ,"H8"])])));
-      }();
+      return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))(A2($List.map,
+      function ($) {
+         return renderRow(getRow(board)($));
+      },
+      _L.fromArray([_L.fromArray(["A1"
+                                 ,"B1"
+                                 ,"C1"
+                                 ,"D1"
+                                 ,"E1"
+                                 ,"F1"
+                                 ,"G1"
+                                 ,"H1"])
+                   ,_L.fromArray(["A2"
+                                 ,"B2"
+                                 ,"C2"
+                                 ,"D2"
+                                 ,"E2"
+                                 ,"F2"
+                                 ,"G2"
+                                 ,"H2"])
+                   ,_L.fromArray(["A3"
+                                 ,"B3"
+                                 ,"C3"
+                                 ,"D3"
+                                 ,"E3"
+                                 ,"F3"
+                                 ,"G3"
+                                 ,"H3"])
+                   ,_L.fromArray(["A4"
+                                 ,"B4"
+                                 ,"C4"
+                                 ,"D4"
+                                 ,"E4"
+                                 ,"F4"
+                                 ,"G4"
+                                 ,"H4"])
+                   ,_L.fromArray(["A5"
+                                 ,"B5"
+                                 ,"C5"
+                                 ,"D5"
+                                 ,"E5"
+                                 ,"F5"
+                                 ,"G5"
+                                 ,"H5"])
+                   ,_L.fromArray(["A6"
+                                 ,"B6"
+                                 ,"C6"
+                                 ,"D6"
+                                 ,"E6"
+                                 ,"F6"
+                                 ,"G6"
+                                 ,"H6"])
+                   ,_L.fromArray(["A7"
+                                 ,"B7"
+                                 ,"C7"
+                                 ,"D7"
+                                 ,"E7"
+                                 ,"F7"
+                                 ,"G7"
+                                 ,"H7"])
+                   ,_L.fromArray(["A8"
+                                 ,"B8"
+                                 ,"C8"
+                                 ,"D8"
+                                 ,"E8"
+                                 ,"F8"
+                                 ,"G8"
+                                 ,"H8"])])));
    };
    var main = renderBoard($Model.makeInitialBoard);
    var Click = function (a) {
@@ -4315,10 +4254,7 @@ Elm.Main.make = function (_elm) {
    };
    _elm.Main.values = {_op: _op
                       ,Click: Click
-                      ,center: center
-                      ,boardStyle: boardStyle
-                      ,squareStyle: squareStyle
-                      ,renderPiece: renderPiece
+                      ,getHtmlCode: getHtmlCode
                       ,renderSquare: renderSquare
                       ,renderRow: renderRow
                       ,getRow: getRow
@@ -4399,6 +4335,210 @@ Elm.Maybe.make = function (_elm) {
                        ,Nothing: Nothing};
    return _elm.Maybe.values;
 };
+Elm.Maybe = Elm.Maybe || {};
+Elm.Maybe.Extra = Elm.Maybe.Extra || {};
+Elm.Maybe.Extra.make = function (_elm) {
+   "use strict";
+   _elm.Maybe = _elm.Maybe || {};
+   _elm.Maybe.Extra = _elm.Maybe.Extra || {};
+   if (_elm.Maybe.Extra.values)
+   return _elm.Maybe.Extra.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Maybe.Extra",
+   $Array = Elm.Array.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var traverseArray = function (f) {
+      return function () {
+         var step = F2(function (e,
+         acc) {
+            return function () {
+               var _v0 = f(e);
+               switch (_v0.ctor)
+               {case "Just":
+                  return A2($Maybe.map,
+                    $Array.push(_v0._0),
+                    acc);
+                  case "Nothing":
+                  return $Maybe.Nothing;}
+               _U.badCase($moduleName,
+               "between lines 202 and 205");
+            }();
+         });
+         return A2($Array.foldl,
+         step,
+         $Maybe.Just($Array.empty));
+      }();
+   };
+   var combineArray = traverseArray($Basics.identity);
+   var traverse = function (f) {
+      return function () {
+         var step = F2(function (e,
+         acc) {
+            return function () {
+               var _v2 = f(e);
+               switch (_v2.ctor)
+               {case "Just":
+                  return A2($Maybe.map,
+                    F2(function (x,y) {
+                       return A2($List._op["::"],
+                       x,
+                       y);
+                    })(_v2._0),
+                    acc);
+                  case "Nothing":
+                  return $Maybe.Nothing;}
+               _U.badCase($moduleName,
+               "between lines 180 and 183");
+            }();
+         });
+         return A2($List.foldr,
+         step,
+         $Maybe.Just(_L.fromArray([])));
+      }();
+   };
+   var combine = traverse($Basics.identity);
+   var maybeToArray = function (m) {
+      return function () {
+         switch (m.ctor)
+         {case "Just":
+            return A2($Array.repeat,1,m._0);
+            case "Nothing":
+            return $Array.empty;}
+         _U.badCase($moduleName,
+         "between lines 167 and 169");
+      }();
+   };
+   var maybeToList = function (m) {
+      return function () {
+         switch (m.ctor)
+         {case "Just":
+            return _L.fromArray([m._0]);
+            case "Nothing":
+            return _L.fromArray([]);}
+         _U.badCase($moduleName,
+         "between lines 154 and 156");
+      }();
+   };
+   var or = F2(function (ma,mb) {
+      return function () {
+         switch (ma.ctor)
+         {case "Just": return ma;
+            case "Nothing": return mb;}
+         _U.badCase($moduleName,
+         "between lines 142 and 144");
+      }();
+   });
+   var andMap = F2(function (f,x) {
+      return A2($Maybe.andThen,
+      x,
+      function (x$) {
+         return A2($Maybe.andThen,
+         f,
+         function (f$) {
+            return $Maybe.Just(f$(x$));
+         });
+      });
+   });
+   var map5 = F6(function (f,
+   a,
+   b,
+   c,
+   d,
+   e) {
+      return A2(andMap,
+      A2(andMap,
+      A2(andMap,
+      A2(andMap,A2($Maybe.map,f,a),b),
+      c),
+      d),
+      e);
+   });
+   var map4 = F5(function (f,
+   a,
+   b,
+   c,
+   d) {
+      return A2(andMap,
+      A2(andMap,
+      A2(andMap,A2($Maybe.map,f,a),b),
+      c),
+      d);
+   });
+   var map3 = F4(function (f,
+   a,
+   b,
+   c) {
+      return A2(andMap,
+      A2(andMap,A2($Maybe.map,f,a),b),
+      c);
+   });
+   var map2 = F3(function (f,a,b) {
+      return A2(andMap,
+      A2($Maybe.map,f,a),
+      b);
+   });
+   var next = map2($Basics.flip($Basics.always));
+   var prev = map2($Basics.always);
+   var isJust = function (m) {
+      return function () {
+         switch (m.ctor)
+         {case "Just": return true;
+            case "Nothing": return false;}
+         _U.badCase($moduleName,
+         "between lines 66 and 68");
+      }();
+   };
+   var isNothing = function (m) {
+      return function () {
+         switch (m.ctor)
+         {case "Just": return false;
+            case "Nothing": return true;}
+         _U.badCase($moduleName,
+         "between lines 54 and 56");
+      }();
+   };
+   var join = function (mx) {
+      return function () {
+         switch (mx.ctor)
+         {case "Just": return mx._0;
+            case "Nothing":
+            return $Maybe.Nothing;}
+         _U.badCase($moduleName,
+         "between lines 42 and 44");
+      }();
+   };
+   _op["?"] = F2(function (mx,x) {
+      return A2($Maybe.withDefault,
+      x,
+      mx);
+   });
+   _elm.Maybe.Extra.values = {_op: _op
+                             ,join: join
+                             ,isNothing: isNothing
+                             ,isJust: isJust
+                             ,map2: map2
+                             ,map3: map3
+                             ,map4: map4
+                             ,map5: map5
+                             ,andMap: andMap
+                             ,next: next
+                             ,prev: prev
+                             ,or: or
+                             ,maybeToList: maybeToList
+                             ,maybeToArray: maybeToArray
+                             ,traverse: traverse
+                             ,combine: combine
+                             ,traverseArray: traverseArray
+                             ,combineArray: combineArray};
+   return _elm.Maybe.Extra.values;
+};
 Elm.Model = Elm.Model || {};
 Elm.Model.make = function (_elm) {
    "use strict";
@@ -4416,16 +4556,6 @@ Elm.Model.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
-   var square = F2(function (c,p) {
-      return {_: {}
-             ,color: c
-             ,piece: p};
-   });
-   var Square = F2(function (a,b) {
-      return {_: {}
-             ,color: b
-             ,piece: a};
-   });
    var piece = F3(function (f,
    c,
    m) {
@@ -4463,12 +4593,6 @@ Elm.Model.make = function (_elm) {
       }();
    };
    var makeInitialBoard = function () {
-      var loopList = function (startingColor) {
-         return $List.concat(A2($List.repeat,
-         4,
-         _L.fromArray([startingColor
-                      ,other(startingColor)])));
-      };
       var zip = $List.map2(F2(function (v0,
       v1) {
          return {ctor: "_Tuple2"
@@ -4483,38 +4607,22 @@ Elm.Model.make = function (_elm) {
                                   ,Bishop
                                   ,Knight
                                   ,Rook]);
-      var makeSquare = F3(function (pieceColor,
-      squareColor,
+      var makePiece = F2(function (pieceColor,
       figure) {
-         return square(squareColor)($Maybe.Just(A3(piece,
+         return $Maybe.Just(A3(piece,
          figure,
          pieceColor,
-         false)));
+         false));
       });
-      var emptyRow = function (color) {
-         return A3($List.map2,
-         square,
-         $List.concat(A2($List.repeat,
-         4,
-         _L.fromArray([color
-                      ,other(color)]))),
-         A2($List.repeat,
-         8,
-         $Maybe.Nothing));
-      };
-      var pawnRow = F2(function (pawnColor,
-      firstSquareColor) {
-         return A3($List.map2,
-         square,
-         $List.concat(A2($List.repeat,
-         4,
-         _L.fromArray([firstSquareColor
-                      ,other(firstSquareColor)]))),
-         $List.repeat(8)($Maybe.Just(A3(piece,
+      var emptyRow = A2($List.repeat,
+      8,
+      $Maybe.Nothing);
+      var pawnRow = function (pawnColor) {
+         return $List.repeat(8)($Maybe.Just(A3(piece,
          Pawn,
          pawnColor,
-         false))));
-      });
+         false)));
+      };
       return $Dict.fromList(A2($Basics._op["++"],
       A2(zip,
       _L.fromArray(["A8"
@@ -4525,9 +4633,8 @@ Elm.Model.make = function (_elm) {
                    ,"F8"
                    ,"G8"
                    ,"H8"]),
-      A3($List.map2,
-      makeSquare(Black),
-      loopList(White),
+      A2($List.map,
+      makePiece(Black),
       firstRow)),
       A2($Basics._op["++"],
       A2(zip,
@@ -4539,7 +4646,7 @@ Elm.Model.make = function (_elm) {
                    ,"F7"
                    ,"G7"
                    ,"H7"]),
-      A2(pawnRow,Black,Black)),
+      pawnRow(Black)),
       A2($Basics._op["++"],
       A2(zip,
       _L.fromArray(["A6"
@@ -4550,7 +4657,7 @@ Elm.Model.make = function (_elm) {
                    ,"F6"
                    ,"G6"
                    ,"H6"]),
-      emptyRow(White)),
+      emptyRow),
       A2($Basics._op["++"],
       A2(zip,
       _L.fromArray(["A5"
@@ -4561,7 +4668,7 @@ Elm.Model.make = function (_elm) {
                    ,"F5"
                    ,"G5"
                    ,"H5"]),
-      emptyRow(Black)),
+      emptyRow),
       A2($Basics._op["++"],
       A2(zip,
       _L.fromArray(["A4"
@@ -4572,7 +4679,7 @@ Elm.Model.make = function (_elm) {
                    ,"F4"
                    ,"G4"
                    ,"H4"]),
-      emptyRow(White)),
+      emptyRow),
       A2($Basics._op["++"],
       A2(zip,
       _L.fromArray(["A3"
@@ -4583,7 +4690,7 @@ Elm.Model.make = function (_elm) {
                    ,"F3"
                    ,"G3"
                    ,"H3"]),
-      emptyRow(Black)),
+      emptyRow),
       A2($Basics._op["++"],
       A2(zip,
       _L.fromArray(["A2"
@@ -4594,7 +4701,7 @@ Elm.Model.make = function (_elm) {
                    ,"F2"
                    ,"G2"
                    ,"H2"]),
-      A2(pawnRow,White,White)),
+      pawnRow(White)),
       A2(zip,
       _L.fromArray(["A1"
                    ,"B1"
@@ -4604,9 +4711,8 @@ Elm.Model.make = function (_elm) {
                    ,"F1"
                    ,"G1"
                    ,"H1"]),
-      A3($List.map2,
-      makeSquare(White),
-      loopList(Black),
+      A2($List.map,
+      makePiece(White),
       firstRow))))))))));
    }();
    _elm.Model.values = {_op: _op
@@ -4622,8 +4728,6 @@ Elm.Model.make = function (_elm) {
                        ,King: King
                        ,Piece: Piece
                        ,piece: piece
-                       ,Square: Square
-                       ,square: square
                        ,makeInitialBoard: makeInitialBoard};
    return _elm.Model.values;
 };
