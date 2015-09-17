@@ -69,9 +69,12 @@ makeInitialBoard =
 
       zip = List.map2 (,)
 
+      loopList startingColor = 
+        concat <| repeat 4 [startingColor, other startingColor]
+
   in Dict.fromList <| 
     zip ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"] 
-        (List.map2 (makeSquare Black) (concat <| repeat 4 [White, Black]) firstRow) ++
+        (List.map2 (makeSquare Black) (loopList White) firstRow) ++
 
     zip ["A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7"]
         (pawnRow Black Black)                         ++
@@ -91,6 +94,6 @@ makeInitialBoard =
     zip ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"]
         (pawnRow White White)                         ++
 
-    zip ["A1", "B1",  "C1","D1", "E1", "F1", "G1", "H1"] 
-        (List.map2 (makeSquare White) (concat <| repeat 4 [Black, White]) firstRow)
+    zip ["A1", "B1",  "C1","D1", "E1", "F1", "G1", "H1"]
+        (List.map2 (makeSquare White) (loopList Black) firstRow)
     

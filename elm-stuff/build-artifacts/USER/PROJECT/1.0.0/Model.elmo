@@ -62,6 +62,12 @@ Elm.Model.make = function (_elm) {
       }();
    };
    var makeInitialBoard = function () {
+      var loopList = function (startingColor) {
+         return $List.concat(A2($List.repeat,
+         4,
+         _L.fromArray([startingColor
+                      ,other(startingColor)])));
+      };
       var zip = $List.map2(F2(function (v0,
       v1) {
          return {ctor: "_Tuple2"
@@ -120,9 +126,7 @@ Elm.Model.make = function (_elm) {
                    ,"H8"]),
       A3($List.map2,
       makeSquare(Black),
-      $List.concat(A2($List.repeat,
-      4,
-      _L.fromArray([White,Black]))),
+      loopList(White),
       firstRow)),
       A2($Basics._op["++"],
       A2(zip,
@@ -201,9 +205,7 @@ Elm.Model.make = function (_elm) {
                    ,"H1"]),
       A3($List.map2,
       makeSquare(White),
-      $List.concat(A2($List.repeat,
-      4,
-      _L.fromArray([Black,White]))),
+      loopList(Black),
       firstRow))))))))));
    }();
    _elm.Model.values = {_op: _op
