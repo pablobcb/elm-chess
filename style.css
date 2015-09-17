@@ -8,7 +8,7 @@ td {
 }
 
 #chessBoard {
-  border: 5px solid #333;
+  border: 3px solid #333;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;

@@ -24,7 +24,14 @@ import Model exposing (..)
 --============================ Update ==============================
 type alias Board = Dict String (Maybe Piece)
 type alias Position = String
-type Action = Click Position
+
+type Action = Click Board
+
+--update : Action -> Board -> Board
+--update action board =
+--    case action of
+--      Click  -> board
+
 
 --============================ View ================================
 --mover tudo que retorna html para a view
@@ -59,16 +66,19 @@ getHtmlCode piece = text <| String.fromChar <|
 
 renderSquare : Maybe Piece -> Html
 renderSquare piece = 
-  td [] <| case piece of
-    Just piece' -> [ getHtmlCode piece']
-    Nothing -> []
+  case piece of
+    Just piece' -> td 
+      [ style [("cursor", "grab")]]--, onClick address Click ]
+      [ getHtmlCode piece']
+    
+    Nothing -> td [ style [("cursor", "default")] ] []
 
 
 renderRow : List (Maybe Piece) -> Html
 renderRow pieces = 
   tr [] <| List.map (\piece ->
              case piece of
-               Nothing -> td [] []
+               Nothing -> renderSquare Nothing
                _ -> renderSquare piece) pieces
 
 getRow : Board -> List Position -> List (Maybe Piece)
