@@ -12,6 +12,7 @@
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Maybe exposing  ( Maybe(..) )
+import Maybe.Extra exposing (..)
 import Array exposing  ( Array(..) )
 import Text exposing   ( Text(..) )
 import String exposing ( fromChar )
@@ -63,15 +64,17 @@ renderSquare piece =
     Nothing -> []
 
 
-renderRow : List (Maybe (Maybe Piece)) -> Html
+renderRow : List (Maybe Piece) -> Html
 renderRow pieces = 
   tr [] <| List.map (\piece ->
              case piece of
                Nothing -> td [] []
-               Just piece' -> renderSquare piece') pieces
+               _ -> renderSquare piece) pieces
 
-getRow : Board -> List Position -> List (Maybe (Maybe Piece) )
-getRow board positions = List.map (\key -> Dict.get key board) positions
+getRow : Board -> List Position -> List (Maybe Piece)
+getRow board positions = List.map
+    (\key -> Maybe.Extra.join <| Dict.get key board)
+    positions
 
 
 renderBoard : Board -> Html

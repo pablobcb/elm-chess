@@ -15,6 +15,7 @@ Elm.Main.make = function (_elm) {
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
+   $Maybe$Extra = Elm.Maybe.Extra.make(_elm),
    $Model = Elm.Model.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
@@ -23,9 +24,9 @@ Elm.Main.make = function (_elm) {
    positions) {
       return A2($List.map,
       function (key) {
-         return A2($Dict.get,
+         return $Maybe$Extra.join(A2($Dict.get,
          key,
-         board);
+         board));
       },
       positions);
    });
@@ -42,7 +43,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♗");}
                  _U.badCase($moduleName,
-                 "between lines 46 and 50");
+                 "between lines 47 and 51");
               }();
             case "King":
             return function () {
@@ -53,7 +54,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♔");}
                  _U.badCase($moduleName,
-                 "between lines 34 and 38");
+                 "between lines 35 and 39");
               }();
             case "Knight":
             return function () {
@@ -64,7 +65,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♘");}
                  _U.badCase($moduleName,
-                 "between lines 50 and 54");
+                 "between lines 51 and 55");
               }();
             case "Pawn":
             return function () {
@@ -75,7 +76,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♙");}
                  _U.badCase($moduleName,
-                 "between lines 54 and 56");
+                 "between lines 55 and 57");
               }();
             case "Queen":
             return function () {
@@ -86,7 +87,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♕");}
                  _U.badCase($moduleName,
-                 "between lines 38 and 42");
+                 "between lines 39 and 43");
               }();
             case "Rook":
             return function () {
@@ -97,10 +98,10 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♖");}
                  _U.badCase($moduleName,
-                 "between lines 42 and 46");
+                 "between lines 43 and 47");
               }();}
          _U.badCase($moduleName,
-         "between lines 33 and 56");
+         "between lines 34 and 57");
       }()));
    };
    var renderSquare = function (piece) {
@@ -111,7 +112,7 @@ Elm.Main.make = function (_elm) {
             case "Nothing":
             return _L.fromArray([]);}
          _U.badCase($moduleName,
-         "between lines 61 and 63");
+         "between lines 62 and 64");
       }());
    };
    var renderRow = function (pieces) {
@@ -119,14 +120,11 @@ Elm.Main.make = function (_elm) {
       function (piece) {
          return function () {
             switch (piece.ctor)
-            {case "Just":
-               return renderSquare(piece._0);
-               case "Nothing":
+            {case "Nothing":
                return A2($Html.td,
                  _L.fromArray([]),
                  _L.fromArray([]));}
-            _U.badCase($moduleName,
-            "between lines 69 and 71");
+            return renderSquare(piece);
          }();
       },
       pieces));
