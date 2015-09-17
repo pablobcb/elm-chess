@@ -13,6 +13,7 @@ Elm.Main.make = function (_elm) {
    $Dict = Elm.Dict.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Maybe$Extra = Elm.Maybe.Extra.make(_elm),
@@ -34,7 +35,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♗");}
                  _U.badCase($moduleName,
-                 "between lines 47 and 51");
+                 "between lines 45 and 49");
               }();
             case "King":
             return function () {
@@ -45,7 +46,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♔");}
                  _U.badCase($moduleName,
-                 "between lines 35 and 39");
+                 "between lines 33 and 37");
               }();
             case "Knight":
             return function () {
@@ -56,7 +57,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♘");}
                  _U.badCase($moduleName,
-                 "between lines 51 and 55");
+                 "between lines 49 and 53");
               }();
             case "Pawn":
             return function () {
@@ -67,7 +68,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♙");}
                  _U.badCase($moduleName,
-                 "between lines 55 and 57");
+                 "between lines 53 and 55");
               }();
             case "Queen":
             return function () {
@@ -78,7 +79,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♕");}
                  _U.badCase($moduleName,
-                 "between lines 39 and 43");
+                 "between lines 37 and 41");
               }();
             case "Rook":
             return function () {
@@ -89,58 +90,59 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♖");}
                  _U.badCase($moduleName,
-                 "between lines 43 and 47");
+                 "between lines 41 and 45");
               }();}
          _U.badCase($moduleName,
-         "between lines 34 and 57");
+         "between lines 32 and 55");
       }()));
+   };
+   var update = F2(function (action,
+   board) {
+      return function () {
+         switch (action.ctor)
+         {case "Click": return board;}
+         _U.badCase($moduleName,
+         "between lines 23 and 24");
+      }();
+   });
+   var Click = function (a) {
+      return {ctor: "Click",_0: a};
    };
    var renderBoard = F2(function (address,
    board) {
       return function () {
-         var renderSquare = function (piece) {
+         var renderSquare = function (position) {
             return function () {
-               switch (piece.ctor)
-               {case "Just":
-                  return A2($Html.td,
-                    _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
-                                                                       ,_0: "cursor"
-                                                                       ,_1: "grab"}]))]),
-                    _L.fromArray([getHtmlCode(piece._0)]));
-                  case "Nothing":
-                  return A2($Html.td,
-                    _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
-                                                                       ,_0: "cursor"
-                                                                       ,_1: "default"}]))]),
-                    _L.fromArray([]));}
-               _U.badCase($moduleName,
-               "between lines 73 and 76");
-            }();
-         };
-         var renderRow = function (pieces) {
-            return $Html.tr(_L.fromArray([]))(A2($List.map,
-            function (piece) {
+               var piece = $Maybe$Extra.join(A2($Dict.get,
+               position,
+               board));
                return function () {
                   switch (piece.ctor)
-                  {case "Nothing":
-                     return renderSquare($Maybe.Nothing);}
-                  return renderSquare(piece);
+                  {case "Just":
+                     return A2($Html.td,
+                       _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                                          ,_0: "cursor"
+                                                                          ,_1: "grab"}]))
+                                    ,A2($Html$Events.onClick,
+                                    address,
+                                    Click(position))]),
+                       _L.fromArray([getHtmlCode(piece._0)]));
+                     case "Nothing":
+                     return A2($Html.td,
+                       _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                                          ,_0: "cursor"
+                                                                          ,_1: "default"}]))]),
+                       _L.fromArray([]));}
+                  _U.badCase($moduleName,
+                  "between lines 63 and 69");
                }();
-            },
-            pieces));
-         };
-         var getRow = function (positions) {
-            return A2($List.map,
-            function (key) {
-               return $Maybe$Extra.join(A2($Dict.get,
-               key,
-               board));
-            },
-            positions);
+            }();
          };
          return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))(A2($List.map,
-         function ($) {
-            return renderRow(getRow($));
+         function (xs) {
+            return $Html.tr(_L.fromArray([]))(A2($List.map,
+            renderSquare,
+            xs));
          },
          _L.fromArray([_L.fromArray(["A1"
                                     ,"B1"
@@ -208,17 +210,10 @@ Elm.Main.make = function (_elm) {
                                     ,"H8"])])));
       }();
    });
-   var update = F2(function (action,
-   board) {
-      return board;
-   });
    var main = $StartApp$Simple.start({_: {}
                                      ,model: $Model.makeInitialBoard
                                      ,update: update
                                      ,view: renderBoard});
-   var Click = function (a) {
-      return {ctor: "Click",_0: a};
-   };
    _elm.Main.values = {_op: _op
                       ,Click: Click
                       ,update: update

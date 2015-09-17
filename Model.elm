@@ -16,6 +16,7 @@ other color =
 
 type alias Player = { color : Color }
 
+type alias Position = String
 
 type Figure = Pawn 
             | Knight
@@ -31,7 +32,7 @@ piece : Figure -> Color -> Bool -> Piece
 piece f c m = { figure = f, moved = m, color = c }
 
 
-type alias Board = Dict String (Maybe Piece)
+type alias Board = Dict Position (Maybe Piece)
 
 
 --type alias Game = {
