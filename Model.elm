@@ -93,5 +93,4 @@ makeInitialBoard =
 
     zip ["A1", "B1",  "C1","D1", "E1", "F1", "G1", "H1"] 
         (List.map2 (makeSquare White) (concat <| repeat 4 [Black, White]) firstRow)
-                                                            
     

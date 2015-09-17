@@ -190,13 +190,7 @@ Elm.Main.make = function (_elm) {
             },
             positions);
          };
-         return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")
-                                         ,$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
-                                                                               ,_0: "border"
-                                                                               ,_1: "2px solid #000"}
-                                                                              ,{ctor: "_Tuple2"
-                                                                               ,_0: "user-select"
-                                                                               ,_1: "none"}]))]))(A2($List.map,
+         return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))(A2($List.map,
          function ($) {
             return renderRow(getRow($));
          },

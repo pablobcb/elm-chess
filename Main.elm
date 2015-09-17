@@ -105,9 +105,7 @@ getRow board positions = List.map (\key -> Dict.get key board) positions
 renderBoard : Board -> Html
 renderBoard board =
   let getRow positions = List.map (\key -> Dict.get key board) positions
-  in table [ id "chessBoard"
-           , style  [ ("border", "2px solid #000") , ("user-select", "none") ]
-           ] <| List.map (renderRow << getRow)
+  in table [ id "chessBoard" ] <| List.map (renderRow << getRow)
            [ ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"]
            , ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"]
            , ["A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3"]

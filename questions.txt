@@ -1,2 +1,1 @@
 1) is StartApp.simple the way to go?
-2) lazy caching works? invoking a function N times does actually triggers a function call in the js code?
