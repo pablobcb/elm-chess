@@ -31,22 +31,12 @@ Elm.Repl.make = function (_elm) {
                          ,_U.chr("f")
                          ,_U.chr("g")
                          ,_U.chr("h")]);
-   var deltron3030 = A3($List.map2,
-   F2(function (v0,v1) {
-      return {ctor: "_Tuple2"
-             ,_0: v0
-             ,_1: v1};
-   }),
-   _L.fromArray([_U.chr("A")
-                ,_U.chr("B")
-                ,_U.chr("C")
-                ,_U.chr("D")
-                ,_U.chr("E")
-                ,_U.chr("F")
-                ,_U.chr("G")
-                ,_U.chr("H")]),
-   A2($List.repeat,8,_U.chr("8")));
+   var White = {ctor: "White"};
+   var Black = {ctor: "Black"};
+   var deltron3030 = $Basics.toString(Black);
    _elm.Repl.values = {_op: _op
+                      ,Black: Black
+                      ,White: White
                       ,deltron3030: deltron3030
                       ,l1: l1
                       ,l2: l2

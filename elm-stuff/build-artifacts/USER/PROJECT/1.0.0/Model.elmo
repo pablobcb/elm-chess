@@ -37,20 +37,11 @@ Elm.Model.make = function (_elm) {
    var emptyRow = A2($List.repeat,
    8,
    $Maybe.Nothing);
-   var player = function (color) {
-      return {_: {}
-             ,color: color
-             ,graveyard: A2($Basics._op["++"],
-             emptyRow,
-             emptyRow)};
-   };
-   var piece = F3(function (f,
-   c,
-   m) {
+   var piece = F2(function (f,c) {
       return {_: {}
              ,color: c
              ,figure: f
-             ,moved: m};
+             ,moved: false};
    });
    var Piece = F3(function (a,
    b,
@@ -66,6 +57,11 @@ Elm.Model.make = function (_elm) {
    var Bishop = {ctor: "Bishop"};
    var Knight = {ctor: "Knight"};
    var Pawn = {ctor: "Pawn"};
+   var player = function (color) {
+      return {_: {}
+             ,color: color
+             ,graveyard: $List.repeat(8)($Maybe.Just(Pawn))};
+   };
    var White = {ctor: "White"};
    var Black = {ctor: "Black"};
    var other = function (color) {
@@ -96,33 +92,33 @@ Elm.Model.make = function (_elm) {
                       ,_U.chr("H")]),
          A2($List.repeat,8,number));
       };
-      var firstRow = _L.fromArray([Rook
-                                  ,Knight
-                                  ,Bishop
-                                  ,Queen
-                                  ,King
-                                  ,Bishop
-                                  ,Knight
-                                  ,Rook]);
       var makePiece = F2(function (pieceColor,
       figure) {
-         return $Maybe.Just(A3(piece,
+         return $Maybe.Just(A2(piece,
          figure,
-         pieceColor,
-         false));
+         pieceColor));
       });
+      var makeFirstRow = function (color) {
+         return A2($List.map,
+         makePiece(color),
+         _L.fromArray([Rook
+                      ,Knight
+                      ,Bishop
+                      ,Queen
+                      ,King
+                      ,Bishop
+                      ,Knight
+                      ,Rook]));
+      };
       var pawnRow = function (pawnColor) {
-         return $List.repeat(8)($Maybe.Just(A3(piece,
+         return $List.repeat(8)($Maybe.Just(A2(piece,
          Pawn,
-         pawnColor,
-         false)));
+         pawnColor)));
       };
       return $Dict.fromList(A2($Basics._op["++"],
       A2(zip,
       makeRow(_U.chr("8")),
-      A2($List.map,
-      makePiece(Black),
-      firstRow)),
+      makeFirstRow(Black)),
       A2($Basics._op["++"],
       A2(zip,
       makeRow(_U.chr("7")),
@@ -149,9 +145,7 @@ Elm.Model.make = function (_elm) {
       pawnRow(White)),
       A2(zip,
       makeRow(_U.chr("1")),
-      A2($List.map,
-      makePiece(White),
-      firstRow))))))))));
+      makeFirstRow(White))))))))));
    }();
    var makeInitialGame = A3(game,
    makeInitialBoard,

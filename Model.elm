@@ -33,11 +33,11 @@ type alias Piece =
   }
 
 
-piece : Figure -> Color -> Bool -> Piece
-piece f c m = 
+piece : Figure -> Color -> Piece
+piece f c = 
   { figure = f
-  , moved  = m
   , color  = c
+  , moved  = False
   }
 
 
@@ -56,46 +56,36 @@ makeInitialBoard : Board
 makeInitialBoard =
   let pawnRow pawnColor = repeat 8
         <| Just 
-        <| piece Pawn pawnColor False
+        <| piece Pawn pawnColor
+
 
       makePiece pieceColor figure =
-          Just <| piece figure pieceColor False
+          Just <| piece figure pieceColor
 
-      firstRow = [ Rook, Knight, Bishop
-                 , Queen, King, Bishop, Knight, Rook
-                 ]
+
+      makeFirstRow color = List.map
+        (makePiece color) 
+        [ Rook, Knight, Bishop , Queen
+        , King, Bishop, Knight, Rook
+        ]
+      
 
       zip = List.map2 (,)
+
 
       makeRow number = zip 
         ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
         (List.repeat 8 number)
 
 
-  in Dict.fromList <|
-    zip (makeRow '8')
-        (List.map (makePiece Black)  firstRow)
-    ++
-    zip (makeRow '7')
-        (pawnRow Black)
-    ++
-    zip (makeRow '6')
-        emptyRow
-    ++
-    zip (makeRow '5')
-        emptyRow
-    ++
-    zip (makeRow '4')
-        emptyRow
-    ++
-    zip (makeRow '3')
-        emptyRow
-    ++
-    zip (makeRow '2')
-        (pawnRow White)
-    ++
-    zip (makeRow '1')
-        (List.map (makePiece White) firstRow)
+  in Dict.fromList <| zip (makeRow '8') (makeFirstRow Black)
+                   ++ zip (makeRow '7') (pawnRow Black)
+                   ++ zip (makeRow '6') emptyRow
+                   ++ zip (makeRow '5') emptyRow
+                   ++ zip (makeRow '4') emptyRow
+                   ++ zip (makeRow '3') emptyRow
+                   ++ zip (makeRow '2') (pawnRow White)
+                   ++ zip (makeRow '1') (makeFirstRow White)
 
 
 {-------------------------- Game -------------------------}
@@ -118,7 +108,8 @@ type alias Game =
 player : Color -> Player
 player color = 
   { color     = color
-  , graveyard = emptyRow ++ emptyRow
+  , graveyard = repeat 8 <| Just Pawn
+--  , graveyard = emptyRow ++ emptyRow
   }
 
 
