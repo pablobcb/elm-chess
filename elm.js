@@ -4288,10 +4288,11 @@ Elm.Main.make = function (_elm) {
                      return A2($Html.td,
                        _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
                                                                           ,_0: "cursor"
-                                                                          ,_1: "default"}]))]),
+                                                                          ,_1: "default"}]))
+                                    ,$Html$Attributes.id(position)]),
                        _L.fromArray([]));}
                   _U.badCase($moduleName,
-                  "between lines 65 and 73");
+                  "between lines 72 and 80");
                }();
             }();
          };
@@ -4306,21 +4307,27 @@ Elm.Main.make = function (_elm) {
                                     ,"F"
                                     ,"G"
                                     ,"H"]);
+         var cartesianProduct = F3(function (f,
+         xs,
+         ys) {
+            return A2($List.map,
+            function (x) {
+               return A2($List.map,
+               function (y) {
+                  return A2(f,y,x);
+               },
+               ys);
+            },
+            xs);
+         });
          return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))($List.map(function (squares) {
             return $Html.tr(_L.fromArray([]))(A2($List.map,
             renderSquare,
             squares));
-         })(A2($List.map,
-         function (letter) {
-            return A2($List.map,
-            function (num) {
-               return A2($String.append,
-               num,
-               letter);
-            },
-            letters);
-         },
-         numbers)));
+         })(A3(cartesianProduct,
+         $String.append,
+         numbers,
+         letters)));
       }();
    });
    var main = $StartApp$Simple.start({_: {}

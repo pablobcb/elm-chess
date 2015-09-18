@@ -54,16 +54,23 @@ getHtmlCode piece = text <| String.fromChar <|
       Black -> '\x265F'
       White -> '\x2659'
 
+--cartesianProduct : (a -> b -> c) -> List a -> List b -> List (List c)
+
+
 
 renderBoard : Address Action -> Board -> Html
 renderBoard address board =
 
-  let letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
+  let cartesianProduct f xs ys = List.map (\x -> List.map (\y-> f y x) ys ) xs
+
+      letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
+
       numbers = List.map toString [1 .. 8]
-      renderSquare position = 
+      
+      renderSquare position =
         let piece = Maybe.Extra.join <| Dict.get position board
         in case piece of
-          Nothing     -> td [ style [("cursor", "default")] ] []
+          Nothing     -> td [ style [("cursor", "default")], id position ] []
           Just piece' -> td [ style [("cursor", "grab")]
                             , onClick address (Click position)
                             , id position
@@ -72,10 +79,8 @@ renderBoard address board =
   
   in
      table [ id "chessBoard" ] 
-          <| List.map (\squares-> tr []
-          <| List.map renderSquare squares)
-          <| List.map (\letter -> 
-             List.map (\num-> String.append num letter) letters) numbers
+       <| List.map (\squares-> tr [] <| List.map renderSquare squares)
+       <| cartesianProduct String.append numbers letters
 
 main = StartApp.Simple.start
     { model  = makeInitialBoard
