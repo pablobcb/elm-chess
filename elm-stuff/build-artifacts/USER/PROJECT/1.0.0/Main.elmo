@@ -24,7 +24,7 @@ Elm.Main.make = function (_elm) {
    $String = Elm.String.make(_elm);
    var renderStatusBar = function (status) {
       return A2($Html.div,
-      _L.fromArray([]),
+      _L.fromArray([$Html$Attributes.id("statusBar")]),
       _L.fromArray([$Html.text(status)]));
    };
    var renderEmptySquare = A2($Html.td,
@@ -43,7 +43,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♗");}
                  _U.badCase($moduleName,
-                 "between lines 46 and 50");
+                 "between lines 45 and 49");
               }();
             case "King":
             return function () {
@@ -54,7 +54,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♔");}
                  _U.badCase($moduleName,
-                 "between lines 34 and 38");
+                 "between lines 33 and 37");
               }();
             case "Knight":
             return function () {
@@ -65,7 +65,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♘");}
                  _U.badCase($moduleName,
-                 "between lines 50 and 54");
+                 "between lines 49 and 53");
               }();
             case "Pawn":
             return function () {
@@ -76,7 +76,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♙");}
                  _U.badCase($moduleName,
-                 "between lines 54 and 56");
+                 "between lines 53 and 55");
               }();
             case "Queen":
             return function () {
@@ -87,7 +87,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♕");}
                  _U.badCase($moduleName,
-                 "between lines 38 and 42");
+                 "between lines 37 and 41");
               }();
             case "Rook":
             return function () {
@@ -98,63 +98,11 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♖");}
                  _U.badCase($moduleName,
-                 "between lines 42 and 46");
+                 "between lines 41 and 45");
               }();}
          _U.badCase($moduleName,
-         "between lines 33 and 56");
+         "between lines 32 and 55");
       }()));
-   };
-   var renderGraveyard = function (player) {
-      return function () {
-         var renderPiece = function (piece) {
-            return A2($Html.td,
-            _L.fromArray([$Html$Attributes.$class("grave selectNone")]),
-            _L.fromArray([getHtmlCode(piece)]));
-         };
-         var renderSquare = function (figure) {
-            return function () {
-               switch (figure.ctor)
-               {case "Just":
-                  return renderPiece(A2($Model.piece,
-                    figure._0,
-                    player.color));
-                  case "Nothing":
-                  return renderEmptySquare;}
-               _U.badCase($moduleName,
-               "between lines 105 and 113");
-            }();
-         };
-         var renderRow = function (row) {
-            return $Html.tr(_L.fromArray([]))(A2($List.map,
-            renderSquare,
-            row));
-         };
-         return A2($Html.table,
-         _L.fromArray([$Html$Attributes.$class(F2(function (x,
-         y) {
-            return A2($Basics._op["++"],
-            x,
-            y);
-         })("graveyard")($Basics.toString(player.color)))]),
-         _L.fromArray([renderRow(A2($List.take,
-                      8,
-                      player.graveyard))
-                      ,renderRow(A2($List.drop,
-                      8,
-                      player.graveyard))]));
-      }();
-   };
-   var update = F2(function (action,
-   board) {
-      return function () {
-         switch (action.ctor)
-         {case "Click": return board;}
-         _U.badCase($moduleName,
-         "between lines 23 and 24");
-      }();
-   });
-   var Click = function (a) {
-      return {ctor: "Click",_0: a};
    };
    var renderBoard = F2(function (address,
    board) {
@@ -165,7 +113,7 @@ Elm.Main.make = function (_elm) {
             _L.fromArray([$Html$Attributes.$class("selectNone cursorGrab")
                          ,A2($Html$Events.onClick,
                          address,
-                         Click(position))]),
+                         $Model.Click(position))]),
             _L.fromArray([getHtmlCode(piece)]));
          });
          var renderSquare = function (position) {
@@ -182,7 +130,7 @@ Elm.Main.make = function (_elm) {
                      case "Nothing":
                      return renderEmptySquare;}
                   _U.badCase($moduleName,
-                  "between lines 82 and 90");
+                  "between lines 81 and 89");
                }();
             }();
          };
@@ -224,6 +172,46 @@ Elm.Main.make = function (_elm) {
          return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))($List.map(renderRow)(makePositions));
       }();
    });
+   var renderGraveyard = function (player) {
+      return function () {
+         var renderPiece = function (piece) {
+            return A2($Html.td,
+            _L.fromArray([$Html$Attributes.$class("grave selectNone")]),
+            _L.fromArray([getHtmlCode(piece)]));
+         };
+         var renderSquare = function (figure) {
+            return function () {
+               switch (figure.ctor)
+               {case "Just":
+                  return renderPiece(A2($Model.piece,
+                    figure._0,
+                    player.color));
+                  case "Nothing":
+                  return renderEmptySquare;}
+               _U.badCase($moduleName,
+               "between lines 104 and 112");
+            }();
+         };
+         var renderRow = function (row) {
+            return $Html.tr(_L.fromArray([]))(A2($List.map,
+            renderSquare,
+            row));
+         };
+         return A2($Html.table,
+         _L.fromArray([$Html$Attributes.$class(F2(function (x,
+         y) {
+            return A2($Basics._op["++"],
+            x,
+            y);
+         })("graveyard")($Basics.toString(player.color)))]),
+         _L.fromArray([renderRow(A2($List.take,
+                      8,
+                      player.graveyard))
+                      ,renderRow(A2($List.drop,
+                      8,
+                      player.graveyard))]));
+      }();
+   };
    var renderGame = F2(function (address,
    game) {
       return function () {
@@ -236,7 +224,16 @@ Elm.Main.make = function (_elm) {
                       address,
                       game.board)
                       ,renderGraveyard(p1)
-                      ,renderStatusBar("breno")]));
+                      ,renderStatusBar("StatusBarText")]));
+      }();
+   });
+   var update = F2(function (action,
+   board) {
+      return function () {
+         switch (action.ctor)
+         {case "Click": return board;}
+         _U.badCase($moduleName,
+         "between lines 22 and 23");
       }();
    });
    var main = $StartApp$Simple.start({_: {}
@@ -244,7 +241,6 @@ Elm.Main.make = function (_elm) {
                                      ,update: update
                                      ,view: renderGame});
    _elm.Main.values = {_op: _op
-                      ,Click: Click
                       ,update: update
                       ,getHtmlCode: getHtmlCode
                       ,renderEmptySquare: renderEmptySquare

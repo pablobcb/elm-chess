@@ -1,8 +1,8 @@
 module Model where
 
 import Maybe exposing (..)
-import Dict exposing (..)
-import List exposing (..)
+import Dict  exposing (..)
+import List  exposing (..)
 
 
 {-------------------------- Color ---------------------------}
@@ -98,35 +98,43 @@ type alias Player =
   }
 
 
---type Status = Waiting Action Player -- Play, Promotion
---            | Finished Winner
+type Action = Click Position
+            | Promotion Figure
+            | Play
+
+
+type Status = Waiting Action Color
+            | Finished Player
 
 
 type alias Game =
   { board   : Board
   , player1 : Player
   , player2 : Player
+  , status  : Status
   }
 
 
 player : Color -> Player
 player color = 
   { color     = color
-  , graveyard = repeat 16 <| Just Pawn
---  , graveyard = emptyRow ++ emptyRow
+  , graveyard = emptyRow ++ emptyRow
+--  , graveyard = repeat 16 <| Just Pawn
   }
 
 
-game : Board -> Player -> Player -> Game
-game board p1 p2 =
+game : Status -> Board -> Player -> Player -> Game
+game status board p1 p2 =
   { board   = board
   , player1 = p1
   , player2 = p2
+  , status  = status
   }
 
 
 makeInitialGame : Game
 makeInitialGame =
-  game makeInitialBoard
+  game (Waiting Play White)
+       makeInitialBoard
        (player Black)
        (player White)

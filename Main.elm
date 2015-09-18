@@ -16,7 +16,6 @@ import Model exposing (..)
 
 --============================ Update ==============================
 
-type Action = Click Position
 
 update : Action -> Game -> Game
 update action board =
@@ -129,7 +128,7 @@ renderGame address game =
          [ renderGraveyard p2
          , renderBoard address game.board
          , renderGraveyard p1
-         , renderStatusBar "breno"
+         , renderStatusBar "StatusBarText"
          ]
 
 

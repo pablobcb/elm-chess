@@ -4180,7 +4180,7 @@ Elm.Main.make = function (_elm) {
    $String = Elm.String.make(_elm);
    var renderStatusBar = function (status) {
       return A2($Html.div,
-      _L.fromArray([]),
+      _L.fromArray([$Html$Attributes.id("statusBar")]),
       _L.fromArray([$Html.text(status)]));
    };
    var renderEmptySquare = A2($Html.td,
@@ -4199,7 +4199,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♗");}
                  _U.badCase($moduleName,
-                 "between lines 46 and 50");
+                 "between lines 45 and 49");
               }();
             case "King":
             return function () {
@@ -4210,7 +4210,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♔");}
                  _U.badCase($moduleName,
-                 "between lines 34 and 38");
+                 "between lines 33 and 37");
               }();
             case "Knight":
             return function () {
@@ -4221,7 +4221,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♘");}
                  _U.badCase($moduleName,
-                 "between lines 50 and 54");
+                 "between lines 49 and 53");
               }();
             case "Pawn":
             return function () {
@@ -4232,7 +4232,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♙");}
                  _U.badCase($moduleName,
-                 "between lines 54 and 56");
+                 "between lines 53 and 55");
               }();
             case "Queen":
             return function () {
@@ -4243,7 +4243,7 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♕");}
                  _U.badCase($moduleName,
-                 "between lines 38 and 42");
+                 "between lines 37 and 41");
               }();
             case "Rook":
             return function () {
@@ -4254,63 +4254,11 @@ Elm.Main.make = function (_elm) {
                     case "White":
                     return _U.chr("♖");}
                  _U.badCase($moduleName,
-                 "between lines 42 and 46");
+                 "between lines 41 and 45");
               }();}
          _U.badCase($moduleName,
-         "between lines 33 and 56");
+         "between lines 32 and 55");
       }()));
-   };
-   var renderGraveyard = function (player) {
-      return function () {
-         var renderPiece = function (piece) {
-            return A2($Html.td,
-            _L.fromArray([$Html$Attributes.$class("grave selectNone")]),
-            _L.fromArray([getHtmlCode(piece)]));
-         };
-         var renderSquare = function (figure) {
-            return function () {
-               switch (figure.ctor)
-               {case "Just":
-                  return renderPiece(A2($Model.piece,
-                    figure._0,
-                    player.color));
-                  case "Nothing":
-                  return renderEmptySquare;}
-               _U.badCase($moduleName,
-               "between lines 105 and 113");
-            }();
-         };
-         var renderRow = function (row) {
-            return $Html.tr(_L.fromArray([]))(A2($List.map,
-            renderSquare,
-            row));
-         };
-         return A2($Html.table,
-         _L.fromArray([$Html$Attributes.$class(F2(function (x,
-         y) {
-            return A2($Basics._op["++"],
-            x,
-            y);
-         })("graveyard")($Basics.toString(player.color)))]),
-         _L.fromArray([renderRow(A2($List.take,
-                      8,
-                      player.graveyard))
-                      ,renderRow(A2($List.drop,
-                      8,
-                      player.graveyard))]));
-      }();
-   };
-   var update = F2(function (action,
-   board) {
-      return function () {
-         switch (action.ctor)
-         {case "Click": return board;}
-         _U.badCase($moduleName,
-         "between lines 23 and 24");
-      }();
-   });
-   var Click = function (a) {
-      return {ctor: "Click",_0: a};
    };
    var renderBoard = F2(function (address,
    board) {
@@ -4321,7 +4269,7 @@ Elm.Main.make = function (_elm) {
             _L.fromArray([$Html$Attributes.$class("selectNone cursorGrab")
                          ,A2($Html$Events.onClick,
                          address,
-                         Click(position))]),
+                         $Model.Click(position))]),
             _L.fromArray([getHtmlCode(piece)]));
          });
          var renderSquare = function (position) {
@@ -4338,7 +4286,7 @@ Elm.Main.make = function (_elm) {
                      case "Nothing":
                      return renderEmptySquare;}
                   _U.badCase($moduleName,
-                  "between lines 82 and 90");
+                  "between lines 81 and 89");
                }();
             }();
          };
@@ -4380,6 +4328,46 @@ Elm.Main.make = function (_elm) {
          return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))($List.map(renderRow)(makePositions));
       }();
    });
+   var renderGraveyard = function (player) {
+      return function () {
+         var renderPiece = function (piece) {
+            return A2($Html.td,
+            _L.fromArray([$Html$Attributes.$class("grave selectNone")]),
+            _L.fromArray([getHtmlCode(piece)]));
+         };
+         var renderSquare = function (figure) {
+            return function () {
+               switch (figure.ctor)
+               {case "Just":
+                  return renderPiece(A2($Model.piece,
+                    figure._0,
+                    player.color));
+                  case "Nothing":
+                  return renderEmptySquare;}
+               _U.badCase($moduleName,
+               "between lines 104 and 112");
+            }();
+         };
+         var renderRow = function (row) {
+            return $Html.tr(_L.fromArray([]))(A2($List.map,
+            renderSquare,
+            row));
+         };
+         return A2($Html.table,
+         _L.fromArray([$Html$Attributes.$class(F2(function (x,
+         y) {
+            return A2($Basics._op["++"],
+            x,
+            y);
+         })("graveyard")($Basics.toString(player.color)))]),
+         _L.fromArray([renderRow(A2($List.take,
+                      8,
+                      player.graveyard))
+                      ,renderRow(A2($List.drop,
+                      8,
+                      player.graveyard))]));
+      }();
+   };
    var renderGame = F2(function (address,
    game) {
       return function () {
@@ -4392,7 +4380,16 @@ Elm.Main.make = function (_elm) {
                       address,
                       game.board)
                       ,renderGraveyard(p1)
-                      ,renderStatusBar("breno")]));
+                      ,renderStatusBar("StatusBarText")]));
+      }();
+   });
+   var update = F2(function (action,
+   board) {
+      return function () {
+         switch (action.ctor)
+         {case "Click": return board;}
+         _U.badCase($moduleName,
+         "between lines 22 and 23");
       }();
    });
    var main = $StartApp$Simple.start({_: {}
@@ -4400,7 +4397,6 @@ Elm.Main.make = function (_elm) {
                                      ,update: update
                                      ,view: renderGame});
    _elm.Main.values = {_op: _op
-                      ,Click: Click
                       ,update: update
                       ,getHtmlCode: getHtmlCode
                       ,renderEmptySquare: renderEmptySquare
@@ -4705,20 +4701,44 @@ Elm.Model.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
-   var game = F3(function (board,
+   var game = F4(function (status,
+   board,
    p1,
    p2) {
       return {_: {}
              ,board: board
              ,player1: p1
-             ,player2: p2};
+             ,player2: p2
+             ,status: status};
    });
-   var Game = F3(function (a,b,c) {
+   var Game = F4(function (a,
+   b,
+   c,
+   d) {
       return {_: {}
              ,board: a
              ,player1: b
-             ,player2: c};
+             ,player2: c
+             ,status: d};
    });
+   var Finished = function (a) {
+      return {ctor: "Finished"
+             ,_0: a};
+   };
+   var Waiting = F2(function (a,
+   b) {
+      return {ctor: "Waiting"
+             ,_0: a
+             ,_1: b};
+   });
+   var Play = {ctor: "Play"};
+   var Promotion = function (a) {
+      return {ctor: "Promotion"
+             ,_0: a};
+   };
+   var Click = function (a) {
+      return {ctor: "Click",_0: a};
+   };
    var Player = F2(function (a,b) {
       return {_: {}
              ,color: a
@@ -4727,6 +4747,13 @@ Elm.Model.make = function (_elm) {
    var emptyRow = A2($List.repeat,
    8,
    $Maybe.Nothing);
+   var player = function (color) {
+      return {_: {}
+             ,color: color
+             ,graveyard: A2($Basics._op["++"],
+             emptyRow,
+             emptyRow)};
+   };
    var piece = F2(function (f,c) {
       return {_: {}
              ,color: c
@@ -4747,11 +4774,6 @@ Elm.Model.make = function (_elm) {
    var Bishop = {ctor: "Bishop"};
    var Knight = {ctor: "Knight"};
    var Pawn = {ctor: "Pawn"};
-   var player = function (color) {
-      return {_: {}
-             ,color: color
-             ,graveyard: $List.repeat(16)($Maybe.Just(Pawn))};
-   };
    var White = {ctor: "White"};
    var Black = {ctor: "Black"};
    var other = function (color) {
@@ -4837,7 +4859,8 @@ Elm.Model.make = function (_elm) {
       makeRow(_U.chr("1")),
       makeFirstRow(White))))))))));
    }();
-   var makeInitialGame = A3(game,
+   var makeInitialGame = A4(game,
+   A2(Waiting,Play,White),
    makeInitialBoard,
    player(Black),
    player(White));
@@ -4856,6 +4879,11 @@ Elm.Model.make = function (_elm) {
                        ,emptyRow: emptyRow
                        ,makeInitialBoard: makeInitialBoard
                        ,Player: Player
+                       ,Click: Click
+                       ,Promotion: Promotion
+                       ,Play: Play
+                       ,Waiting: Waiting
+                       ,Finished: Finished
                        ,Game: Game
                        ,player: player
                        ,game: game

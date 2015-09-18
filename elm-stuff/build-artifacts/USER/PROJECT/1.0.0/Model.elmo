@@ -15,20 +15,44 @@ Elm.Model.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
-   var game = F3(function (board,
+   var game = F4(function (status,
+   board,
    p1,
    p2) {
       return {_: {}
              ,board: board
              ,player1: p1
-             ,player2: p2};
+             ,player2: p2
+             ,status: status};
    });
-   var Game = F3(function (a,b,c) {
+   var Game = F4(function (a,
+   b,
+   c,
+   d) {
       return {_: {}
              ,board: a
              ,player1: b
-             ,player2: c};
+             ,player2: c
+             ,status: d};
    });
+   var Finished = function (a) {
+      return {ctor: "Finished"
+             ,_0: a};
+   };
+   var Waiting = F2(function (a,
+   b) {
+      return {ctor: "Waiting"
+             ,_0: a
+             ,_1: b};
+   });
+   var Play = {ctor: "Play"};
+   var Promotion = function (a) {
+      return {ctor: "Promotion"
+             ,_0: a};
+   };
+   var Click = function (a) {
+      return {ctor: "Click",_0: a};
+   };
    var Player = F2(function (a,b) {
       return {_: {}
              ,color: a
@@ -37,6 +61,13 @@ Elm.Model.make = function (_elm) {
    var emptyRow = A2($List.repeat,
    8,
    $Maybe.Nothing);
+   var player = function (color) {
+      return {_: {}
+             ,color: color
+             ,graveyard: A2($Basics._op["++"],
+             emptyRow,
+             emptyRow)};
+   };
    var piece = F2(function (f,c) {
       return {_: {}
              ,color: c
@@ -57,11 +88,6 @@ Elm.Model.make = function (_elm) {
    var Bishop = {ctor: "Bishop"};
    var Knight = {ctor: "Knight"};
    var Pawn = {ctor: "Pawn"};
-   var player = function (color) {
-      return {_: {}
-             ,color: color
-             ,graveyard: $List.repeat(16)($Maybe.Just(Pawn))};
-   };
    var White = {ctor: "White"};
    var Black = {ctor: "Black"};
    var other = function (color) {
@@ -147,7 +173,8 @@ Elm.Model.make = function (_elm) {
       makeRow(_U.chr("1")),
       makeFirstRow(White))))))))));
    }();
-   var makeInitialGame = A3(game,
+   var makeInitialGame = A4(game,
+   A2(Waiting,Play,White),
    makeInitialBoard,
    player(Black),
    player(White));
@@ -166,6 +193,11 @@ Elm.Model.make = function (_elm) {
                        ,emptyRow: emptyRow
                        ,makeInitialBoard: makeInitialBoard
                        ,Player: Player
+                       ,Click: Click
+                       ,Promotion: Promotion
+                       ,Play: Play
+                       ,Waiting: Waiting
+                       ,Finished: Finished
                        ,Game: Game
                        ,player: player
                        ,game: game
