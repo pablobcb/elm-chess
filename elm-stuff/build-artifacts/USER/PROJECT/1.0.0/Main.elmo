@@ -22,6 +22,11 @@ Elm.Main.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $StartApp$Simple = Elm.StartApp.Simple.make(_elm),
    $String = Elm.String.make(_elm);
+   var renderEmptySquare = A2($Html.td,
+   _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                      ,_0: "cursor"
+                                                      ,_1: "default"}]))]),
+   _L.fromArray([]));
    var getHtmlCode = function (piece) {
       return $Html.text($String.fromChar(function () {
          var _v0 = piece.figure;
@@ -111,6 +116,17 @@ Elm.Main.make = function (_elm) {
    var renderBoard = F2(function (address,
    board) {
       return function () {
+         var renderPiece = F2(function (piece,
+         position) {
+            return A2($Html.td,
+            _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                               ,_0: "cursor"
+                                                               ,_1: "grab"}]))
+                         ,A2($Html$Events.onClick,
+                         address,
+                         Click(position))]),
+            _L.fromArray([getHtmlCode(piece)]));
+         });
          var renderSquare = function (position) {
             return function () {
                var piece = $Maybe$Extra.join(A2($Dict.get,
@@ -119,24 +135,13 @@ Elm.Main.make = function (_elm) {
                return function () {
                   switch (piece.ctor)
                   {case "Just":
-                     return A2($Html.td,
-                       _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
-                                                                          ,_0: "cursor"
-                                                                          ,_1: "grab"}]))
-                                    ,A2($Html$Events.onClick,
-                                    address,
-                                    Click(position))
-                                    ,$Html$Attributes.id(position)]),
-                       _L.fromArray([getHtmlCode(piece._0)]));
+                     return A2(renderPiece,
+                       piece._0,
+                       position);
                      case "Nothing":
-                     return A2($Html.td,
-                       _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
-                                                                          ,_0: "cursor"
-                                                                          ,_1: "default"}]))
-                                    ,$Html$Attributes.id(position)]),
-                       _L.fromArray([]));}
+                     return renderEmptySquare;}
                   _U.badCase($moduleName,
-                  "between lines 72 and 80");
+                  "between lines 78 and 85");
                }();
             }();
          };
@@ -182,6 +187,7 @@ Elm.Main.make = function (_elm) {
                       ,Click: Click
                       ,update: update
                       ,getHtmlCode: getHtmlCode
+                      ,renderEmptySquare: renderEmptySquare
                       ,renderBoard: renderBoard
                       ,main: main};
    return _elm.Main.values;

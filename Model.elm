@@ -5,8 +5,10 @@ import Dict exposing (..)
 import List exposing (..)
 
 
+{-------------------------- Color ---------------------------}
 type Color = Black
            | White
+
 
 other : Color -> Color
 other color =
@@ -14,11 +16,9 @@ other color =
     Black -> White
     White -> Black
 
-type alias Player = { color : Color }
 
-type alias Position = String
-
-type Figure = Pawn 
+{-------------------------- Piece ---------------------------}
+type Figure = Pawn
             | Knight
             | Bishop
             | Rook
@@ -26,33 +26,44 @@ type Figure = Pawn
             | King
 
 
-type alias Piece = { figure : Figure , moved  : Bool , color  : Color }
+type alias Piece =
+  { figure : Figure
+  , moved  : Bool
+  , color  : Color
+  }
+
 
 piece : Figure -> Color -> Bool -> Piece
-piece f c m = { figure = f, moved = m, color = c }
+piece f c m = 
+  { figure = f
+  , moved  = m
+  , color  = c
+  }
+
+
+{-------------------------- Board ---------------------------}
+type alias Position = String
 
 
 type alias Board = Dict Position (Maybe Piece)
 
 
---type alias Game = {
---  board : Board,
---  p1: Player,
---  p2: Player,
---  p1Graveyard : List Piece,
---  p2Graveyard : List Piece }
+emptyRow : List (Maybe a)
+emptyRow = repeat 8 Nothing
 
 
 makeInitialBoard : Board
 makeInitialBoard =
-  let pawnRow pawnColor = repeat 8 <| Just <| piece Pawn pawnColor False
-
-      emptyRow = repeat 8 Nothing
+  let pawnRow pawnColor = repeat 8
+        <| Just 
+        <| piece Pawn pawnColor False
 
       makePiece pieceColor figure =
           Just <| piece figure pieceColor False
 
-      firstRow = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
+      firstRow = [ Rook, Knight, Bishop
+                 , Queen, King, Bishop, Knight, Rook
+                 ]
 
       zip = List.map2 (,)
 
@@ -80,3 +91,42 @@ makeInitialBoard =
     ++
     zip ["A1", "B1",  "C1","D1", "E1", "F1", "G1", "H1"]
         (List.map (makePiece White) firstRow)
+
+
+{-------------------------- Game -------------------------}
+type alias Graveyard = List (Maybe Figure)
+
+
+type alias Player =
+  { color     : Color
+  , graveyard : Graveyard
+  }
+
+
+type alias Game =
+  { board   : Board
+  , player1 : Player
+  , player2 : Player
+  }
+
+
+player : Color -> Player
+player color = 
+  { color     = color
+  , graveyard = emptyRow ++ emptyRow
+  }
+
+
+game : Board -> Player -> Player -> Game
+game board p1 p2 =
+  { board   = board
+  , player1 = p1
+  , player2 = p2
+  }
+
+
+makeInitialGame : Game
+makeInitialGame =
+  game makeInitialBoard
+       (player Black)
+       (player White)

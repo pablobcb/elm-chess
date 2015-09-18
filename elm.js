@@ -4178,6 +4178,11 @@ Elm.Main.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $StartApp$Simple = Elm.StartApp.Simple.make(_elm),
    $String = Elm.String.make(_elm);
+   var renderEmptySquare = A2($Html.td,
+   _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                      ,_0: "cursor"
+                                                      ,_1: "default"}]))]),
+   _L.fromArray([]));
    var getHtmlCode = function (piece) {
       return $Html.text($String.fromChar(function () {
          var _v0 = piece.figure;
@@ -4267,6 +4272,17 @@ Elm.Main.make = function (_elm) {
    var renderBoard = F2(function (address,
    board) {
       return function () {
+         var renderPiece = F2(function (piece,
+         position) {
+            return A2($Html.td,
+            _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                               ,_0: "cursor"
+                                                               ,_1: "grab"}]))
+                         ,A2($Html$Events.onClick,
+                         address,
+                         Click(position))]),
+            _L.fromArray([getHtmlCode(piece)]));
+         });
          var renderSquare = function (position) {
             return function () {
                var piece = $Maybe$Extra.join(A2($Dict.get,
@@ -4275,24 +4291,13 @@ Elm.Main.make = function (_elm) {
                return function () {
                   switch (piece.ctor)
                   {case "Just":
-                     return A2($Html.td,
-                       _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
-                                                                          ,_0: "cursor"
-                                                                          ,_1: "grab"}]))
-                                    ,A2($Html$Events.onClick,
-                                    address,
-                                    Click(position))
-                                    ,$Html$Attributes.id(position)]),
-                       _L.fromArray([getHtmlCode(piece._0)]));
+                     return A2(renderPiece,
+                       piece._0,
+                       position);
                      case "Nothing":
-                     return A2($Html.td,
-                       _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
-                                                                          ,_0: "cursor"
-                                                                          ,_1: "default"}]))
-                                    ,$Html$Attributes.id(position)]),
-                       _L.fromArray([]));}
+                     return renderEmptySquare;}
                   _U.badCase($moduleName,
-                  "between lines 72 and 80");
+                  "between lines 78 and 85");
                }();
             }();
          };
@@ -4338,6 +4343,7 @@ Elm.Main.make = function (_elm) {
                       ,Click: Click
                       ,update: update
                       ,getHtmlCode: getHtmlCode
+                      ,renderEmptySquare: renderEmptySquare
                       ,renderBoard: renderBoard
                       ,main: main};
    return _elm.Main.values;
@@ -4636,6 +4642,35 @@ Elm.Model.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
+   var game = F3(function (board,
+   p1,
+   p2) {
+      return {_: {}
+             ,board: board
+             ,player1: p1
+             ,player2: p2};
+   });
+   var Game = F3(function (a,b,c) {
+      return {_: {}
+             ,board: a
+             ,player1: b
+             ,player2: c};
+   });
+   var Player = F2(function (a,b) {
+      return {_: {}
+             ,color: a
+             ,graveyard: b};
+   });
+   var emptyRow = A2($List.repeat,
+   8,
+   $Maybe.Nothing);
+   var player = function (color) {
+      return {_: {}
+             ,color: color
+             ,graveyard: A2($Basics._op["++"],
+             emptyRow,
+             emptyRow)};
+   };
    var piece = F3(function (f,
    c,
    m) {
@@ -4658,9 +4693,6 @@ Elm.Model.make = function (_elm) {
    var Bishop = {ctor: "Bishop"};
    var Knight = {ctor: "Knight"};
    var Pawn = {ctor: "Pawn"};
-   var Player = function (a) {
-      return {_: {},color: a};
-   };
    var White = {ctor: "White"};
    var Black = {ctor: "Black"};
    var other = function (color) {
@@ -4669,7 +4701,7 @@ Elm.Model.make = function (_elm) {
          {case "Black": return White;
             case "White": return Black;}
          _U.badCase($moduleName,
-         "between lines 13 and 15");
+         "between lines 15 and 20");
       }();
    };
    var makeInitialBoard = function () {
@@ -4694,9 +4726,6 @@ Elm.Model.make = function (_elm) {
          pieceColor,
          false));
       });
-      var emptyRow = A2($List.repeat,
-      8,
-      $Maybe.Nothing);
       var pawnRow = function (pawnColor) {
          return $List.repeat(8)($Maybe.Just(A3(piece,
          Pawn,
@@ -4795,11 +4824,14 @@ Elm.Model.make = function (_elm) {
       makePiece(White),
       firstRow))))))))));
    }();
+   var makeInitialGame = A3(game,
+   makeInitialBoard,
+   player(Black),
+   player(White));
    _elm.Model.values = {_op: _op
                        ,Black: Black
                        ,White: White
                        ,other: other
-                       ,Player: Player
                        ,Pawn: Pawn
                        ,Knight: Knight
                        ,Bishop: Bishop
@@ -4808,7 +4840,13 @@ Elm.Model.make = function (_elm) {
                        ,King: King
                        ,Piece: Piece
                        ,piece: piece
-                       ,makeInitialBoard: makeInitialBoard};
+                       ,emptyRow: emptyRow
+                       ,makeInitialBoard: makeInitialBoard
+                       ,Player: Player
+                       ,Game: Game
+                       ,player: player
+                       ,game: game
+                       ,makeInitialGame: makeInitialGame};
    return _elm.Model.values;
 };
 Elm.Native.Array = {};

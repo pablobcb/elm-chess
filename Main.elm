@@ -1,15 +1,15 @@
 
-import Array exposing  ( Array(..) )
-import Dict exposing (..)
-import Html exposing (..)
+import Array           exposing ( Array(..) )
+import Dict            exposing (..)
+import Html            exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (..)
-import Maybe exposing  ( Maybe(..) )
-import Maybe.Extra exposing (..)
-import Signal exposing (..)
+import Html.Events     exposing (..)
+import Maybe           exposing ( Maybe(..) )
+import Maybe.Extra     exposing (..)
+import Signal          exposing (..)
 import StartApp.Simple exposing (..)
-import String exposing (..)
-import Text exposing   ( Text(..) )
+import String          exposing (..)
+import Text            exposing ( Text(..) )
 
 import Model exposing (..)
 
@@ -54,33 +54,41 @@ getHtmlCode piece = text <| String.fromChar <|
       Black -> '\x265F'
       White -> '\x2659'
 
---cartesianProduct : (a -> b -> c) -> List a -> List b -> List (List c)
 
+renderEmptySquare = td [ style [("cursor", "default")] ] []
 
 
 renderBoard : Address Action -> Board -> Html
 renderBoard address board =
-
+  -- kind of :P
   let cartesianProduct f xs ys = List.map (\x -> List.map (\y-> f y x) ys ) xs
 
       letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
 
       numbers = List.map toString [1 .. 8]
-      
+
+      renderPiece piece position =
+        td [ style [("cursor", "grab")]
+           , onClick address (Click position)
+           ]
+           [ getHtmlCode piece ]
+
       renderSquare position =
         let piece = Maybe.Extra.join <| Dict.get position board
         in case piece of
-          Nothing     -> td [ style [("cursor", "default")], id position ] []
-          Just piece' -> td [ style [("cursor", "grab")]
-                            , onClick address (Click position)
-                            , id position
-                            ]
-                            [ getHtmlCode piece' ]
-  
-  in
-     table [ id "chessBoard" ] 
+          Nothing ->
+            renderEmptySquare
+          
+          Just piece' ->
+            renderPiece piece' position
+                                   
+  in table [ id "chessBoard" ] 
        <| List.map (\squares-> tr [] <| List.map renderSquare squares)
        <| cartesianProduct String.append numbers letters
+
+--renderGraveyard List Piece -> Html
+--renderGraveyard pieces =
+--  table [ id "p1Graveyard" ] [ List.map  ]
 
 main = StartApp.Simple.start
     { model  = makeInitialBoard
