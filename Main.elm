@@ -56,7 +56,7 @@ getHtmlCode piece = text
          White -> '\x2659'
 
 renderEmptySquare : Html
-renderEmptySquare = td [ style [("cursor", "default")] ] []
+renderEmptySquare = td [ class "cursorDefault"] []
 
 
 renderBoard : Address Action -> Board -> Html
@@ -71,7 +71,7 @@ renderBoard address board =
 
 
       renderPiece piece position =
-        td [ style [("cursor", "grab")]
+        td [ class "selectNone cursorGrab"
            , onClick address (Click position)
            ]
            [ getHtmlCode piece ]
@@ -98,7 +98,7 @@ renderBoard address board =
 renderGraveyard : Player -> Html
 renderGraveyard player =
   let renderPiece piece =
-        td [] [ getHtmlCode piece ]
+        td [ class "grave selectNone" ] [ getHtmlCode piece ]
 
 
       renderSquare figure =
@@ -110,8 +110,15 @@ renderGraveyard player =
             renderPiece <| piece figure' player.color
 
 
-  in table [ id <| toString player.color ++ "Graveyard" ]
-           <| List.map renderSquare player.graveyard
+      renderRow row =
+        tr [] <| List.map renderSquare row
+
+
+  in table [ class <| (++) "graveyard"  <| toString player.color ]
+           [ renderRow <| List.take 8 player.graveyard
+           , renderRow <| List.drop 8 player.graveyard
+           ]
+
 
 renderGame : Address Action -> Game -> Html
 renderGame address game =

@@ -60,7 +60,7 @@ Elm.Model.make = function (_elm) {
    var player = function (color) {
       return {_: {}
              ,color: color
-             ,graveyard: $List.repeat(8)($Maybe.Just(Pawn))};
+             ,graveyard: $List.repeat(16)($Maybe.Just(Pawn))};
    };
    var White = {ctor: "White"};
    var Black = {ctor: "Black"};

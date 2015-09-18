@@ -4179,9 +4179,7 @@ Elm.Main.make = function (_elm) {
    $StartApp$Simple = Elm.StartApp.Simple.make(_elm),
    $String = Elm.String.make(_elm);
    var renderEmptySquare = A2($Html.td,
-   _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
-                                                      ,_0: "cursor"
-                                                      ,_1: "default"}]))]),
+   _L.fromArray([$Html$Attributes.$class("cursorDefault")]),
    _L.fromArray([]));
    var getHtmlCode = function (piece) {
       return $Html.text($String.fromChar(function () {
@@ -4261,7 +4259,7 @@ Elm.Main.make = function (_elm) {
       return function () {
          var renderPiece = function (piece) {
             return A2($Html.td,
-            _L.fromArray([]),
+            _L.fromArray([$Html$Attributes.$class("grave selectNone")]),
             _L.fromArray([getHtmlCode(piece)]));
          };
          var renderSquare = function (figure) {
@@ -4277,11 +4275,24 @@ Elm.Main.make = function (_elm) {
                "between lines 105 and 113");
             }();
          };
-         return $Html.table(_L.fromArray([$Html$Attributes.id(A2($Basics._op["++"],
-         $Basics.toString(player.color),
-         "Graveyard"))]))(A2($List.map,
-         renderSquare,
-         player.graveyard));
+         var renderRow = function (row) {
+            return $Html.tr(_L.fromArray([]))(A2($List.map,
+            renderSquare,
+            row));
+         };
+         return A2($Html.table,
+         _L.fromArray([$Html$Attributes.$class(F2(function (x,
+         y) {
+            return A2($Basics._op["++"],
+            x,
+            y);
+         })("graveyard")($Basics.toString(player.color)))]),
+         _L.fromArray([renderRow(A2($List.take,
+                      8,
+                      player.graveyard))
+                      ,renderRow(A2($List.drop,
+                      8,
+                      player.graveyard))]));
       }();
    };
    var update = F2(function (action,
@@ -4302,9 +4313,7 @@ Elm.Main.make = function (_elm) {
          var renderPiece = F2(function (piece,
          position) {
             return A2($Html.td,
-            _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
-                                                               ,_0: "cursor"
-                                                               ,_1: "grab"}]))
+            _L.fromArray([$Html$Attributes.$class("selectNone cursorGrab")
                          ,A2($Html$Events.onClick,
                          address,
                          Click(position))]),
@@ -4734,7 +4743,7 @@ Elm.Model.make = function (_elm) {
    var player = function (color) {
       return {_: {}
              ,color: color
-             ,graveyard: $List.repeat(8)($Maybe.Just(Pawn))};
+             ,graveyard: $List.repeat(16)($Maybe.Just(Pawn))};
    };
    var White = {ctor: "White"};
    var Black = {ctor: "Black"};

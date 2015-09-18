@@ -108,7 +108,7 @@ type alias Game =
 player : Color -> Player
 player color = 
   { color     = color
-  , graveyard = repeat 8 <| Just Pawn
+  , graveyard = repeat 16 <| Just Pawn
 --  , graveyard = emptyRow ++ emptyRow
   }
 
