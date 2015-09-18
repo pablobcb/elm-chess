@@ -98,6 +98,10 @@ type alias Player =
   }
 
 
+--type Status = Waiting Action Player -- Play, Promotion
+--            | Finished Winner
+
+
 type alias Game =
   { board   : Board
   , player1 : Player

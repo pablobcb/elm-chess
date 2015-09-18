@@ -129,7 +129,18 @@ renderGame address game =
          [ renderGraveyard p2
          , renderBoard address game.board
          , renderGraveyard p1
+         , renderStatusBar "breno"
          ]
+
+
+renderStatusBar : String -> Html
+---renderStatusBar : Status -> Html
+renderStatusBar status = 
+ -- case status of
+   -- Waiting ->
+
+  div [ id "statusBar" ] [ text status ]
+
 
 main = StartApp.Simple.start
     { model  = makeInitialGame

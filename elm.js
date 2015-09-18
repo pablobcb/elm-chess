@@ -4178,6 +4178,11 @@ Elm.Main.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $StartApp$Simple = Elm.StartApp.Simple.make(_elm),
    $String = Elm.String.make(_elm);
+   var renderStatusBar = function (status) {
+      return A2($Html.div,
+      _L.fromArray([]),
+      _L.fromArray([$Html.text(status)]));
+   };
    var renderEmptySquare = A2($Html.td,
    _L.fromArray([$Html$Attributes.$class("cursorDefault")]),
    _L.fromArray([]));
@@ -4386,7 +4391,8 @@ Elm.Main.make = function (_elm) {
                       ,A2(renderBoard,
                       address,
                       game.board)
-                      ,renderGraveyard(p1)]));
+                      ,renderGraveyard(p1)
+                      ,renderStatusBar("breno")]));
       }();
    });
    var main = $StartApp$Simple.start({_: {}
@@ -4401,6 +4407,7 @@ Elm.Main.make = function (_elm) {
                       ,renderBoard: renderBoard
                       ,renderGraveyard: renderGraveyard
                       ,renderGame: renderGame
+                      ,renderStatusBar: renderStatusBar
                       ,main: main};
    return _elm.Main.values;
 };
