@@ -15,19 +15,41 @@ Elm.Repl.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
    var tsol = {ctor: "_Tuple0"};
-   var f$ = function (x) {
-      return x;
-   };
-   var f = function (a) {
-      return a;
-   };
-   var deltron3030 = function ($) {
-      return f(f$($));
-   };
+   var l2 = _L.fromArray([_U.chr("1")
+                         ,_U.chr("2")
+                         ,_U.chr("3")
+                         ,_U.chr("4")
+                         ,_U.chr("5")
+                         ,_U.chr("6")
+                         ,_U.chr("7")
+                         ,_U.chr("8")]);
+   var l1 = _L.fromArray([_U.chr("a")
+                         ,_U.chr("b")
+                         ,_U.chr("c")
+                         ,_U.chr("d")
+                         ,_U.chr("e")
+                         ,_U.chr("f")
+                         ,_U.chr("g")
+                         ,_U.chr("h")]);
+   var deltron3030 = A3($List.map2,
+   F2(function (v0,v1) {
+      return {ctor: "_Tuple2"
+             ,_0: v0
+             ,_1: v1};
+   }),
+   _L.fromArray([_U.chr("A")
+                ,_U.chr("B")
+                ,_U.chr("C")
+                ,_U.chr("D")
+                ,_U.chr("E")
+                ,_U.chr("F")
+                ,_U.chr("G")
+                ,_U.chr("H")]),
+   A2($List.repeat,8,_U.chr("8")));
    _elm.Repl.values = {_op: _op
                       ,deltron3030: deltron3030
-                      ,f: f
-                      ,f$: f$
+                      ,l1: l1
+                      ,l2: l2
                       ,tsol: tsol};
    return _elm.Repl.values;
 };

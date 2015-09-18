@@ -60,12 +60,14 @@ renderEmptySquare = td [ style [("cursor", "default")] ] []
 
 renderBoard : Address Action -> Board -> Html
 renderBoard address board =
-  -- kind of :P
-  let cartesianProduct f xs ys = List.map (\x -> List.map (\y-> f y x) ys ) xs
+  -- combines two lists into their cartesian product
+  let makePositions = 
+        List.map (\digit -> 
+          List.map (\letter->
+           (,) letter digit)
+             ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
+               ['1', '2', '3' , '4', '5', '6', '7', '8']
 
-      letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
-
-      numbers = List.map toString [1 .. 8]
 
       renderPiece piece position =
         td [ style [("cursor", "grab")]
@@ -84,10 +86,11 @@ renderBoard address board =
                                    
   in table [ id "chessBoard" ] 
        <| List.map (\squares-> tr [] <| List.map renderSquare squares)
-       <| cartesianProduct String.append numbers letters
+       <| makePositions
 
---renderGraveyard List Piece -> Html
---renderGraveyard pieces =
+--renderGraveyard List (Maybe Piece) -> Html
+--renderGraveyard  =
+--  let l = [ ]
 --  table [ id "p1Graveyard" ] [ List.map  ]
 
 main = StartApp.Simple.start

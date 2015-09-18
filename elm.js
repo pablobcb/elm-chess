@@ -4297,42 +4297,45 @@ Elm.Main.make = function (_elm) {
                      case "Nothing":
                      return renderEmptySquare;}
                   _U.badCase($moduleName,
-                  "between lines 78 and 85");
+                  "between lines 80 and 87");
                }();
             }();
          };
-         var numbers = A2($List.map,
-         $Basics.toString,
-         _L.range(1,8));
-         var letters = _L.fromArray(["A"
-                                    ,"B"
-                                    ,"C"
-                                    ,"D"
-                                    ,"E"
-                                    ,"F"
-                                    ,"G"
-                                    ,"H"]);
-         var cartesianProduct = F3(function (f,
-         xs,
-         ys) {
+         var makePositions = A2($List.map,
+         function (digit) {
             return A2($List.map,
-            function (x) {
-               return A2($List.map,
-               function (y) {
-                  return A2(f,y,x);
-               },
-               ys);
+            function (letter) {
+               return A2(F2(function (v0,
+               v1) {
+                  return {ctor: "_Tuple2"
+                         ,_0: v0
+                         ,_1: v1};
+               }),
+               letter,
+               digit);
             },
-            xs);
-         });
+            _L.fromArray([_U.chr("A")
+                         ,_U.chr("B")
+                         ,_U.chr("C")
+                         ,_U.chr("D")
+                         ,_U.chr("E")
+                         ,_U.chr("F")
+                         ,_U.chr("G")
+                         ,_U.chr("H")]));
+         },
+         _L.fromArray([_U.chr("1")
+                      ,_U.chr("2")
+                      ,_U.chr("3")
+                      ,_U.chr("4")
+                      ,_U.chr("5")
+                      ,_U.chr("6")
+                      ,_U.chr("7")
+                      ,_U.chr("8")]));
          return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))($List.map(function (squares) {
             return $Html.tr(_L.fromArray([]))(A2($List.map,
             renderSquare,
             squares));
-         })(A3(cartesianProduct,
-         $String.append,
-         numbers,
-         letters)));
+         })(makePositions));
       }();
    });
    var main = $StartApp$Simple.start({_: {}
@@ -4711,6 +4714,18 @@ Elm.Model.make = function (_elm) {
                 ,_0: v0
                 ,_1: v1};
       }));
+      var makeRow = function (number) {
+         return A2(zip,
+         _L.fromArray([_U.chr("A")
+                      ,_U.chr("B")
+                      ,_U.chr("C")
+                      ,_U.chr("D")
+                      ,_U.chr("E")
+                      ,_U.chr("F")
+                      ,_U.chr("G")
+                      ,_U.chr("H")]),
+         A2($List.repeat,8,number));
+      };
       var firstRow = _L.fromArray([Rook
                                   ,Knight
                                   ,Bishop
@@ -4734,92 +4749,36 @@ Elm.Model.make = function (_elm) {
       };
       return $Dict.fromList(A2($Basics._op["++"],
       A2(zip,
-      _L.fromArray(["A8"
-                   ,"B8"
-                   ,"C8"
-                   ,"D8"
-                   ,"E8"
-                   ,"F8"
-                   ,"G8"
-                   ,"H8"]),
+      makeRow(_U.chr("8")),
       A2($List.map,
       makePiece(Black),
       firstRow)),
       A2($Basics._op["++"],
       A2(zip,
-      _L.fromArray(["A7"
-                   ,"B7"
-                   ,"C7"
-                   ,"D7"
-                   ,"E7"
-                   ,"F7"
-                   ,"G7"
-                   ,"H7"]),
+      makeRow(_U.chr("7")),
       pawnRow(Black)),
       A2($Basics._op["++"],
       A2(zip,
-      _L.fromArray(["A6"
-                   ,"B6"
-                   ,"C6"
-                   ,"D6"
-                   ,"E6"
-                   ,"F6"
-                   ,"G6"
-                   ,"H6"]),
+      makeRow(_U.chr("6")),
       emptyRow),
       A2($Basics._op["++"],
       A2(zip,
-      _L.fromArray(["A5"
-                   ,"B5"
-                   ,"C5"
-                   ,"D5"
-                   ,"E5"
-                   ,"F5"
-                   ,"G5"
-                   ,"H5"]),
+      makeRow(_U.chr("5")),
       emptyRow),
       A2($Basics._op["++"],
       A2(zip,
-      _L.fromArray(["A4"
-                   ,"B4"
-                   ,"C4"
-                   ,"D4"
-                   ,"E4"
-                   ,"F4"
-                   ,"G4"
-                   ,"H4"]),
+      makeRow(_U.chr("4")),
       emptyRow),
       A2($Basics._op["++"],
       A2(zip,
-      _L.fromArray(["A3"
-                   ,"B3"
-                   ,"C3"
-                   ,"D3"
-                   ,"E3"
-                   ,"F3"
-                   ,"G3"
-                   ,"H3"]),
+      makeRow(_U.chr("3")),
       emptyRow),
       A2($Basics._op["++"],
       A2(zip,
-      _L.fromArray(["A2"
-                   ,"B2"
-                   ,"C2"
-                   ,"D2"
-                   ,"E2"
-                   ,"F2"
-                   ,"G2"
-                   ,"H2"]),
+      makeRow(_U.chr("2")),
       pawnRow(White)),
       A2(zip,
-      _L.fromArray(["A1"
-                   ,"B1"
-                   ,"C1"
-                   ,"D1"
-                   ,"E1"
-                   ,"F1"
-                   ,"G1"
-                   ,"H1"]),
+      makeRow(_U.chr("1")),
       A2($List.map,
       makePiece(White),
       firstRow))))))))));
