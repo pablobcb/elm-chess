@@ -1,0 +1,52 @@
+body {
+  margin: 0;
+/* Avoid user selection */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.game {
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.graveyard {
+  border: 2px solid #808080;
+  height: 600px;
+  width: 150px;
+}
+.chessboard {
+  height: 600px;
+  width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  border: 3px solid #333;
+}
+.square {
+  height: 75px;
+  width: 75px;
+  background-color: #008000;
+  text-align: center;
+}
+.square .square:nth-child(odd) .square:nth-child(even),
+.square .square:nth-child(even) .square:nth-child(odd) {
+  background: #ccc;
+  background: linear-gradient(top, #ccc, #eee);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.4);
+}
+.chessboard__square {
+  background: linear-gradient(top #fff, #eee);
+  box-shadow: inset 0 0 0 1px #fff;
+}
+.graveyard__grave {
+  background-color: #800080;
+  float: left;
+  text-align: center;
+  vertical-align: middle;
+  cursor: default;
+}

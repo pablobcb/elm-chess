@@ -1,0 +1,58 @@
+$square-size    = 75px
+$dimension-size = (8 * $square-size)
+
+body
+  margin: 0
+
+  /* Avoid user selection */
+  -webkit-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  user-select: none
+
+.game
+  margin-left: auto
+  margin-right: auto
+  position: relative
+  height: 100vh
+
+  display: flex
+  flex-direction: column
+  justify-content: center
+
+.graveyard
+  border: 2px solid grey
+  height: $dimension-size
+  width: (2 * $square-size)
+
+.chessboard
+  height: $dimension-size
+  width:  $dimension-size
+  margin-left  auto
+  margin-right auto
+  border: 3px solid #333
+
+.square
+  height $square-size
+  width  $square-size
+  background-color green
+  text-align center
+
+  .square:nth-child(odd)  .square:nth-child(even),
+  .square:nth-child(even) .square:nth-child(odd)
+    background: #ccc;
+    background: linear-gradient(top, #ccc, #eee);
+    box-shadow: inset 0 0 10px rgba(0,0,0,.4);
+
+.chessboard__square
+  background: linear-gradient(top #fff, #eee)
+  box-shadow: inset 0 0 0 1px #fff
+
+
+
+.graveyard__grave
+  background-color: purple
+  float: left;
+  text-align: center;
+  vertical-align: middle;
+  cursor: default;

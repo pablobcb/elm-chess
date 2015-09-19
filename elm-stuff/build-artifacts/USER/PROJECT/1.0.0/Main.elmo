@@ -1,0 +1,240 @@
+Elm.Main = Elm.Main || {};
+Elm.Main.make = function (_elm) {
+   "use strict";
+   _elm.Main = _elm.Main || {};
+   if (_elm.Main.values)
+   return _elm.Main.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Main",
+   $Basics = Elm.Basics.make(_elm),
+   $Dict = Elm.Dict.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Maybe$Extra = Elm.Maybe.Extra.make(_elm),
+   $Model = Elm.Model.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $StartApp$Simple = Elm.StartApp.Simple.make(_elm),
+   $String = Elm.String.make(_elm);
+   var renderStatusBar = function (status) {
+      return A2($Html.div,
+      _L.fromArray([$Html$Attributes.$class("status-bar")]),
+      _L.fromArray([$Html.text(status)]));
+   };
+   var renderEmptyChessboardSquare = A2($Html.div,
+   _L.fromArray([$Html$Attributes.$class("chessboard__square chessboard__square--empty")]),
+   _L.fromArray([]));
+   var getHtmlCode = function (piece) {
+      return $Html.text($String.fromChar(function () {
+         var _v0 = piece.figure;
+         switch (_v0.ctor)
+         {case "Bishop":
+            return function () {
+                 var _v1 = piece.color;
+                 switch (_v1.ctor)
+                 {case "Black":
+                    return _U.chr("♝");
+                    case "White":
+                    return _U.chr("♗");}
+                 _U.badCase($moduleName,
+                 "between lines 43 and 47");
+              }();
+            case "King":
+            return function () {
+                 var _v2 = piece.color;
+                 switch (_v2.ctor)
+                 {case "Black":
+                    return _U.chr("♚");
+                    case "White":
+                    return _U.chr("♔");}
+                 _U.badCase($moduleName,
+                 "between lines 31 and 35");
+              }();
+            case "Knight":
+            return function () {
+                 var _v3 = piece.color;
+                 switch (_v3.ctor)
+                 {case "Black":
+                    return _U.chr("♞");
+                    case "White":
+                    return _U.chr("♘");}
+                 _U.badCase($moduleName,
+                 "between lines 47 and 51");
+              }();
+            case "Pawn":
+            return function () {
+                 var _v4 = piece.color;
+                 switch (_v4.ctor)
+                 {case "Black":
+                    return _U.chr("♟");
+                    case "White":
+                    return _U.chr("♙");}
+                 _U.badCase($moduleName,
+                 "between lines 51 and 53");
+              }();
+            case "Queen":
+            return function () {
+                 var _v5 = piece.color;
+                 switch (_v5.ctor)
+                 {case "Black":
+                    return _U.chr("♛");
+                    case "White":
+                    return _U.chr("♕");}
+                 _U.badCase($moduleName,
+                 "between lines 35 and 39");
+              }();
+            case "Rook":
+            return function () {
+                 var _v6 = piece.color;
+                 switch (_v6.ctor)
+                 {case "Black":
+                    return _U.chr("♜");
+                    case "White":
+                    return _U.chr("♖");}
+                 _U.badCase($moduleName,
+                 "between lines 39 and 43");
+              }();}
+         _U.badCase($moduleName,
+         "between lines 30 and 53");
+      }()));
+   };
+   var renderBoard = F2(function (address,
+   board) {
+      return function () {
+         var renderPiece = F2(function (piece,
+         position) {
+            return A2($Html.div,
+            _L.fromArray([$Html$Attributes.$class("chessboard__square")
+                         ,A2($Html$Events.onClick,
+                         address,
+                         $Model.Click(position))]),
+            _L.fromArray([getHtmlCode(piece)]));
+         });
+         var renderChessboardSquare = function (position) {
+            return function () {
+               var piece = $Maybe$Extra.join(A2($Dict.get,
+               position,
+               board));
+               return function () {
+                  switch (piece.ctor)
+                  {case "Just":
+                     return A2(renderPiece,
+                       piece._0,
+                       position);
+                     case "Nothing":
+                     return renderEmptyChessboardSquare;}
+                  _U.badCase($moduleName,
+                  "between lines 77 and 85");
+               }();
+            }();
+         };
+         var renderRow = function (positions) {
+            return $Html.div(_L.fromArray([]))(A2($List.map,
+            renderChessboardSquare,
+            positions));
+         };
+         var makeRows = A2($List.map,
+         function (digit) {
+            return A2($List.map,
+            function (letter) {
+               return {ctor: "_Tuple2"
+                      ,_0: letter
+                      ,_1: digit};
+            },
+            _L.fromArray([_U.chr("A")
+                         ,_U.chr("B")
+                         ,_U.chr("C")
+                         ,_U.chr("D")
+                         ,_U.chr("E")
+                         ,_U.chr("F")
+                         ,_U.chr("G")
+                         ,_U.chr("H")]));
+         },
+         _L.fromArray([1
+                      ,2
+                      ,3
+                      ,4
+                      ,5
+                      ,6
+                      ,7
+                      ,8]));
+         return $Html.div(_L.fromArray([$Html$Attributes.$class("chessboard")]))($List.map(renderRow)(makeRows));
+      }();
+   });
+   var renderGraveyard = function (player) {
+      return function () {
+         var renderSquare = function (piece) {
+            return A2($Html.div,
+            _L.fromArray([$Html$Attributes.$class("square")]),
+            _L.fromArray([getHtmlCode(piece)]));
+         };
+         var renderChessboardSquare = function (figure) {
+            return function () {
+               switch (figure.ctor)
+               {case "Just":
+                  return renderSquare(A2($Model.piece,
+                    figure._0,
+                    player.color));
+                  case "Nothing":
+                  return renderEmptyChessboardSquare;}
+               _U.badCase($moduleName,
+               "between lines 99 and 106");
+            }();
+         };
+         return A2($Html.div,
+         _L.fromArray([$Html$Attributes.$class(F2(function (x,
+         y) {
+            return A2($Basics._op["++"],
+            x,
+            y);
+         })("graveyard ")($String.toLower($Basics.toString(player.color))))]),
+         A2($List.map,
+         renderChessboardSquare,
+         player.graveyard));
+      }();
+   };
+   var renderGame = F2(function (address,
+   game) {
+      return function () {
+         var p2 = game.player2;
+         var p1 = game.player1;
+         return A2($Html.div,
+         _L.fromArray([$Html$Attributes.$class("game")]),
+         _L.fromArray([renderGraveyard(p2)
+                      ,A2(renderBoard,
+                      address,
+                      game.board)
+                      ,renderGraveyard(p1)
+                      ,renderStatusBar("Lorem Ipsum")]));
+      }();
+   });
+   var update = F2(function (action,
+   board) {
+      return function () {
+         switch (action.ctor)
+         {case "Click": return board;}
+         _U.badCase($moduleName,
+         "between lines 21 and 22");
+      }();
+   });
+   var main = $StartApp$Simple.start({_: {}
+                                     ,model: $Model.makeInitialGame
+                                     ,update: update
+                                     ,view: renderGame});
+   _elm.Main.values = {_op: _op
+                      ,update: update
+                      ,getHtmlCode: getHtmlCode
+                      ,renderEmptyChessboardSquare: renderEmptyChessboardSquare
+                      ,renderBoard: renderBoard
+                      ,renderGraveyard: renderGraveyard
+                      ,renderGame: renderGame
+                      ,renderStatusBar: renderStatusBar
+                      ,main: main};
+   return _elm.Main.values;
+};
