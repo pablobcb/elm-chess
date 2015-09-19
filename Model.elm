@@ -42,7 +42,7 @@ piece f c =
 
 
 {-------------------------- Board ---------------------------}
-type alias Position = (Char, Char)
+type alias Position = (Char, Int)
 
 
 type alias Board = Dict Position (Maybe Piece)
@@ -78,14 +78,14 @@ makeInitialBoard =
         (List.repeat 8 number)
 
 
-  in Dict.fromList <| zip (makeRow '8') (makeFirstRow Black)
-                   ++ zip (makeRow '7') (pawnRow Black)
-                   ++ zip (makeRow '6') emptyRow
-                   ++ zip (makeRow '5') emptyRow
-                   ++ zip (makeRow '4') emptyRow
-                   ++ zip (makeRow '3') emptyRow
-                   ++ zip (makeRow '2') (pawnRow White)
-                   ++ zip (makeRow '1') (makeFirstRow White)
+  in Dict.fromList <| zip (makeRow 8) (makeFirstRow Black)
+                   ++ zip (makeRow 7) (pawnRow Black)
+                   ++ zip (makeRow 6) emptyRow
+                   ++ zip (makeRow 5) emptyRow
+                   ++ zip (makeRow 4) emptyRow
+                   ++ zip (makeRow 3) emptyRow
+                   ++ zip (makeRow 2) (pawnRow White)
+                   ++ zip (makeRow 1) (makeFirstRow White)
 
 
 {-------------------------- Game -------------------------}

@@ -4295,7 +4295,7 @@ Elm.Main.make = function (_elm) {
             renderSquare,
             positions));
          };
-         var makePositions = A2($List.map,
+         var makeRows = A2($List.map,
          function (digit) {
             return A2($List.map,
             function (letter) {
@@ -4317,15 +4317,15 @@ Elm.Main.make = function (_elm) {
                          ,_U.chr("G")
                          ,_U.chr("H")]));
          },
-         _L.fromArray([_U.chr("1")
-                      ,_U.chr("2")
-                      ,_U.chr("3")
-                      ,_U.chr("4")
-                      ,_U.chr("5")
-                      ,_U.chr("6")
-                      ,_U.chr("7")
-                      ,_U.chr("8")]));
-         return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))($List.map(renderRow)(makePositions));
+         _L.fromArray([1
+                      ,2
+                      ,3
+                      ,4
+                      ,5
+                      ,6
+                      ,7
+                      ,8]));
+         return $Html.table(_L.fromArray([$Html$Attributes.id("chessBoard")]))($List.map(renderRow)(makeRows));
       }();
    });
    var renderGraveyard = function (player) {
@@ -4829,34 +4829,26 @@ Elm.Model.make = function (_elm) {
       };
       return $Dict.fromList(A2($Basics._op["++"],
       A2(zip,
-      makeRow(_U.chr("8")),
+      makeRow(8),
       makeFirstRow(Black)),
       A2($Basics._op["++"],
       A2(zip,
-      makeRow(_U.chr("7")),
+      makeRow(7),
       pawnRow(Black)),
       A2($Basics._op["++"],
-      A2(zip,
-      makeRow(_U.chr("6")),
-      emptyRow),
+      A2(zip,makeRow(6),emptyRow),
+      A2($Basics._op["++"],
+      A2(zip,makeRow(5),emptyRow),
+      A2($Basics._op["++"],
+      A2(zip,makeRow(4),emptyRow),
+      A2($Basics._op["++"],
+      A2(zip,makeRow(3),emptyRow),
       A2($Basics._op["++"],
       A2(zip,
-      makeRow(_U.chr("5")),
-      emptyRow),
-      A2($Basics._op["++"],
-      A2(zip,
-      makeRow(_U.chr("4")),
-      emptyRow),
-      A2($Basics._op["++"],
-      A2(zip,
-      makeRow(_U.chr("3")),
-      emptyRow),
-      A2($Basics._op["++"],
-      A2(zip,
-      makeRow(_U.chr("2")),
+      makeRow(2),
       pawnRow(White)),
       A2(zip,
-      makeRow(_U.chr("1")),
+      makeRow(1),
       makeFirstRow(White))))))))));
    }();
    var makeInitialGame = A4(game,
