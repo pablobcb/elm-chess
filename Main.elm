@@ -61,10 +61,10 @@ renderEmptySquare = td [ class "cursorDefault"] []
 renderBoard : Address Action -> Board -> Html
 renderBoard address board =
   -- combines two lists into their cartesian product
-  let makeRows = 
+  let makeRows =
         List.map (\digit ->
           List.map (\letter->
-           (,) letter digit)
+           (letter, digit))
              ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
                [1 .. 8]
 
@@ -134,7 +134,7 @@ renderGame address game =
 
 renderStatusBar : String -> Html
 ---renderStatusBar : Status -> Html
-renderStatusBar status = 
+renderStatusBar status =
  -- case status of
    -- Waiting ->
 
