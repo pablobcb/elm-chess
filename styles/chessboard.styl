@@ -1,0 +1,21 @@
+.chessboard
+  height: $dimension-size
+  width:  $dimension-size
+  margin-left  auto
+  margin-right auto
+  border: 3px solid #333
+
+  .square
+    display: inline-block
+
+    &:nth-of-type(16n + 16),
+    &:nth-of-type(16n + 14),
+    &:nth-of-type(16n + 12),
+    &:nth-of-type(16n + 10),
+    &:nth-of-type(16n + 7),
+    &:nth-of-type(16n + 5),
+    &:nth-of-type(16n + 3),
+    &:nth-of-type(16n + 1)
+      background #ccc
+      background linear-gradient(top, #ccc, #eee)
+      box-shadow inset 0 0 10px rgba(0,0,0,.4)
