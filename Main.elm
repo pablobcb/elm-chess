@@ -1,119 +1,136 @@
-
---import Counter exposing (update, view)
---import StartApp.Simple exposing (start)
-
-
---main =
-  --start
---    { model = 0
---    , update = update
---    , view = view
---    }
-import Html exposing (..)
+import Array           exposing ( Array(..) )
+import Dict            exposing (..)
+import Html            exposing (..)
 import Html.Attributes exposing (..)
-import Maybe exposing  ( Maybe(..) )
-import Array exposing  ( Array(..) )
-import Text exposing   ( Text(..) )
-import String exposing ( fromChar )
-import Dict exposing (..)
+import Html.Events     exposing (..)
+import Maybe           exposing ( Maybe(..) )
+import Maybe.Extra     exposing (..)
+import Signal          exposing (..)
+import StartApp.Simple exposing (..)
+import String          exposing (..)
+import Text            exposing ( Text(..) )
 
 import Model exposing (..)
 
 
 --============================ Update ==============================
-type alias Position = String
-type Action = Click Position
+
+
+update : Action -> Game -> Game
+update action board =
+    case action of
+      Click position-> board
+
+
 --============================ View ================================
-
-
------------------------------- Style -------------------------------           
-
-center = [ ("text-align", "center"), ("vertical-align", "middle") ]
-
-boardStyle : Attribute
-boardStyle =
-    style <|
-      [ ("border", "2px solid #000")
-      , ("user-select", "none")
-       --, ("width", "640px"'')
-      ] ++ center
-
-
-squareStyle : Color -> Attribute
-squareStyle color =
-  let bgColor = case color of
-        Black -> ("background-color", "#808080")
-        White -> ("background-color", "#0000")
-  
-  in style <| bgColor ::
-    [ ("float", "left")
-    , ("width", "80px")
-    , ("height", "80px")
-    , ("font-size", "400%")
-    ] ++ center
-
-------------------------- Render----------------------------------
 --mover tudo que retorna html para a view
+getHtmlCode : Piece -> Html
+getHtmlCode piece = text
+  <| String.fromChar
+  <| case piece.figure of
+       King -> case piece.color of
+         Black -> '\x265A'
+         White -> '\x2654'
 
-renderPiece : Piece -> Html
-renderPiece piece = text <| String.fromChar <| 
-  case piece.figure of
-    King -> case piece.color of
-      Black -> '\x265A'
-      White -> '\x2654'
+       Queen -> case piece.color of
+         Black -> '\x265B'
+         White -> '\x2655'
 
-    Queen -> case piece.color of
-      Black -> '\x265B'
-      White -> '\x2655'
+       Rook -> case piece.color of
+         Black -> '\x265C'
+         White -> '\x2656'
 
-    Rook -> case piece.color of
-      Black -> '\x265C'
-      White -> '\x2656'
+       Bishop -> case piece.color of
+         Black -> '\x265D'
+         White -> '\x2657'
 
-    Bishop -> case piece.color of
-      Black -> '\x265D'
-      White -> '\x2657'
+       Knight -> case piece.color of
+         Black -> '\x265E'
+         White -> '\x2658'
 
-    Knight -> case piece.color of
-      Black -> '\x265E'
-      White -> '\x2658'
+       Pawn -> case piece.color of
+         Black -> '\x265F'
+         White -> '\x2659'
 
-    Pawn -> case piece.color of
-      Black -> '\x265F'
-      White -> '\x2659'
-
-
-renderSquare : Square -> Html
-renderSquare square = 
-  td [ squareStyle square.color ] <| case square.piece of
-    Just piece -> [ renderPiece piece]
-    Nothing -> []
+renderEmptyChessboardSquare : Html
+renderEmptyChessboardSquare =
+  div [ class "chessboard__square chessboard__square--empty" ] []
 
 
-renderRow : List (Maybe Square) -> Html
-renderRow squares = 
-  tr [] <| List.map (\square ->
-             case square of
-               Just square' -> renderSquare square'
-               Nothing -> td [] []) squares
+renderBoard : Address Action -> Board -> Html
+renderBoard address board =
+  -- combines two lists into their cartesian product
+  let makeRows =
+        List.map (\digit ->
+          List.map (\letter->
+           (letter, digit))
+             ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
+               [1, 2, 3 , 4, 5, 6, 7, 8]
 
 
-getRow : Board -> List Position -> List (Maybe Square)
-getRow board positions = List.map (\key -> Dict.get key board) positions
+      renderPiece piece position =
+        div [ class "chessboard__square", onClick address (Click position) ]
+            [ getHtmlCode piece ]
+
+      renderChessboardSquare position =
+        let piece = Maybe.Extra.join <| Dict.get position board
+        in case piece of
+          Nothing ->
+            renderEmptyChessboardSquare
+
+          Just piece' ->
+            renderPiece piece' position
 
 
-renderBoard : Board -> Html
-renderBoard board =
-  let getRow positions = List.map (\key -> Dict.get key board) positions
-  in table [ id "chessBoard" ] <| List.map (renderRow << getRow)
-           [ ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"]
-           , ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"]
-           , ["A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3"]
-           , ["A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4"]
-           , ["A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5"]
-           , ["A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6"]
-           , ["A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7"]
-           , ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"]
-           ]
-main : Html
-main = renderBoard makeInitialBoard
+      renderRow positions =
+        div [] <| List.map renderChessboardSquare positions
+
+
+  in div [ class "chessboard" ]
+       <| List.map renderRow
+       <| makeRows
+
+renderGraveyard : Player -> Html
+renderGraveyard player =
+  let renderSquare piece =
+        div [ class "square" ] [ getHtmlCode piece ]
+
+      renderChessboardSquare figure =
+        case figure of
+          Nothing ->
+            renderEmptyChessboardSquare
+
+          Just figure' ->
+            renderSquare <| piece figure' player.color
+
+  in div [ class <| (++) "graveyard " <| toLower <| toString player.color ]
+         ( List.map renderChessboardSquare player.graveyard )
+
+
+renderGame : Address Action -> Game -> Html
+renderGame address game =
+  let p1 = game.player1
+      p2 = game.player2
+
+  in div [ class "game" ]
+         [ renderGraveyard p2
+         , renderBoard address game.board
+         , renderGraveyard p1
+         , renderStatusBar "Lorem Ipsum"
+         ]
+
+
+renderStatusBar : String -> Html
+---renderStatusBar : Status -> Html
+renderStatusBar status =
+ -- case status of
+   -- Waiting ->
+
+  div [ class "status-bar" ] [ text status ]
+
+
+main = StartApp.Simple.start
+    { model  = makeInitialGame
+    , view   = renderGame
+    , update = update
+    }

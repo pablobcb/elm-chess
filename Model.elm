@@ -1,12 +1,14 @@
 module Model where
 
 import Maybe exposing (..)
-import Dict exposing (..)
-import List exposing (..)
+import Dict  exposing (..)
+import List  exposing (..)
 
 
-type Color = Black 
+{-------------------------- Color ---------------------------}
+type Color = Black
            | White
+
 
 other : Color -> Color
 other color =
@@ -14,86 +16,125 @@ other color =
     Black -> White
     White -> Black
 
-type alias Player = { color : Color }
 
-
-type Figure = Pawn 
+{-------------------------- Piece ---------------------------}
+type Figure = Pawn
             | Knight
-            | Bishop 
-            | Rook 
-            | Queen 
-            | King 
+            | Bishop
+            | Rook
+            | Queen
+            | King
 
 
-type alias Piece = { figure : Figure , moved  : Bool , color  : Color }
-
-piece : Figure -> Color -> Bool -> Piece
-piece f c m = { figure = f, moved = m, color = c }
-
-
-type alias Square = { piece : Maybe Piece , color : Color }
-
-square : Color -> Maybe Piece -> Square
-square c p  = { piece = p, color = c }
+type alias Piece =
+  { figure : Figure
+  , moved  : Bool
+  , color  : Color
+  }
 
 
-type alias Board = Dict String Square
+piece : Figure -> Color -> Piece
+piece f c =
+  { figure = f
+  , color  = c
+  , moved  = False
+  }
 
---type alias Game = {
---  board : Board,
---  p1: Player,
---  p2: Player,
---  p1Graveyard : List Piece,
---  p2Graveyard : List Piece
---}
 
+{-------------------------- Board ---------------------------}
+type alias Position = (Char, Int)
+
+
+type alias Board = Dict Position (Maybe Piece)
+
+
+emptyRow : List (Maybe a)
+emptyRow = List.repeat 8 Nothing
 
 
 makeInitialBoard : Board
 makeInitialBoard =
-  let pawnRow pawnColor firstSquareColor = List.map2 square
-        (concat <| repeat 4 [firstSquareColor, other firstSquareColor]) 
-        (repeat 8 <| Just <| piece Pawn pawnColor False)
+  let pawnRow pawnColor = repeat 8
+        <| Just
+        <| piece Pawn pawnColor
 
 
-      emptyRow color = List.map2 square 
-        (concat <| repeat 4 [color, other color])
-        (repeat 8 Nothing)
+      makePiece pieceColor figure =
+          Just <| piece figure pieceColor
 
 
-      makeSquare pieceColor squareColor figure =
-        square squareColor << Just <| piece figure pieceColor False
+      makeFirstRow color = List.map
+        (makePiece color)
+        [ Rook, Knight, Bishop , Queen
+        , King, Bishop, Knight, Rook
+        ]
 
-
-      firstRow = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
 
       zip = List.map2 (,)
 
-      loopList startingColor = 
-        concat <| repeat 4 [startingColor, other startingColor]
 
-  in Dict.fromList <| 
-    zip ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"] 
-        (List.map2 (makeSquare Black) (loopList White) firstRow) ++
+      makeRow number = zip
+        ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+        (List.repeat 8 number)
 
-    zip ["A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7"]
-        (pawnRow Black Black)                         ++
 
-    zip ["A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6"]
-        (emptyRow White)                              ++
-    
-    zip ["A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5"] 
-        (emptyRow Black)                              ++
+  in Dict.fromList <| zip (makeRow 8) (makeFirstRow Black)
+                   ++ zip (makeRow 7) (pawnRow Black)
+                   ++ zip (makeRow 6) emptyRow
+                   ++ zip (makeRow 5) emptyRow
+                   ++ zip (makeRow 4) emptyRow
+                   ++ zip (makeRow 3) emptyRow
+                   ++ zip (makeRow 2) (pawnRow White)
+                   ++ zip (makeRow 1) (makeFirstRow White)
 
-    zip ["A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4"] 
-        (emptyRow White)                              ++
-    
-    zip ["A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3"]
-        (emptyRow Black)                              ++
 
-    zip ["A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2"]
-        (pawnRow White White)                         ++
+{-------------------------- Game -------------------------}
+type alias Graveyard = List (Maybe Figure)
 
-    zip ["A1", "B1",  "C1","D1", "E1", "F1", "G1", "H1"]
-        (List.map2 (makeSquare White) (loopList Black) firstRow)
-    
+
+type alias Player =
+  { color     : Color
+  , graveyard : Graveyard
+  }
+
+
+type Action = Click Position
+            | Promotion Figure
+            | Play
+
+
+type Status = Waiting Action Color
+            | Finished Player
+
+
+type alias Game =
+  { board   : Board
+  , player1 : Player
+  , player2 : Player
+  , status  : Status
+  }
+
+
+player : Color -> Player
+player color =
+  { color     = color
+  --, graveyard = emptyRow ++ emptyRow
+  , graveyard = repeat 16 <| Just Pawn
+  }
+
+
+game : Status -> Board -> Player -> Player -> Game
+game status board p1 p2 =
+  { board   = board
+  , player1 = p1
+  , player2 = p2
+  , status  = status
+  }
+
+
+makeInitialGame : Game
+makeInitialGame =
+  game (Waiting Play White)
+       makeInitialBoard
+       (player Black)
+       (player White)
