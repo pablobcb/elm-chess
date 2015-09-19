@@ -54,69 +54,52 @@ getHtmlCode piece = text
          Black -> '\x265F'
          White -> '\x2659'
 
-renderEmptySquare : Html
-renderEmptySquare = td [ class "cursorDefault"] []
+renderSquare : Address Action -> (Position, Maybe Piece) -> Html
+renderSquare address (position, piece) =
+  case piece of
+    Nothing ->
+      div [ class "square" ] [ text " " ]
 
+    Just piece' ->
+      div [ class "square", onClick address (Click position) ]
+          [ getHtmlCode piece' ]
 
 renderBoard : Address Action -> Board -> Html
 renderBoard address board =
-  -- combines two lists into their cartesian product
-  let makeRows = 
+  let
+    positions : List (Char, Int)
+    positions =
+      List.concat <|
         List.map (\digit ->
           List.map (\letter->
-           (,) letter digit)
-             ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
-               [1 .. 8]
+             (letter, digit))
+               ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
+                 [1 .. 8]
+
+    pieces : List (Maybe Piece)
+    pieces =
+      List.map (Maybe.Extra.join << ((flip Dict.get) board)) positions
+
+    zipped = List.map2 (,) positions pieces
+
+    squares = List.map (renderSquare address) zipped
+
+  in div [ class "chessboard" ] squares
 
 
-      renderPiece piece position =
-        td [ class "selectNone cursorGrab"
-           , onClick address (Click position)
-           ]
-           [ getHtmlCode piece ]
+--renderGraveyard : Player -> Html
+--renderGraveyard player =
+--  let
+--    renderChessboardSquare figure =
+--      case figure of
+--        Nothing ->
+--          renderSquare
 
+--        Just figure' ->
+--          renderSquare <| piece figure' player.color
 
-      renderSquare position =
-        let piece = Maybe.Extra.join <| Dict.get position board
-        in case piece of
-          Nothing ->
-            renderEmptySquare
-          
-          Just piece' ->
-            renderPiece piece' position
-
-
-      renderRow positions =
-        tr [] <| List.map renderSquare positions
-
-
-  in table [ id "chessBoard" ]
-       <| List.map renderRow
-       <| makeRows
-
-renderGraveyard : Player -> Html
-renderGraveyard player =
-  let renderPiece piece =
-        td [ class "grave selectNone" ] [ getHtmlCode piece ]
-
-
-      renderSquare figure =
-        case figure of
-          Nothing ->
-            renderEmptySquare
-
-          Just figure' ->
-            renderPiece <| piece figure' player.color
-
-
-      renderRow row =
-        tr [] <| List.map renderSquare row
-
-
-  in table [ class <| (++) "graveyard"  <| toString player.color ]
-           [ renderRow <| List.take 8 player.graveyard
-           , renderRow <| List.drop 8 player.graveyard
-           ]
+--  in div [ class <| (++) "graveyard " <| toLower <| toString player.color ]
+--         ( List.map renderChessboardSquare player.graveyard )
 
 
 renderGame : Address Action -> Game -> Html
@@ -124,21 +107,23 @@ renderGame address game =
   let p1 = game.player1
       p2 = game.player2
 
-  in div [ id "game" ]
-         [ renderGraveyard p2
-         , renderBoard address game.board
-         , renderGraveyard p1
-         , renderStatusBar "StatusBarText"
+  in div [ class "game" ]
+         [ div [ class "board-and-graveyard" ]
+               [ --renderGraveyard p2
+                renderBoard address game.board
+               --, renderGraveyard p1
+               ]
+         , renderStatusBar "Lorem Ipsum"
          ]
 
 
 renderStatusBar : String -> Html
 ---renderStatusBar : Status -> Html
-renderStatusBar status = 
+renderStatusBar status =
  -- case status of
    -- Waiting ->
 
-  div [ id "statusBar" ] [ text status ]
+  div [ class "status-bar" ] [ text status ]
 
 
 main = StartApp.Simple.start
