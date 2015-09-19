@@ -61,7 +61,7 @@ renderEmptySquare = td [ class "cursorDefault"] []
 renderBoard : Address Action -> Board -> Html
 renderBoard address board =
   -- combines two lists into their cartesian product
-  let makePositions = 
+  let makeRows = 
         List.map (\digit ->
           List.map (\letter->
            (,) letter digit)
@@ -92,7 +92,7 @@ renderBoard address board =
 
   in table [ id "chessBoard" ]
        <| List.map renderRow
-       <| makePositions
+       <| makeRows
 
 renderGraveyard : Player -> Html
 renderGraveyard player =
