@@ -26,43 +26,46 @@ update action board =
 --============================ View ================================
 --mover tudo que retorna html para a view
 
-getHtmlCode : Piece -> Html
-getHtmlCode piece = text
-  <| String.fromChar
-  <| case piece.figure of
-       King -> case piece.color of
-         Black -> '\x265A'
-         White -> '\x2654'
+renderPiece : Piece -> Html
+renderPiece piece =
+  let
+    className =
+      case piece.figure of
+        King -> case piece.color of
+          Black -> "black king"
+          White -> "white king"
 
-       Queen -> case piece.color of
-         Black -> '\x265B'
-         White -> '\x2655'
+        Queen -> case piece.color of
+          Black -> "black queen"
+          White -> "white queen"
 
-       Rook -> case piece.color of
-         Black -> '\x265C'
-         White -> '\x2656'
+        Rook -> case piece.color of
+          Black -> "black rook"
+          White -> "white rook"
 
-       Bishop -> case piece.color of
-         Black -> '\x265D'
-         White -> '\x2657'
+        Bishop -> case piece.color of
+          Black -> "black bishop"
+          White -> "white bishop"
 
-       Knight -> case piece.color of
-         Black -> '\x265E'
-         White -> '\x2658'
+        Knight -> case piece.color of
+          Black -> "black knight"
+          White -> "white knight"
 
-       Pawn -> case piece.color of
-         Black -> '\x265F'
-         White -> '\x2659'
+        Pawn -> case piece.color of
+          Black -> "black pawn"
+          White -> "white pawn"
+
+  in div [ class <| "piece " ++ className ] [ ]
 
 renderSquare : Address Action -> (Position, Maybe Piece) -> Html
 renderSquare address (position, piece) =
   case piece of
     Nothing ->
-      div [ class "square" ] [ text " " ]
+      div [ class "square" ] [ ]
 
     Just piece' ->
       div [ class "square", onClick address (Click position) ]
-          [ getHtmlCode piece' ]
+          [ renderPiece piece' ]
 
 renderBoard : Address Action -> Board -> Html
 renderBoard address board =
