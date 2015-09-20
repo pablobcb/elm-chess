@@ -1,4 +1,4 @@
-module Update where 
+module Update where
 
 import Model exposing (..)
 
