@@ -46,15 +46,23 @@ renderPiece piece =
 
   in div [ class <| "piece " ++ className ] [ ]
 
-renderSquare : Address Action -> Position -> Maybe Piece -> Html
+
+renderSquare : Address Action -> Maybe Position -> Maybe Piece -> Html
 renderSquare address position piece =
   case piece of
     Nothing ->
       div [ class "square" ] [ ]
 
     Just piece' ->
-      div [ class "square", onClick address (Origin position) ]
-          [ renderPiece piece' ]
+      case position of
+        Nothing ->
+          div [ class "square" ]
+              [ renderPiece piece' ]
+
+        Just position' ->
+          div [ class "square", onClick address (Origin position') ]
+              [ renderPiece piece' ]
+
 
 renderBoard : Address Action -> Board -> Html
 renderBoard address board =
@@ -77,18 +85,22 @@ renderBoard address board =
   in div [ class "chessboard" ] squares
 
 
---renderGraveyard : Player -> Html
---renderGraveyard player =
---  let
---    renderChessboardSquare figure =
---      case figure of
---        Nothing ->
---          renderSquare
+renderGraveyard : Address Action -> Player -> Html
+renderGraveyard address player =
+  let
+    renderGraveyardSquare : Maybe Figure -> Html
+    renderGraveyardSquare figure =
+      case figure of
+        Nothing ->
+          renderSquare address Nothing Nothing
 
---        Just figure' ->
---          renderSquare <| piece figure' player.color
---  in div [ class <| (++) "graveyard " <| toLower <| toString player.color ]
---         ( List.map renderChessboardSquare player.graveyard )
+        Just figure' ->
+          renderSquare address Nothing (Just (piece figure' player.color))
+
+    className = (++) "graveyard " <| toLower <| toString player.color
+
+  in div [ class className ]
+         ( List.map renderGraveyardSquare player.graveyard )
 
 
 renderStatusBar : String -> Html
@@ -98,14 +110,11 @@ renderStatusBar status =
 
 renderGame : Address Action -> Game -> Html
 renderGame address game =
-  let p1 = game.player1
-      p2 = game.player2
-
-  in div [ class "game" ]
-         [ div [ class "board-and-graveyard" ]
-               [ --renderGraveyard p2
-                renderBoard address game.board
-               --, renderGraveyard p1
-               ]
-         , renderStatusBar "Lorem Ipsum"
-         ]
+  div [ class "game" ]
+      [ div [ class "board-and-graveyard" ]
+            [ renderGraveyard address game.player2
+            , renderBoard address game.board
+            , renderGraveyard address game.player1
+            ]
+      , renderStatusBar "Welcome to elm-chess"
+      ]
