@@ -5,10 +5,14 @@ import Model exposing (..)
 type Action = Origin Position
             | Destination Position
             | Promotion Figure
+            | Restart
 
 
 update : Action -> Game -> Game
-update action board =
+update action game =
     case action of
       Origin position ->
-        board
+        { game | board <- game.board }
+
+      Restart ->
+        makeInitialGame
