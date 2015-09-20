@@ -1,8 +1,9 @@
 module Model where
 
-import Maybe exposing (..)
-import Dict  exposing (..)
-import List  exposing (..)
+import Maybe       exposing (..)
+import Maybe.Extra exposing (..)
+import Dict        exposing (..)
+import List        exposing (..)
 
 
 {-------------------------- Color ---------------------------}
@@ -46,6 +47,10 @@ type alias Position = (Char, Int)
 
 
 type alias Board = Dict Position (Maybe Piece)
+
+getSquareContent : Board -> Position -> Maybe Piece
+getSquareContent board =
+  Maybe.Extra.join << (flip Dict.get) board
 
 
 emptyRow : List (Maybe a)
@@ -98,20 +103,11 @@ type alias Player =
   }
 
 
-type Action = Click Position
-            | Promotion Figure
-            | Play
-
-
-type Status = Waiting Action Color
-            | Finished Player
-
-
 type alias Game =
   { board   : Board
   , player1 : Player
   , player2 : Player
-  , status  : Status
+  , turn    : Color
   }
 
 
@@ -123,18 +119,10 @@ player color =
   }
 
 
-game : Status -> Board -> Player -> Player -> Game
-game status board p1 p2 =
-  { board   = board
-  , player1 = p1
-  , player2 = p2
-  , status  = status
-  }
-
-
 makeInitialGame : Game
 makeInitialGame =
-  game (Waiting Play White)
-       makeInitialBoard
-       (player Black)
-       (player White)
+  { board   = makeInitialBoard
+  , player1 = (player Black)
+  , player2 = (player White)
+  , turn    = White
+  }
