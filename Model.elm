@@ -1,8 +1,9 @@
 module Model where
 
-import Maybe exposing (..)
-import Dict  exposing (..)
-import List  exposing (..)
+import Maybe       exposing (..)
+import Maybe.Extra exposing (..)
+import Dict        exposing (..)
+import List        exposing (..)
 
 
 {-------------------------- Color ---------------------------}
@@ -34,7 +35,7 @@ type alias Piece =
 
 
 piece : Figure -> Color -> Piece
-piece f c = 
+piece f c =
   { figure = f
   , color  = c
   , moved  = False
@@ -47,6 +48,10 @@ type alias Position = (Char, Int)
 
 type alias Board = Dict Position (Maybe Piece)
 
+getSquareContent : Board -> Position -> Maybe Piece
+getSquareContent board =
+  Maybe.Extra.join << (flip Dict.get) board
+
 
 emptyRow : List (Maybe a)
 emptyRow = List.repeat 8 Nothing
@@ -55,7 +60,7 @@ emptyRow = List.repeat 8 Nothing
 makeInitialBoard : Board
 makeInitialBoard =
   let pawnRow pawnColor = repeat 8
-        <| Just 
+        <| Just
         <| piece Pawn pawnColor
 
 
@@ -64,16 +69,16 @@ makeInitialBoard =
 
 
       makeFirstRow color = List.map
-        (makePiece color) 
+        (makePiece color)
         [ Rook, Knight, Bishop , Queen
         , King, Bishop, Knight, Rook
         ]
-      
+
 
       zip = List.map2 (,)
 
 
-      makeRow number = zip 
+      makeRow number = zip
         ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
         (List.repeat 8 number)
 
@@ -98,43 +103,26 @@ type alias Player =
   }
 
 
-type Action = Click Position
-            | Promotion Figure
-            | Play
-
-
-type Status = Waiting Action Color
-            | Finished Player
-
-
 type alias Game =
   { board   : Board
   , player1 : Player
   , player2 : Player
-  , status  : Status
+  , turn    : Color
   }
 
 
 player : Color -> Player
-player color = 
+player color =
   { color     = color
-  , graveyard = emptyRow ++ emptyRow
---  , graveyard = repeat 16 <| Just Pawn
-  }
-
-
-game : Status -> Board -> Player -> Player -> Game
-game status board p1 p2 =
-  { board   = board
-  , player1 = p1
-  , player2 = p2
-  , status  = status
+  --, graveyard = emptyRow ++ emptyRow
+  , graveyard = repeat 16 <| Just Pawn
   }
 
 
 makeInitialGame : Game
 makeInitialGame =
-  game (Waiting Play White)
-       makeInitialBoard
-       (player Black)
-       (player White)
+  { board   = makeInitialBoard
+  , player1 = (player Black)
+  , player2 = (player White)
+  , turn    = White
+  }
