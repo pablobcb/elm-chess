@@ -1,3 +1,5 @@
+module Main(main) where 
+
 import StartApp.Simple as App
 
 import Model  exposing (..)
