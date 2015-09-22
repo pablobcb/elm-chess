@@ -10,3 +10,4 @@ Study Project
 ## TODO:
 > pegar os eventos de mouse corretos para setar o icone do mouse
 > escolher fonte bonita pras peças e status bar (pode ser diferentes)
+> move piece envolvendo o garveyard

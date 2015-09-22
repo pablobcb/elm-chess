@@ -49,8 +49,11 @@ update action game =
               then
                 let 
                   game' = { game | board <- move origin selectedPosition game.board }
+
+                  promoted = (snd selectedPosition == 1) || (snd selectedPosition == 8)
+                  
                 in 
-                  if (snd selectedPosition == 1) || (snd selectedPosition == 8)
+                  if promoted
                   then
                     { game'
                     | turn  <- player
