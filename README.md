@@ -1,13 +1,19 @@
 ## Elm Chess
 Study Project
 
-## Run Instructions
+## Install Instructions
 - Install npm
 - Install Elm (npm install -g elm)
 - Instal Stylus (npm install -g stylus)
+
+## Run Instructions
 - run `make build`
 
+## Debug Instructions
+- run `elm-reactor`
+- debugger will be avaliable at http://localhost:8000/index.html
+
 ## TODO:
-> pegar os eventos de mouse corretos para setar o icone do mouse
-> escolher fonte bonita pras peças e status bar (pode ser diferentes)
-> move piece envolvendo o garveyard
+> set correct mouse icons for pieces
+> choose better font (for status bar and pieces)
+> function that updates board and graveyard (move + attack)

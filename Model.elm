@@ -101,11 +101,12 @@ type alias Player =
   , graveyard : Graveyard
   }
 
+type alias Winner = Color
 
 type State = Origin
            | Destination Position
            | Promotion Position
-           | Finished
+           | Finished Winner
 
 type alias Game =
   { board   : Board

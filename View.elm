@@ -91,23 +91,43 @@ renderBoard address board =
 
 renderGame : Address Action -> Game -> Html
 renderGame address game =
-  let p1 = game.player1
-      p2 = game.player2
+  let
+    p1 = game.player1
 
-  in div [ class "game" ]
-         [ div [ class "board-and-graveyard" ]
-               [ --renderGraveyard p2
-                renderBoard address game.board
-               --, renderGraveyard p1
-               ]
-         , renderStatusBar "Lorem Ipsum"
-         ]
+    p2 = game.player2
+
+  in 
+    div [ class "game" ]
+        [ renderStatusBar address game
+        , div [ class "board-and-graveyard" ]
+              [ --renderGraveyard p2
+               renderBoard address game.board
+              --, renderGraveyard p1
+              ]
+        ]
 
 
-renderStatusBar : String -> Html
+renderStatusBar : Address Action -> Game -> Html
 ---renderStatusBar : Status -> Html
-renderStatusBar status =
+renderStatusBar address game =
+  let
+    prefix = "waiting for " ++ (toString game.turn) ++ " player"
+
+    status = 
+      case game.state of
+        Origin ->
+           prefix ++ " to select a piece"
+
+        Destination _ ->
+          prefix ++ " to select a destination"
+
+        Promotion _ ->
+          "Breno"
+
+        Finished winner ->
+          "the game has ended, " ++ 
+          (toString winner) ++ " has won!"
  -- case status of
    -- Waiting ->
-
-  div [ class "status-bar" ] [ text status ]
+  in
+    div [ class "status-bar" ] [ text status ]
