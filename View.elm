@@ -50,7 +50,7 @@ renderSquare address position piece =
       div [ class "square" ] [ text " " ]
 
     Just piece' ->
-      div [ class "square", onClick address (Origin position) ]
+      div [ class "square", onClick address (Select position) ]
           [ getHtmlCode piece' ]
 
 renderBoard : Address Action -> Board -> Html
@@ -74,19 +74,19 @@ renderBoard address board =
   in div [ class "chessboard" ] squares
 
 
---renderGraveyard : Player -> Html
---renderGraveyard player =
+--renderGraveyard : Address Action -> Player -> Html
+--
+--renderGraveyard address player =
 --  let
 --    renderChessboardSquare figure =
 --      case figure of
 --        Nothing ->
 --          renderSquare
-
 --        Just figure' ->
---          renderSquare <| piece figure' player.color
-
---  in div [ class <| (++) "graveyard " <| toLower <| toString player.color ]
---         ( List.map renderChessboardSquare player.graveyard )
+--          renderSquare address Nothing <| piece figure' player.color
+--  in 
+--    div [ class <| (++) "graveyard " <| toLower <| toString player.color ]
+ --       ( List.map renderChessboardSquare player.graveyard )
 
 
 renderGame : Address Action -> Game -> Html

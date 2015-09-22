@@ -5,7 +5,6 @@ import Maybe.Extra exposing (..)
 import Dict        exposing (..)
 import List        exposing (..)
 
-
 {-------------------------- Color ---------------------------}
 type Color = Black
            | White
@@ -103,11 +102,17 @@ type alias Player =
   }
 
 
+type State = Origin
+           | Destination Position
+           | Promotion Position
+           | Finished
+
 type alias Game =
   { board   : Board
   , player1 : Player
   , player2 : Player
   , turn    : Color
+  , state   : State
   }
 
 
@@ -125,4 +130,5 @@ makeInitialGame =
   , player1 = (player Black)
   , player2 = (player White)
   , turn    = White
+  , state   = Origin
   }

@@ -1,10 +1,12 @@
 ## Elm Chess
 Study Project
 
-## Hacking
-- Install Elm, Stylus and make
+## Run Instructions
+- Install npm
+- Install Elm (npm install -g elm)
+- Instal Stylus (npm install -g stylus)
 - run `make build`
 
 ## TODO:
 > pegar os eventos de mouse corretos para setar o icone do mouse
-> fazer uma maquina de estados do xadrez
+> escolher fonte bonita pras peças e status bar (pode ser diferentes)
