@@ -55,16 +55,17 @@ getSquareContent board =
 
 validateMove origin destination game =
   let
-    isSameColor =
+    otherColor =
       case getSquareContent game.board destination of
         Just piece ->
-          piece.color == game.turn
+          piece.color /= game.turn
 
         Nothing ->
-          False
+          True
 
   in
-    (origin /= destination) && isSameColor
+    (origin /= destination) -- a piece cant move to the same place
+     && otherColor          -- a piece cant take an ally
 
 move : Game -> Position -> Position -> Game
 move game origin destination =
