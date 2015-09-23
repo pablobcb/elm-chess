@@ -53,6 +53,13 @@ getSquareContent board =
   Maybe.Extra.join << (flip Dict.get) board
 
 
+validatePosition a b  = True
+
+
+move : Position -> Position -> Board
+move origin destination board = board
+
+
 emptyRow : List (Maybe a)
 emptyRow = List.repeat 8 Nothing
 
