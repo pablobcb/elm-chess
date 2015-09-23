@@ -17,44 +17,35 @@ import Update exposing (..)
 
 {-------------------------- Piece -------------------------}
 
-getHtmlCode : Piece -> Html
-getHtmlCode piece = text
-  <| String.fromChar
-  <| case piece.figure of
-       King -> case piece.color of
-         Black -> '\x265A'
-         White -> '\x2654'
+getPieceClass : Piece -> String
+getPieceClass piece =
+  let className =
+    case piece.figure of
+      King -> case piece.color of
+        Black -> "black king"
+        White -> "white king"
 
-renderPiece : Piece -> Html
-renderPiece piece =
-  let
-    className =
-      case piece.figure of
-        King -> case piece.color of
-          Black -> "black king"
-          White -> "white king"
+      Queen -> case piece.color of
+        Black -> "black queen"
+        White -> "white queen"
 
-        Queen -> case piece.color of
-          Black -> "black queen"
-          White -> "white queen"
+      Rook -> case piece.color of
+        Black -> "black rook"
+        White -> "white rook"
 
-        Rook -> case piece.color of
-          Black -> "black rook"
-          White -> "white rook"
+      Bishop -> case piece.color of
+        Black -> "black bishop"
+        White -> "white bishop"
 
-        Bishop -> case piece.color of
-          Black -> "black bishop"
-          White -> "white bishop"
+      Knight -> case piece.color of
+        Black -> "black knight"
+        White -> "white knight"
 
-        Knight -> case piece.color of
-          Black -> "black knight"
-          White -> "white knight"
+      Pawn -> case piece.color of
+        Black -> "black pawn"
+        White -> "white pawn"
 
-        Pawn -> case piece.color of
-          Black -> "black pawn"
-          White -> "white pawn"
-
-  in div [ class <| "piece " ++ className ] [ ]
+  in "piece " ++ className
 
 
 {----------------------------- Board ----------------------------}
@@ -66,8 +57,9 @@ renderBoardSquare address position square =
       div [ class "square" ] []
 
     Just piece ->
-      div [ class "square", onClick address (Select position) ]
-          [ getHtmlCode piece ]
+      div [ class <| "square" ++ (getPieceClass piece)
+          , onClick address (Select position)
+          ] []
 
 
 renderBoard : Address Action -> Board -> Html
@@ -88,20 +80,23 @@ renderBoard address board =
 
     squares = List.map2 (renderBoardSquare address) positions pieces
 
-  in div [ class "chessboard" ] squares
+  in
+    div [ class "chessboard" ] squares
 
 
 {----------------------------- Graveyard ----------------------------}
 
 renderGraveyardSquare : Square -> Html
 renderGraveyardSquare square =
-  div [ class "graveyard square" ]
-   <| case square of
-        Nothing ->
-          []
+  let
+    attrs =
+      case square of
+        Nothing -> ""
+        Just piece -> getPieceClass piece
 
-        Just piece ->
-          [ getHtmlCode piece ]
+  in
+    div [ class ("graveyard square " ++ attrs) ] []
+
 
 
 renderGraveyard : Player -> Html
