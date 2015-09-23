@@ -44,10 +44,11 @@ piece f c =
 {-------------------------- Board ---------------------------}
 type alias Position = (Char, Int)
 
+type alias Square = Maybe Piece
 
-type alias Board = Dict Position (Maybe Piece)
+type alias Board = Dict Position Square
 
-getSquareContent : Board -> Position -> Maybe Piece
+getSquareContent : Board -> Position -> Square
 getSquareContent board =
   Maybe.Extra.join << (flip Dict.get) board
 
