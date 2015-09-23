@@ -43,22 +43,36 @@ update action game =
                   game
 
                 Just piece ->
-                  { game
-                  | state <- Destination selectedPosition
-                  , turn  <- player
-                  }
+                  if game.turn /= piece.color
+                  then game
+                  else
+                    { game
+                    | state <- Destination selectedPosition
+                    , turn  <- player
+                    }
 
             -- validates the destination  nd checks if promotion
             -- should be granted to the moved piece
             Destination origin ->
-              if validateMove origin selectedPosition game.board
+              if validateMove origin selectedPosition game
               then -- valid move
                 let
                   game' = move game origin selectedPosition
 
                   row = snd selectedPosition
 
-                  promoted = row == 1 || row == 8
+                  isPawn =
+                    case getSquareContent game'.board origin of
+                      Just piece ->
+                        case piece.figure of
+                          Pawn -> True
+                          _ -> False
+
+                      Nothing -> False
+
+
+
+                  promoted = (row == 1 || row == 8) && isPawn
 
                 in
                   if promoted

@@ -101,18 +101,18 @@ renderGraveyardSquare square =
 
 
 
-renderGraveyard : Player -> Html
-renderGraveyard player =
+renderGraveyard : Graveyard -> Color -> Html
+renderGraveyard graveyard color =
   let
     renderSquare figure =
       case figure of
         Nothing ->
           renderGraveyardSquare Nothing
         Just figure' ->
-          renderGraveyardSquare <| Just <| piece figure' player.color
+          renderGraveyardSquare <| Just <| piece figure' color
   in
-    div [ class <| (++) "graveyard " <| toLower <| toString player.color ]
-        ( List.map renderSquare player.graveyard )
+    div [ class <| (++) "graveyard " <| toLower <| toString color ]
+        ( List.map renderSquare graveyard )
 
 
 {----------------------------- Status Bar ----------------------------}
@@ -145,19 +145,13 @@ renderStatusBar address game =
 
 renderGame : Address Action -> Game -> Html
 renderGame address game =
-  let
-    p1 = game.player1
-
-    p2 = game.player2
-
-  in
-    div [ class "game" ]
-        [ renderStatusBar address game
-        , div [ class "board-and-graveyard" ]
-              [ renderGraveyard p2
-              , renderBoard address game.board
-              , renderGraveyard p1
-              ]
-        ]
+  div [ class "game" ]
+      [ renderStatusBar address game
+      , div [ class "board-and-graveyard" ]
+            [ renderGraveyard game.graveyard1 Black
+            , renderBoard address game.board
+            , renderGraveyard game.graveyard2 White
+            ]
+      ]
 
 

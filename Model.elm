@@ -53,8 +53,18 @@ getSquareContent board =
   Maybe.Extra.join << (flip Dict.get) board
 
 
-validateMove a b c = True
+validateMove origin destination game =
+  let
+    isSameColor =
+      case getSquareContent game.board destination of
+        Just piece ->
+          piece.color == game.turn
 
+        Nothing ->
+          False
+
+  in
+    (origin /= destination) && isSameColor
 
 move : Game -> Position -> Position -> Game
 move game origin destination =
@@ -78,12 +88,16 @@ move game origin destination =
   in
     case destinationSquare of
       Just piece ->
-        game'
-        --let
-        --  graveyard' = (++) [Just piece.figure] <|
-        --    case game.turn of
-        --      Black ->
-        --        { game.player1
+        case game.turn of
+          White ->
+            { game'
+            | graveyard2 <- game'.graveyard2 ++ [Just piece.figure]
+            }
+
+          Black ->
+            { game'
+            | graveyard1 <- game'.graveyard1 ++ [Just piece.figure]
+            }
 
       Nothing ->
         game'
@@ -143,30 +157,34 @@ type alias Winner = Color
 type State = Origin
            | Destination Position
            | Promotion Position
+           | CheckMate
            | Finished Winner
 
 type alias Game =
-  { board   : Board
-  , player1 : Player
-  , player2 : Player
-  , turn    : Color
-  , state   : State
+  { board      : Board
+  , graveyard1 : Graveyard
+  , graveyard2 : Graveyard
+  , turn       : Color
+  , state      : State
   }
 
 
-player : Color -> Player
-player color =
-  { color     = color
-  , graveyard = emptyRow ++ emptyRow
-  --, graveyard = repeat 16 <| Just Pawn
-  }
+--player : Color -> Player
+--player color =
+--  { color     = color
+--  , graveyard = emptyRow ++ emptyRow
+--  --, graveyard = repeat 16 <| Just Pawn
+--  }
 
 
 makeInitialGame : Game
 makeInitialGame =
-  { board   = makeInitialBoard
-  , player1 = (player Black)
-  , player2 = (player White)
-  , turn    = White
-  , state   = Origin
-  }
+  let
+    emptyGraveyard = emptyRow ++ emptyRow
+  in
+    { board      = makeInitialBoard
+    , graveyard1 = emptyGraveyard
+    , graveyard2 = emptyGraveyard
+    , turn       = White
+    , state      = Origin
+    }
