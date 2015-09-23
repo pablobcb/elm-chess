@@ -15,7 +15,6 @@ import Text            exposing ( Text(..) )
 import Model exposing (..)
 import Update exposing (..)
 
-
 {-------------------------- Piece -------------------------}
 
 getHtmlCode : Piece -> Html
@@ -26,25 +25,36 @@ getHtmlCode piece = text
          Black -> '\x265A'
          White -> '\x2654'
 
-       Queen -> case piece.color of
-         Black -> '\x265B'
-         White -> '\x2655'
+renderPiece : Piece -> Html
+renderPiece piece =
+  let
+    className =
+      case piece.figure of
+        King -> case piece.color of
+          Black -> "black king"
+          White -> "white king"
 
-       Rook -> case piece.color of
-         Black -> '\x265C'
-         White -> '\x2656'
+        Queen -> case piece.color of
+          Black -> "black queen"
+          White -> "white queen"
 
-       Bishop -> case piece.color of
-         Black -> '\x265D'
-         White -> '\x2657'
+        Rook -> case piece.color of
+          Black -> "black rook"
+          White -> "white rook"
 
-       Knight -> case piece.color of
-         Black -> '\x265E'
-         White -> '\x2658'
+        Bishop -> case piece.color of
+          Black -> "black bishop"
+          White -> "white bishop"
 
-       Pawn -> case piece.color of
-         Black -> '\x265F'
-         White -> '\x2659'
+        Knight -> case piece.color of
+          Black -> "black knight"
+          White -> "white knight"
+
+        Pawn -> case piece.color of
+          Black -> "black pawn"
+          White -> "white pawn"
+
+  in div [ class <| "piece " ++ className ] [ ]
 
 
 {----------------------------- Board ----------------------------}

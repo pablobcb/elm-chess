@@ -1,0 +1,56 @@
+center-piece()
+  position: absolute
+  display: block
+  left: 0
+  width: 100%
+
+.piece
+  position relative
+
+  &.white.king::before
+    center-piece()
+    content: "♔"
+
+  &.white.queen::before
+    center-piece()
+    content: "♕"
+
+  &.white.rook::before
+    center-piece()
+    content: "♖"
+
+  &.white.bishop::before
+    center-piece()
+    content: "♗"
+
+  &.white.knight::before
+    center-piece()
+    content: "♘"
+
+  &.white.pawn::before
+    center-piece()
+    content: "♙"
+
+  &.black.king::before
+    center-piece()
+    content: "♚"
+
+  &.black.queen::before
+    center-piece()
+    content: "♛"
+
+  &.black.rook::before
+    center-piece()
+    content: "♜"
+
+  &.black.bishop::before
+    center-piece()
+    content: "♝"
+
+  &.black.knight::before
+    center-piece()
+    content: "♞"
+
+  &.black.pawn::before
+    center-piece()
+    content: "♟"
