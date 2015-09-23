@@ -57,7 +57,7 @@ renderBoardSquare address position square =
       div [ class "square" ] []
 
     Just piece ->
-      div [ class <| "square" ++ (getPieceClass piece)
+      div [ class <| "square " ++ (getPieceClass piece)
           , onClick address (Select position)
           ] []
 
