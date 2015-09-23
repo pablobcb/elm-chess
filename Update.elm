@@ -51,10 +51,10 @@ update action game =
             -- validates the destination  nd checks if promotion
             -- should be granted to the moved piece
             Destination origin ->
-              if validatePosition origin selectedPosition
-              then
+              if validateMove origin selectedPosition game.board
+              then -- valid move
                 let
-                  game' = { game | board <- move game.board origin selectedPosition }
+                  game' =  { game | board <- move game.board origin selectedPosition }
 
                   row = snd selectedPosition
 
@@ -62,17 +62,17 @@ update action game =
 
                 in
                   if promoted
-                  then
+                  then -- sets state to promotion
                     { game'
                     | turn  <- player
                     , state <- Promotion selectedPosition
                     }
-                  else
+                  else -- passes the turn
                     { game'
                     | turn  <- other player
                     , state <- Origin
                     }
-              else
+              else -- invalid move
                 { game
                 | turn  <- player
                 , state <- Origin
