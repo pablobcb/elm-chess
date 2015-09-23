@@ -54,7 +54,9 @@ renderBoardSquare : Address Action -> Position -> Square -> Html
 renderBoardSquare address position square =
   case square of
     Nothing ->
-      div [ class "square" ] []
+      div [ class "square"
+          , onClick address (Select position)
+          ] []
 
     Just piece ->
       div [ class <| "square " ++ (getPieceClass piece)
@@ -129,7 +131,7 @@ renderStatusBar address game =
           prefix ++ " to select a destination"
 
         Promotion _ ->
-          "Breno"
+          "Promotion"
 
         Finished winner ->
           "the game has ended, " ++

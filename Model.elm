@@ -56,8 +56,37 @@ getSquareContent board =
 validateMove a b c = True
 
 
-move : Board -> Position -> Position -> Board
-move board origin destination = board
+move : Game -> Position -> Position -> Game
+move game origin destination =
+  let
+    board = game.board
+
+    destinationSquare =
+      getSquareContent board destination
+
+    originSquare =
+      getSquareContent board origin
+
+    board' = Dict.insert
+      destination
+      originSquare
+      board
+
+    game' =
+      { game | board <- Dict.insert origin Nothing board'}
+
+  in
+    case destinationSquare of
+      Just piece ->
+        game'
+        --let
+        --  graveyard' = (++) [Just piece.figure] <|
+        --    case game.turn of
+        --      Black ->
+        --        { game.player1
+
+      Nothing ->
+        game'
 
 
 emptyRow : List (Maybe a)

@@ -44,8 +44,8 @@ update action game =
 
                 Just piece ->
                   { game
-                  | state <- Origin
-                  , turn  <- other player
+                  | state <- Destination selectedPosition
+                  , turn  <- player
                   }
 
             -- validates the destination  nd checks if promotion
@@ -54,7 +54,7 @@ update action game =
               if validateMove origin selectedPosition game.board
               then -- valid move
                 let
-                  game' =  { game | board <- move game.board origin selectedPosition }
+                  game' = move game origin selectedPosition
 
                   row = snd selectedPosition
 
