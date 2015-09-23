@@ -67,14 +67,7 @@ renderBoardSquare address position square =
 renderBoard : Address Action -> Board -> Html
 renderBoard address board =
   let
-    positions : List (Char, Int)
-    positions =
-      List.concat <|
-        List.map (\digit ->
-          List.map (\letter->
-             (letter, digit))
-               ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
-                 [1 .. 8]
+    positions = keys board
 
     pieces : List Square
     pieces =
@@ -148,9 +141,9 @@ renderGame address game =
   div [ class "game" ]
       [ renderStatusBar address game
       , div [ class "board-and-graveyard" ]
-            [ renderGraveyard game.graveyard1 Black
+            [ renderGraveyard game.graveyard2 White
             , renderBoard address game.board
-            , renderGraveyard game.graveyard2 White
+            , renderGraveyard game.graveyard1 Black
             ]
       ]
 
