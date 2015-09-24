@@ -42,9 +42,10 @@ update action game =
           board' = Dict.insert promotedPiecePosition promotedTo board
         in
           { game
-          | board <- board'
-          , turn  <- other player
-          , state <- Origin
+          | board         <- board'
+          , turn          <- other player
+          , state         <- Origin
+          , turnInSeconds <- 0
           }
 
 
@@ -112,6 +113,7 @@ update action game =
                 else -- passes the turn
                   { game'
                   | turn  <- other player
+                  , turnInSeconds <- 0
                   , state <- Origin
                   }
             else -- invalid move
