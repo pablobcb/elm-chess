@@ -10,7 +10,7 @@ import Update exposing (..)
 
 inbox : Signal.Mailbox Action
 inbox =
-  Signal.mailbox <| UpdateTimer 0
+  Signal.mailbox UpdateTimer
 
 
 actions : Signal Action
@@ -21,10 +21,7 @@ actions =
 
 ticker : Signal Action
 ticker =
-  let
-    update _ = (UpdateTimer 0)
-  in
-    Signal.map update (Time.every Time.second)
+  Signal.map (\_-> UpdateTimer) <| Time.every Time.second
 
 
 model : Signal Game

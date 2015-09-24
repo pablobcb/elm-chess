@@ -8,7 +8,7 @@ import Dict exposing (..)
 
 
 
-type Action = UpdateTimer Int
+type Action = UpdateTimer
             | Select Position
             | Promote Position Figure
             | Restart
@@ -24,7 +24,7 @@ update action game =
   in
     case action of
 
-      UpdateTimer _ ->
+      UpdateTimer ->
         { game
         | turnInSeconds <- game.turnInSeconds + 1
         }
