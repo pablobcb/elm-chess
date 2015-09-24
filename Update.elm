@@ -8,7 +8,8 @@ import Dict exposing (..)
 
 
 
-type Action = Select Position
+type Action = UpdateTimer Int
+            | Select Position
             | Promote Position Figure
             | Restart
 
@@ -22,6 +23,12 @@ update action game =
     board = game.board
   in
     case action of
+
+      UpdateTimer _ ->
+        { game
+        | timeInSeconds <- game.timeInSeconds + 1
+        }
+
 
       Restart ->
         makeInitialGame

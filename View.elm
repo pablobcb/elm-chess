@@ -124,6 +124,19 @@ renderStatusBar address game =
   let
     prefix = "waiting for " ++ (toString game.turn)
 
+    assert2digits str =
+      if length str == 1
+      then "0" ++ str
+      else str
+
+    time f = toString <| f game.timeInSeconds 60
+
+    seconds = assert2digits <| time rem
+
+    minutes = time (//)
+
+    parsedTime = minutes ++ ":" ++ seconds
+
     statusBar =
       case game.state of
         Origin ->
@@ -157,7 +170,7 @@ renderStatusBar address game =
               ++ " has won!"
           ]
   in
-    div [ class "status-bar" ] statusBar
+    div [ class "status-bar" ] (statusBar ++ [ text (" " ++ parsedTime )])
 
 
 {----------------------------- Game ----------------------------}

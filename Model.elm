@@ -162,20 +162,14 @@ type State = Origin
            | Finished Winner
 
 type alias Game =
-  { board      : Board
-  , graveyard1 : Graveyard
-  , graveyard2 : Graveyard
-  , turn       : Color
-  , state      : State
+  { board         : Board
+  , graveyard1    : Graveyard
+  , graveyard2    : Graveyard
+  , turn          : Color
+  , state         : State
+  , timeInSeconds : Int
   }
 
-
---player : Color -> Player
---player color =
---  { color     = color
---  , graveyard = emptyRow ++ emptyRow
---  --, graveyard = repeat 16 <| Just Pawn
---  }
 
 
 makeInitialGame : Game
@@ -183,9 +177,10 @@ makeInitialGame =
   let
     emptyGraveyard = emptyRow ++ emptyRow
   in
-    { board      = makeInitialBoard
-    , graveyard1 = emptyGraveyard
-    , graveyard2 = emptyGraveyard
-    , turn       = White
-    , state      = Origin
+    { board          = makeInitialBoard
+    , graveyard1     = emptyGraveyard
+    , graveyard2     = emptyGraveyard
+    , turn           = White
+    , state          = Origin
+    , timeInSeconds  = 0
     }
