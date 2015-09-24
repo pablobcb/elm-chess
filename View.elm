@@ -1,5 +1,7 @@
 module View where
 
+import Debug exposing (..)
+
 import Dict            exposing (..)
 import Html            exposing (..)
 import Html.Attributes exposing (..)
@@ -54,7 +56,9 @@ renderBoardSquare : Address Action -> Position -> Square -> Html
 renderBoardSquare address position square =
   case square of
     Nothing ->
-      div [ class "square" ] []
+      div [ class "square"
+          , onClick address (Select position)
+          ] []
 
     Just piece ->
       div [ class <| "square " ++ (getPieceClass piece)
@@ -65,14 +69,14 @@ renderBoardSquare address position square =
 renderBoard : Address Action -> Board -> Html
 renderBoard address board =
   let
-    positions : List (Char, Int)
+--    positions = keys board
     positions =
       List.concat <|
-        List.map (\digit ->
-          List.map (\letter->
-             (letter, digit))
-               ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
-                 [1 .. 8]
+          List.map (\digit ->
+            List.map (\letter->
+               (letter, digit))
+                 ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
+                   [1 .. 8]
 
     pieces : List Square
     pieces =
@@ -99,18 +103,18 @@ renderGraveyardSquare square =
 
 
 
-renderGraveyard : Player -> Html
-renderGraveyard player =
+renderGraveyard : Graveyard -> Color -> Html
+renderGraveyard graveyard color =
   let
     renderSquare figure =
       case figure of
         Nothing ->
           renderGraveyardSquare Nothing
         Just figure' ->
-          renderGraveyardSquare <| Just <| piece figure' player.color
+          renderGraveyardSquare <| Just <| piece figure' color
   in
-    div [ class <| (++) "graveyard " <| toLower <| toString player.color ]
-        ( List.map renderSquare player.graveyard )
+    div [ class <| (++) "graveyard " <| toLower <| toString color ]
+        ( List.map renderSquare graveyard )
 
 
 {----------------------------- Status Bar ----------------------------}
@@ -118,25 +122,42 @@ renderGraveyard player =
 renderStatusBar : Address Action -> Game -> Html
 renderStatusBar address game =
   let
-    prefix = "waiting for " ++ (toString game.turn) ++ " player"
+    prefix = "waiting for " ++ (toString game.turn)
 
-    status =
+    statusBar =
       case game.state of
         Origin ->
-           prefix ++ " to select a piece"
+          [ text <| prefix ++ " to select a piece" ]
 
         Destination _ ->
-          prefix ++ " to select a destination"
+          [ text <| prefix ++ " to select a destination" ]
 
-        Promotion _ ->
-          "Breno"
+        Promotion position ->
+          let
+            queen = piece Queen game.turn
+
+            knight = piece Knight game.turn
+
+          in
+            [ text "promote to:"
+            , button
+               [ onClick address <| Promote position queen.figure
+               , class <| "square " ++ (getPieceClass queen)
+               ] []
+            , button
+                [ onClick address <| Promote position knight.figure
+                , class <| "square " ++ (getPieceClass knight)
+                ] []
+            ]
 
         Finished winner ->
-          "the game has ended, " ++
-          (toString winner) ++ " has won!"
-
+          [ text
+              <| "the game has ended, "
+              ++ (toString winner)
+              ++ " has won!"
+          ]
   in
-    div [ class "status-bar" ] [ text status ]
+    div [ class "status-bar" ] statusBar
 
 
 {----------------------------- Game ----------------------------}
@@ -144,17 +165,15 @@ renderStatusBar address game =
 renderGame : Address Action -> Game -> Html
 renderGame address game =
   let
-    p1 = game.player1
-
-    p2 = game.player2
-
+    breno = watch "turn" game.turn
+    magro = watch "state" game.state
   in
     div [ class "game" ]
         [ renderStatusBar address game
         , div [ class "board-and-graveyard" ]
-              [ renderGraveyard p2
+              [ renderGraveyard game.graveyard2 Black
               , renderBoard address game.board
-              , renderGraveyard p1
+              , renderGraveyard game.graveyard1 White
               ]
         ]
 
