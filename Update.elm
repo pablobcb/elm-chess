@@ -26,7 +26,7 @@ update action game =
 
       UpdateTimer _ ->
         { game
-        | timeInSeconds <- game.timeInSeconds + 1
+        | turnInSeconds <- game.turnInSeconds + 1
         }
 
 

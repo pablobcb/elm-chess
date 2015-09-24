@@ -167,7 +167,7 @@ type alias Game =
   , graveyard2    : Graveyard
   , turn          : Color
   , state         : State
-  , timeInSeconds : Int
+  , turnInSeconds : Int
   }
 
 
@@ -182,5 +182,5 @@ makeInitialGame =
     , graveyard2     = emptyGraveyard
     , turn           = White
     , state          = Origin
-    , timeInSeconds  = 0
+    , turnInSeconds  = 0
     }

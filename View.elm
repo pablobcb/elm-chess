@@ -129,7 +129,7 @@ renderStatusBar address game =
       then "0" ++ str
       else str
 
-    time f = toString <| f game.timeInSeconds 60
+    time f = toString <| f game.turnInSeconds 60
 
     seconds = assert2digits <| time rem
 
