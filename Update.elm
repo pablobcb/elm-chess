@@ -1,5 +1,7 @@
 module Update where
 
+import Debug exposing (..)
+
 import Model exposing (..)
 
 
@@ -62,15 +64,17 @@ update action game =
                   row = snd selectedPosition
 
                   isPawn =
-                    case getSquareContent game'.board origin of
-                      Just piece ->
-                        case piece.figure of
-                          Pawn -> True
-                          _ -> False
+                    let
+                      squareContent = getSquareContent game'.board selectedPosition
+                    in
+                      case squareContent of
+                        Just piece ->
+                          if piece.figure == Pawn
+                          then True
+                          else False
 
-                      Nothing -> False
-
-
+                        Nothing ->
+                          False
 
                   promoted = (row == 1 || row == 8) && isPawn
 

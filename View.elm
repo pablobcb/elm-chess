@@ -1,5 +1,7 @@
 module View where
 
+import Debug exposing (..)
+
 import Dict            exposing (..)
 import Html            exposing (..)
 import Html.Attributes exposing (..)
@@ -67,7 +69,14 @@ renderBoardSquare address position square =
 renderBoard : Address Action -> Board -> Html
 renderBoard address board =
   let
-    positions = keys board
+--    positions = keys board
+    positions =
+      List.concat <|
+          List.map (\digit ->
+            List.map (\letter->
+               (letter, digit))
+                 ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
+                   [1 .. 8]
 
     pieces : List Square
     pieces =
@@ -115,36 +124,54 @@ renderStatusBar address game =
   let
     prefix = "waiting for " ++ (toString game.turn) ++ " player"
 
-    status =
+    statusBar =
       case game.state of
         Origin ->
-           prefix ++ " to select a piece"
+          [ text <| prefix ++ " to select a piece" ]
 
         Destination _ ->
-          prefix ++ " to select a destination"
+          [ text <| prefix ++ " to select a destination" ]
 
-        Promotion _ ->
-          "Promotion"
+        Promotion position ->
+          let
+            queen = piece Queen game.turn
+
+            knight = piece Knight game.turn
+
+          in
+            [ button [ onClick address <| Promote position queen.figure
+                     , class <| "square " ++ (getPieceClass queen)
+                     ] []
+            , button [ onClick address <| Promote position knight.figure
+                     , class <| "square " ++ (getPieceClass knight)
+                     ] []
+            ]
 
         Finished winner ->
-          "the game has ended, " ++
-          (toString winner) ++ " has won!"
-
+          [ text
+              <| "the game has ended, "
+              ++ (toString winner)
+              ++ " has won!"
+          ]
   in
-    div [ class "status-bar" ] [ text status ]
+    div [ class "status-bar" ] statusBar
 
 
 {----------------------------- Game ----------------------------}
 
 renderGame : Address Action -> Game -> Html
 renderGame address game =
-  div [ class "game" ]
-      [ renderStatusBar address game
-      , div [ class "board-and-graveyard" ]
-            [ renderGraveyard game.graveyard2 White
-            , renderBoard address game.board
-            , renderGraveyard game.graveyard1 Black
-            ]
-      ]
+  let
+    breno = watch "turn" game.turn
+    magro = watch "state" game.state
+  in
+    div [ class "game" ]
+        [ renderStatusBar address game
+        , div [ class "board-and-graveyard" ]
+              [ renderGraveyard game.graveyard2 Black
+              , renderBoard address game.board
+              , renderGraveyard game.graveyard1 White
+              ]
+        ]
 
 
