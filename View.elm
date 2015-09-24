@@ -122,7 +122,7 @@ renderGraveyard graveyard color =
 renderStatusBar : Address Action -> Game -> Html
 renderStatusBar address game =
   let
-    prefix = "waiting for " ++ (toString game.turn) ++ " player"
+    prefix = "waiting for " ++ (toString game.turn)
 
     statusBar =
       case game.state of
@@ -139,12 +139,15 @@ renderStatusBar address game =
             knight = piece Knight game.turn
 
           in
-            [ button [ onClick address <| Promote position queen.figure
-                     , class <| "square " ++ (getPieceClass queen)
-                     ] []
-            , button [ onClick address <| Promote position knight.figure
-                     , class <| "square " ++ (getPieceClass knight)
-                     ] []
+            [ text "promote to:"
+            , button
+               [ onClick address <| Promote position queen.figure
+               , class <| "square " ++ (getPieceClass queen)
+               ] []
+            , button
+                [ onClick address <| Promote position knight.figure
+                , class <| "square " ++ (getPieceClass knight)
+                ] []
             ]
 
         Finished winner ->
