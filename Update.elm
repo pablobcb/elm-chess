@@ -84,7 +84,7 @@ update action game =
             -- validates the destination  nd checks if promotion
             -- should be granted to the moved piece
           Destination origin ->
-            if validateMove origin selectedPosition game
+            if validateMove origin selectedPosition game.color
             then -- valid move
               let
                 game' = move game origin selectedPosition

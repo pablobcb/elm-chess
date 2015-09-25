@@ -18,12 +18,12 @@ getSquareContent board =
   Maybe.Extra.join << (flip Dict.get) board
 
 
-validateMove origin destination game =
+validateMove origin destination turnColor =
   let
     otherColor =
       case getSquareContent game.board destination of
         Just piece ->
-          piece.color /= game.turn
+          piece.color /= turnColor
 
         Nothing ->
           True
