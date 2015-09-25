@@ -23,4 +23,3 @@ piece f c =
   , color  = c
   , moved  = False
   }
-

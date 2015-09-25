@@ -192,5 +192,3 @@ renderGame address game =
               , renderGraveyard game.graveyard1 White
               ]
         ]
-
-
