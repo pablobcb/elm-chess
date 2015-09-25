@@ -12,7 +12,7 @@ type alias Graveyard = List (Maybe Figure)
 
 type alias Winner = Color
 
-type State = Origin
+type GameState = Origin
            | Destination Position
            | Promotion Position
            | CheckMate
@@ -23,7 +23,7 @@ type alias Game =
   , graveyard1    : Graveyard
   , graveyard2    : Graveyard
   , turn          : Color
-  , state         : State
+  , state         : GameState
   , turnInSeconds : Int
   }
 
