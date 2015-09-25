@@ -1,12 +1,14 @@
 module Main(main) where
 
-import StartApp.Simple as App
-import Time   exposing (..)
-import Html   exposing (..)
+import Time        exposing (..)
+import Html        exposing (..)
 
-import Model  exposing (..)
-import View   exposing (..)
-import Update exposing (..)
+import Chess.Game  exposing (..)
+import Chess.Color exposing (..)
+import Chess.Board exposing (..)
+import Chess.Piece exposing (..)
+import View        exposing (..)
+import Update      exposing (..)
 
 inbox : Signal.Mailbox Action
 inbox =
@@ -31,9 +33,3 @@ model =
 
 main : Signal Html
 main = Signal.map (renderGame inbox.address) model
-
---main = App.start
---    { model  = makeInitialGame
---    , view   = renderGame
---    , update = update
---    }

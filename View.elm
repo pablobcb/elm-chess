@@ -7,15 +7,18 @@ import Html            exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events     exposing (..)
 import Maybe           exposing ( Maybe(..) )
-import Maybe.Extra exposing (..)
+import Maybe.Extra     exposing (..)
 
 import Signal          exposing (..)
 import StartApp.Simple exposing (..)
 import String          exposing (..)
 import Text            exposing ( Text(..) )
 
-import Model exposing (..)
-import Update exposing (..)
+import Chess.Game      exposing (..)
+import Chess.Color     exposing (..)
+import Chess.Board     exposing (..)
+import Chess.Piece     exposing (..)
+import Update          exposing (..)
 
 {-------------------------- Piece -------------------------}
 
