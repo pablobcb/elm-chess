@@ -12,11 +12,13 @@ type alias Graveyard = List (Maybe Figure)
 
 type alias Winner = Color
 
+
 type State = Origin
            | Destination Position
            | Promotion Position
            | CheckMate
            | Finished Winner
+
 
 type alias Game =
   { board         : Board
@@ -42,6 +44,7 @@ makeInitialGame =
     , turnInSeconds  = 0
     }
 
+
 move : Game -> Position -> Position -> Game
 move game origin destination =
   let
@@ -53,17 +56,23 @@ move game origin destination =
     originSquare =
       getSquareContent board origin
 
-    board' = Dict.insert
-      destination
-      originSquare
-      board
+    board' =
+      let
+        piece =
+          case originSquare of
+            Just piece' -> Just
+              { piece'
+              | moved <- True
+              }
+      in -- copies piece to destination
+        Dict.insert destination piece board
 
-    game' =
+    game' = --cleans origin
       { game | board <- Dict.insert origin Nothing board'}
 
   in
     case destinationSquare of
-      Just piece ->
+      Just piece -> --take piece
         case game.turn of
           White ->
             { game'
@@ -75,5 +84,28 @@ move game origin destination =
             | graveyard1 <- game'.graveyard1 ++ [Just piece.figure]
             }
 
-      Nothing ->
+      Nothing -> --just move
         game'
+
+validateMove : Position -> Position -> Game -> Bool
+validateMove origin destination game =
+  let
+    validRanges =
+      case getSquareContent game.board origin of
+        Just piece ->
+          List.member
+            destination
+            (getValidRanges (ranges piece) origin)
+
+    otherColor =
+      case getSquareContent game.board destination of
+        Just piece ->
+          (piece.color /= game.turn)
+
+        Nothing ->
+          True
+
+  in
+    (origin /= destination) -- a piece cant move to the same place
+     && validRanges           -- a piece cant take an ally
+     && otherColor

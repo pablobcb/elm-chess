@@ -7,32 +7,26 @@ import Maybe.Extra exposing (..)
 import Chess.Color exposing (..)
 import Chess.Piece exposing (..)
 
+
 type alias Position = (Char, Int)
+
 
 type alias Square = Maybe Piece
 
+
 type alias Board = Dict Position Square
+
+
+type alias Range = (Int, Int)
+
+letters: List Char
+letters =
+  ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+
 
 getSquareContent : Board -> Position -> Square
 getSquareContent board =
   Maybe.Extra.join << (flip Dict.get) board
-
-
-validateMove origin destination turnColor =
-  let
-    otherColor =
-      case getSquareContent game.board destination of
-        Just piece ->
-          piece.color /= turnColor
-
-        Nothing ->
-          True
-
-  in
-    (origin /= destination) -- a piece cant move to the same place
-     && otherColor          -- a piece cant take an ally
-
-
 
 
 emptyRow : List (Maybe a)
@@ -61,7 +55,7 @@ makeInitialBoard =
 
 
       makeRow number = zip
-        ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+        letters
         (List.repeat 8 number)
 
 
@@ -74,3 +68,61 @@ makeInitialBoard =
                    ++ zip (makeRow 2) (pawnRow White)
                    ++ zip (makeRow 1) (makeFirstRow White)
 
+shift : Position -> Range -> Position
+shift (char, number) (x, y) =
+  let
+    charNumericalRepresentation =
+      case charToNum char of
+        Just num ->
+          num
+
+        Nothing ->
+          -10000 --fatal error?
+
+    shiftedCharNumericalRepresentation =
+      charNumericalRepresentation + x
+
+    shiftedChar =
+      case numToChar shiftedCharNumericalRepresentation of
+        Just char ->
+          char
+
+        Nothing ->
+          '!' --fatal error?
+
+  in
+    (shiftedChar, number + y)
+
+getValidRanges : List Range -> Position -> List Position
+getValidRanges ranges position =
+  let
+    filterPosition pos =
+      (List.member (fst pos) letters) &&
+        (List.member (snd pos) [1..8])
+  in
+    List.filter filterPosition <|
+    List.map (shift position) ranges
+
+charToNum : Char -> Maybe Int
+charToNum char =
+  if | char == 'A' -> Just 1
+     | char == 'B' -> Just 2
+     | char == 'C' -> Just 3
+     | char == 'D' -> Just 4
+     | char == 'E' -> Just 5
+     | char == 'F' -> Just 6
+     | char == 'G' -> Just 7
+     | char == 'H' -> Just 8
+     | otherwise   -> Nothing
+
+numToChar : Int -> Maybe Char
+numToChar num =
+  if | num == 1  -> Just 'A'
+     | num == 2  -> Just 'B'
+     | num == 3  -> Just 'C'
+     | num == 4  -> Just 'D'
+     | num == 5  -> Just 'E'
+     | num == 6  -> Just 'F'
+     | num == 7  -> Just 'G'
+     | num == 8  -> Just 'H'
+     | otherwise -> Nothing
