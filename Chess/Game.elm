@@ -4,7 +4,7 @@ import Maybe       exposing (..)
 import Dict        exposing (..)
 
 import Chess.Color exposing (..)
-import Chess.Board exposing (..)
+import Chess.Board as Board exposing (..)
 import Chess.Piece exposing (..)
 
 type alias Graveyard = List (Maybe Figure)
@@ -12,11 +12,13 @@ type alias Graveyard = List (Maybe Figure)
 
 type alias Winner = Color
 
+
 type State = Origin
            | Destination Position
            | Promotion Position
            | CheckMate
            | Finished Winner
+
 
 type alias Game =
   { board         : Board
@@ -42,6 +44,7 @@ makeInitialGame =
     , turnInSeconds  = 0
     }
 
+
 move : Game -> Position -> Position -> Game
 move game origin destination =
   let
@@ -53,17 +56,23 @@ move game origin destination =
     originSquare =
       getSquareContent board origin
 
-    board' = Dict.insert
-      destination
-      originSquare
-      board
+    board' =
+      let
+        piece =
+          case originSquare of
+            Just piece' -> Just
+              { piece'
+              | moved <- True
+              }
+      in -- copies piece to destination
+        Dict.insert destination piece board
 
-    game' =
+    game' = --cleans origin
       { game | board <- Dict.insert origin Nothing board'}
 
   in
     case destinationSquare of
-      Just piece ->
+      Just piece -> --take piece
         case game.turn of
           White ->
             { game'
@@ -75,5 +84,81 @@ move game origin destination =
             | graveyard1 <- game'.graveyard1 ++ [Just piece.figure]
             }
 
-      Nothing ->
+      Nothing -> --just move
         game'
+
+validateMove : Position -> Position -> Game -> Bool
+validateMove origin destination game =
+  let
+    board =  game.board
+
+    getSquareContent' = getSquareContent board
+
+    originSquare : Square
+    originSquare = getSquareContent' origin
+
+
+    destinationSquare : Square
+    destinationSquare = getSquareContent' destination
+
+
+    isDestinationValid : Bool
+    isDestinationValid =
+      case originSquare of
+        Just piece ->
+          let
+            validPositions : List Position
+            validPositions = getValidPositions(ranges piece) origin
+
+            specialPositions : List Position
+            specialPositions =
+              case piece.figure of
+                Pawn ->
+                  let
+                    pawnTakeRanges' = pawnTakeRanges game.turn
+
+                    right =
+                      getSquareContent' <| Board.shift origin (.right pawnTakeRanges')
+
+                    left =
+                      getSquareContent' <| Board.shift origin (.left pawnTakeRanges')
+
+                    right' =
+                      case right of
+                        Just piece'->
+                          [ Board.shift origin (.right pawnTakeRanges') ]
+                        Nothing ->
+                          []
+
+                    left' =
+                      case left of
+                         Just piece'->
+                           [ Board.shift origin (.left pawnTakeRanges') ]
+                         Nothing ->
+                           []
+                  in
+                    (++) right' left'
+
+
+                _ -> []
+
+          in
+            List.member destination (validPositions ++ specialPositions )
+
+
+    otherColor : Bool
+    otherColor =
+      case destinationSquare of
+        Just piece ->
+          (piece.color /= game.turn)
+
+        Nothing ->
+          True
+
+  in
+     -- a piece cant move to the same place
+     (origin /= destination)
+     -- a piece cant move to a place out of range
+     && isDestinationValid
+     -- a piece cant take an ally
+     && otherColor
