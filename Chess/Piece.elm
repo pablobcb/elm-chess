@@ -19,7 +19,7 @@ type alias Piece =
   , color  : Color
   }
 
-
+-- creates piece
 piece : Figure -> Color -> Piece
 piece f c =
   { figure = f
@@ -27,6 +27,18 @@ piece f c =
   , moved  = False
   }
 
+-- because pawns take pieces in a different
+-- way from how they move, this function is necessary
+--pawnTakeRanges : Color -> List Range
+pawnTakeRanges color =
+  case color of
+     White ->
+       { right = (1, 1), left = (-1, 1) }
+
+     Black ->
+       { right = (1, -1), left = (-1, -1) }
+
+-- movement ranges for each piece
 ranges : Piece -> List Range
 ranges piece =
   let
@@ -45,6 +57,17 @@ ranges piece =
       zip [ -1 .. -7 ][  1 ..  7 ] ++
       zip [  1 ..  7 ][ -1 .. -7 ] ++
       zip [ -1 .. -7 ][ -1 .. -7 ]
+
+    kingRanges =
+      [ (  0,  1 )
+      , (  1,  1 )
+      , (  1,  0 )
+      , (  1, -1 )
+      , (  0, -1 )
+      , ( -1, -1 )
+      , ( -1,  0 )
+      , ( -1,  1 )
+      ]
 
   in
     case piece.figure of
@@ -80,18 +103,11 @@ ranges piece =
         ]
 
       King ->
-        [ (  0,  1 )
-        , (  1,  1 )
-        , (  1,  0 )
-        , (  1, -1 )
-        , (  0, -1 )
-        , ( -1, -1 )
-        , ( -1,  0 )
-        , ( -1,  1 )
-        ]
+        kingRanges
 
       Queen ->
-        bishopRanges ++
-          rookRanges
+        bishopRanges
+        ++ rookRanges
+        ++ kingRanges
 
 

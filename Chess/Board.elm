@@ -17,8 +17,6 @@ type alias Square = Maybe Piece
 type alias Board = Dict Position Square
 
 
-type alias Range = (Int, Int)
-
 letters: List Char
 letters =
   ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
@@ -93,8 +91,8 @@ shift (char, number) (x, y) =
   in
     (shiftedChar, number + y)
 
-getValidRanges : List Range -> Position -> List Position
-getValidRanges ranges position =
+getValidPositions : List Range -> Position -> List Position
+getValidPositions ranges position =
   let
     filterPosition pos =
       (List.member (fst pos) letters) &&

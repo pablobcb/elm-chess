@@ -4,7 +4,7 @@ import Maybe       exposing (..)
 import Dict        exposing (..)
 
 import Chess.Color exposing (..)
-import Chess.Board exposing (..)
+import Chess.Board as Board exposing (..)
 import Chess.Piece exposing (..)
 
 type alias Graveyard = List (Maybe Figure)
@@ -90,15 +90,65 @@ move game origin destination =
 validateMove : Position -> Position -> Game -> Bool
 validateMove origin destination game =
   let
-    validRanges =
-      case getSquareContent game.board origin of
-        Just piece ->
-          List.member
-            destination
-            (getValidRanges (ranges piece) origin)
+    board =  game.board
 
+    getSquareContent' = getSquareContent board
+
+    originSquare : Square
+    originSquare = getSquareContent' origin
+
+
+    destinationSquare : Square
+    destinationSquare = getSquareContent' destination
+
+
+    isDestinationValid : Bool
+    isDestinationValid =
+      case originSquare of
+        Just piece ->
+          let
+            validPositions : List Position
+            validPositions = getValidPositions(ranges piece) origin
+
+            specialPositions : List Position
+            specialPositions =
+              case piece.figure of
+                Pawn ->
+                  let
+                    pawnTakeRanges' = pawnTakeRanges game.turn
+
+                    right =
+                      getSquareContent' <| Board.shift origin (.right pawnTakeRanges')
+
+                    left =
+                      getSquareContent' <| Board.shift origin (.left pawnTakeRanges')
+
+                    right' =
+                      case right of
+                        Just piece'->
+                          [ Board.shift origin (.right pawnTakeRanges') ]
+                        Nothing ->
+                          []
+
+                    left' =
+                      case left of
+                         Just piece'->
+                           [ Board.shift origin (.left pawnTakeRanges') ]
+                         Nothing ->
+                           []
+                  in
+                    (++) right' left'
+
+
+                _ -> []
+
+          in
+            List.member destination (validPositions ++ specialPositions )
+
+
+    otherColor : Bool
     otherColor =
-      case getSquareContent game.board destination of
+      case destinationSquare of
         Just piece ->
           (piece.color /= game.turn)
 
@@ -106,6 +156,9 @@ validateMove origin destination game =
           True
 
   in
-    (origin /= destination) -- a piece cant move to the same place
-     && validRanges           -- a piece cant take an ally
+     -- a piece cant move to the same place
+     (origin /= destination)
+     -- a piece cant move to a place out of range
+     && isDestinationValid
+     -- a piece cant take an ally
      && otherColor
