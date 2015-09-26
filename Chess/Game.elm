@@ -1,5 +1,7 @@
 module Chess.Game where
 
+import Debug       exposing (..)
+
 import Maybe       exposing (..)
 import Dict        exposing (..)
 
@@ -16,6 +18,7 @@ type alias Winner = Color
 type GameState = Origin
            | Destination Position
            | Promotion Position
+           | EnPassant Position
            | CheckMate
            | Finished Winner
 
@@ -107,11 +110,11 @@ validateMove origin destination game =
       case originSquare of
         Just piece ->
           let
-            validPositions : List Position
-            validPositions = getValidPositions(ranges piece) origin
+            regularMoves : List Position
+            regularMoves  = getValidPositions(ranges piece) origin
 
-            specialPositions : List Position
-            specialPositions =
+            specialMoves : List Position
+            specialMoves =
               case piece.figure of
                 Pawn ->
                   let
@@ -121,27 +124,38 @@ validateMove origin destination game =
                       getSquareContent' <| Board.shift origin <| f pawnTakeRanges'
 
 
-                    right =
+                    takeToRight =
                       case getSquareContent'' .right of
                         Just piece'->
                           [ Board.shift origin (.right pawnTakeRanges') ]
                         Nothing ->
                           []
 
-                    left =
+                    takeToLeft =
                       case getSquareContent'' .left of
                          Just piece'->
                            [ Board.shift origin (.left pawnTakeRanges') ]
                          Nothing ->
                            []
+
+                    enPassant =
+                      case game.state of
+                        EnPassant passedPawnPosition ->
+                          []
+                        _ -> []
+
                   in
-                    (++) right left
+                    takeToLeft
+                    ++ takeToRight
+                    ++  enPassant
 
 
                 _ -> []
 
+            validMoves = regularMoves ++ specialMoves
+
           in
-            List.member destination (validPositions ++ specialPositions )
+            List.member destination <| watch "valid moves" validMoves
 
 
     otherColor : Bool
