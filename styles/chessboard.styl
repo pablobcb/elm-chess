@@ -19,3 +19,15 @@
     &:nth-of-type(16n + 3),
     &:nth-of-type(16n + 1)
       inset-dark-background()
+
+  for color in 'black' 'white'
+    &.highlight-{color}-pieces
+      .square.piece.{color}:hover
+        border: 2px solid green
+
+        &::before
+          transform: translateY(-2px)
+
+  &.highlight-destinations
+    .square:not(.piece):hover
+      border: 2px solid green

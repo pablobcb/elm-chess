@@ -69,8 +69,8 @@ renderBoardSquare address position square =
           ] []
 
 
-renderBoard : Address Action -> Board -> Html
-renderBoard address board =
+renderBoard : Address Action -> Color -> GameState -> Board -> Html
+renderBoard address turn state board =
   let
 --    positions = keys board
     positions =
@@ -87,8 +87,18 @@ renderBoard address board =
 
     squares = List.map2 (renderBoardSquare address) positions pieces
 
+    highlight = case state of
+      Origin ->
+        String.join "-" ["highlight", toLower <| toString turn, "pieces"]
+      Destination _ ->
+        "highlight-destinations"
+      _ ->
+        ""
+
+    className = String.join " " ["chessboard", highlight]
+
   in
-    div [ class "chessboard" ] squares
+    div [ class className ] squares
 
 
 {----------------------------- Graveyard ----------------------------}
@@ -188,9 +198,7 @@ renderGame address game =
         [ renderStatusBar address game
         , div [ class "board-and-graveyard" ]
               [ renderGraveyard game.graveyard2 Black
-              , renderBoard address game.board
+              , renderBoard address game.turn game.state game.board
               , renderGraveyard game.graveyard1 White
               ]
         ]
-
-

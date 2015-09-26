@@ -13,7 +13,7 @@ type alias Graveyard = List (Maybe Figure)
 type alias Winner = Color
 
 
-type State = Origin
+type GameState = Origin
            | Destination Position
            | Promotion Position
            | CheckMate
@@ -25,7 +25,7 @@ type alias Game =
   , graveyard1    : Graveyard
   , graveyard2    : Graveyard
   , turn          : Color
-  , state         : State
+  , state         : GameState
   , turnInSeconds : Int
   }
 
@@ -117,27 +117,25 @@ validateMove origin destination game =
                   let
                     pawnTakeRanges' = pawnTakeRanges game.turn
 
+                    getSquareContent'' f =
+                      getSquareContent' <| Board.shift origin <| f pawnTakeRanges'
+
+
                     right =
-                      getSquareContent' <| Board.shift origin (.right pawnTakeRanges')
-
-                    left =
-                      getSquareContent' <| Board.shift origin (.left pawnTakeRanges')
-
-                    right' =
-                      case right of
+                      case getSquareContent'' .right of
                         Just piece'->
                           [ Board.shift origin (.right pawnTakeRanges') ]
                         Nothing ->
                           []
 
-                    left' =
-                      case left of
+                    left =
+                      case getSquareContent'' .left of
                          Just piece'->
                            [ Board.shift origin (.left pawnTakeRanges') ]
                          Nothing ->
                            []
                   in
-                    (++) right' left'
+                    (++) right left
 
 
                 _ -> []

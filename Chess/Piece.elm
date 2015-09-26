@@ -27,6 +27,7 @@ piece f c =
   , moved  = False
   }
 
+
 -- because pawns take pieces in a different
 -- way from how they move, this function is necessary
 --pawnTakeRanges : Color -> List Range
