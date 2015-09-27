@@ -1,5 +1,7 @@
 module Chess.Board where
 
+import Debug       exposing (..)
+
 import Dict        exposing (..)
 import Maybe       exposing (..)
 import Maybe.Extra exposing (..)
@@ -91,8 +93,8 @@ shift (char, number) (x, y) =
   in
     (shiftedChar, number + y)
 
-getValidPositions : List Range -> Position -> List Position
-getValidPositions ranges position =
+getRegularMoves : List Range -> Position -> List Position
+getRegularMoves ranges position =
   let
     filterPosition pos =
     -- excludes ranges with ! and negative values
@@ -100,7 +102,7 @@ getValidPositions ranges position =
         (List.member (snd pos) [1..8])
   in
     List.filter filterPosition <|
-    List.map (shift position) ranges
+    watch "unfiltered" <| List.map (shift position) ranges
 
 charToNum : Char -> Maybe Int
 charToNum char =

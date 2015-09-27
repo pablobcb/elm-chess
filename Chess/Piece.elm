@@ -49,15 +49,15 @@ ranges piece =
 
     rookRanges =
       zip [ 1  .. 7 ] zeros ++
-      zip [-1 .. -7 ] zeros ++
+      zip [-7 .. -1 ] zeros ++
       zip zeros [ 1 ..  7 ] ++
-      zip zeros [-1 .. -7 ]
+      zip zeros [-7 .. -1 ]
 
     bishopRanges =
       zip [  1 ..  7 ][  1 ..  7 ] ++
-      zip [ -1 .. -7 ][  1 ..  7 ] ++
-      zip [  1 ..  7 ][ -1 .. -7 ] ++
-      zip [ -1 .. -7 ][ -1 .. -7 ]
+      zip [ -7 .. -1 ][  1 ..  7 ] ++
+      zip [  1 ..  7 ][ -7 .. -1 ] ++
+      zip [ -7 .. -1 ][ -7 .. -1 ]
 
     kingRanges =
       [ (  0,  1 )

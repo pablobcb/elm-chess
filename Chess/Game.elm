@@ -95,7 +95,8 @@ getValidDestinations origin piece game =
   let
     getSquareContent' = getSquareContent game.board
 
-    regularMoves  = getValidPositions(ranges piece) origin
+    regularMoves  = watch "regular moves"<| getRegularMoves (ranges piece) origin
+
 
     specialMoves =
       case piece.figure of

@@ -75,7 +75,7 @@ renderBoardSquare address state position square =
             ] []
 
       Just piece ->
-        div [ class <| "square " ++ (getPieceClass piece)
+        div [ class <| "square " ++ (getPieceClass piece) ++ highlight
             , onClick address (Select position)
             ] []
 
