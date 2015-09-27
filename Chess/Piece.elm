@@ -1,5 +1,7 @@
 module Chess.Piece where
 
+import Debug exposing (..)
+
 import Chess.Color exposing (..)
 
 type Figure = Pawn
@@ -47,17 +49,23 @@ ranges piece =
 
     zeros = List.repeat 7 0
 
+    oneToSeven = [ 1 .. 7 ]
+
+    negativeOneToSeven =
+      --[ -1, -2, -3, -4, -5, -6, -7 ]
+      List.map ( (*) (-1)) oneToSeven
+
     rookRanges =
-      zip [ 1  .. 7 ] zeros ++
-      zip [-7 .. -1 ] zeros ++
-      zip zeros [ 1 ..  7 ] ++
-      zip zeros [-7 .. -1 ]
+      zip oneToSeven zeros ++
+      zip negativeOneToSeven zeros ++
+      zip zeros oneToSeven ++
+      zip zeros negativeOneToSeven
 
     bishopRanges =
-      zip [  1 ..  7 ][  1 ..  7 ] ++
-      zip [ -7 .. -1 ][  1 ..  7 ] ++
-      zip [  1 ..  7 ][ -7 .. -1 ] ++
-      zip [ -7 .. -1 ][ -7 .. -1 ]
+      zip oneToSeven oneToSeven ++
+      zip negativeOneToSeven oneToSeven ++
+      zip oneToSeven negativeOneToSeven ++
+      zip negativeOneToSeven negativeOneToSeven
 
     kingRanges =
       [ (  0,  1 )
@@ -90,7 +98,7 @@ ranges piece =
         rookRanges
 
       Bishop ->
-        bishopRanges
+        watch "bishop Ranges" bishopRanges
 
       Knight ->
         [ (  1,  2 )
