@@ -4,10 +4,10 @@ import Debug exposing (..)
 
 import Dict exposing (..)
 
-import Chess.Game  exposing (..)
-import Chess.Color exposing (..)
-import Chess.Board exposing (..)
-import Chess.Piece exposing (..)
+import Chess.Game  as Game exposing (..)
+import Chess.Color as Game exposing (..)
+import Chess.Board as Game exposing (..)
+import Chess.Piece as Game exposing (..)
 
 
 
@@ -67,24 +67,34 @@ update action game =
               selectedOrigin = getSquareContent board selectedPosition
             in
               case selectedOrigin of
-                Nothing ->
+                Nothing -> -- ignores click because its expecting a piece
                   game
 
 
                 Just piece ->
-                  if player /= piece.color
-                  then game
-                  else
-                    { game
-                    | state <- Destination selectedPosition
-                    , turn  <- player
-                    }
+                  let
+                    validDestinations =
+                      Game.getValidDestinations
+                        selectedPosition
+                        piece
+                        game
+                  in
+                    if player /= piece.color
+                    then game
+                    else
+                      { game
+                      | turn  <- player
+                      , state <-
+                          Destination
+                            selectedPosition
+                            validDestinations
+                      }
 
 
             -- validates the destination  nd checks if promotion
             -- should be granted to the moved piece
-          Destination origin ->
-            if validateMove origin selectedPosition game
+          Destination origin validDestinations ->
+            if List.member selectedPosition validDestinations
             then -- valid move
               let
                 game' = move game origin selectedPosition

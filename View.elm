@@ -55,18 +55,29 @@ getPieceClass piece =
 
 {----------------------------- Board ----------------------------}
 
-renderBoardSquare : Address Action -> Position -> Square -> Html
-renderBoardSquare address position square =
-  case square of
-    Nothing ->
-      div [ class "square"
-          , onClick address (Select position)
-          ] []
+renderBoardSquare : Address Action -> GameState -> Position -> Square -> Html
+renderBoardSquare address state position square =
+  let
+    highlight =
+      (case state of
+        Destination _ validPositions ->
+          if List.member position validPositions
+          -- fix me: repetion of ""
+          then " valid-destination"
+          else ""
 
-    Just piece ->
-      div [ class <| "square " ++ (getPieceClass piece)
-          , onClick address (Select position)
-          ] []
+        _ -> "")
+  in
+    case square of
+      Nothing ->
+        div [ class <| "square" ++ highlight
+            , onClick address (Select position)
+            ] []
+
+      Just piece ->
+        div [ class <| "square " ++ (getPieceClass piece)
+            , onClick address (Select position)
+            ] []
 
 
 renderBoard : Address Action -> Color -> GameState -> Board -> Html
@@ -85,13 +96,13 @@ renderBoard address turn state board =
     pieces =
       List.map (getSquareContent board) positions
 
-    squares = List.map2 (renderBoardSquare address) positions pieces
+    squares = List.map2 (renderBoardSquare address state) positions pieces
 
     highlight = case state of
       Origin ->
         String.join "-" ["highlight", toLower <| toString turn, "pieces"]
-      Destination _ ->
-        "highlight-destinations"
+
+
       _ ->
         ""
 
@@ -155,7 +166,7 @@ renderStatusBar address game =
         Origin ->
           [ text <| prefix ++ " to select a piece" ]
 
-        Destination _ ->
+        Destination _ _ ->
           [ text <| prefix ++ " to select a destination" ]
 
         Promotion position ->

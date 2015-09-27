@@ -95,6 +95,7 @@ getValidPositions : List Range -> Position -> List Position
 getValidPositions ranges position =
   let
     filterPosition pos =
+    -- excludes ranges with ! and negative values
       (List.member (fst pos) letters) &&
         (List.member (snd pos) [1..8])
   in

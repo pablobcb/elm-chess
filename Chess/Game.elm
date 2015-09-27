@@ -16,7 +16,7 @@ type alias Winner = Color
 
 
 type GameState = Origin
-           | Destination Position
+           | Destination Position (List Position)
            | Promotion Position
            | EnPassant Position
            | CheckMate
@@ -90,87 +90,62 @@ move game origin destination =
       Nothing -> --just move
         game'
 
-validateMove : Position -> Position -> Game -> Bool
-validateMove origin destination game =
+getValidDestinations : Position -> Piece -> Game -> List Position
+getValidDestinations origin piece game =
   let
-    board =  game.board
+    getSquareContent' = getSquareContent game.board
 
-    getSquareContent' = getSquareContent board
+    regularMoves  = getValidPositions(ranges piece) origin
 
-    originSquare : Square
-    originSquare = getSquareContent' origin
-
-
-    destinationSquare : Square
-    destinationSquare = getSquareContent' destination
-
-
-    isDestinationValid : Bool
-    isDestinationValid =
-      case originSquare of
-        Just piece ->
+    specialMoves =
+      case piece.figure of
+        Pawn ->
           let
-            regularMoves : List Position
-            regularMoves  = getValidPositions(ranges piece) origin
+            pawnTakeRanges' =
+              pawnTakeRanges game.turn
 
-            specialMoves : List Position
-            specialMoves =
-              case piece.figure of
-                Pawn ->
-                  let
-                    pawnTakeRanges' = pawnTakeRanges game.turn
+            getSquareContent'' f =
+              getSquareContent' <| Board.shift origin <| f pawnTakeRanges'
 
-                    getSquareContent'' f =
-                      getSquareContent' <| Board.shift origin <| f pawnTakeRanges'
+            takeToRight =
+              case getSquareContent'' .right of
+                Just piece'->
+                  [ Board.shift origin (.right pawnTakeRanges') ]
+                Nothing ->
+                  []
 
+            takeToLeft =
+              case getSquareContent'' .left of
+                 Just piece'->
+                   [ Board.shift origin (.left pawnTakeRanges') ]
+                 Nothing ->
+                   []
 
-                    takeToRight =
-                      case getSquareContent'' .right of
-                        Just piece'->
-                          [ Board.shift origin (.right pawnTakeRanges') ]
-                        Nothing ->
-                          []
-
-                    takeToLeft =
-                      case getSquareContent'' .left of
-                         Just piece'->
-                           [ Board.shift origin (.left pawnTakeRanges') ]
-                         Nothing ->
-                           []
-
-                    enPassant =
-                      case game.state of
-                        EnPassant passedPawnPosition ->
-                          []
-                        _ -> []
-
-                  in
-                    takeToLeft
-                    ++ takeToRight
-                    ++  enPassant
-
-
+            enPassant =
+              case game.state of
+                EnPassant passedPawnPosition ->
+                  []
                 _ -> []
-
-            validMoves = regularMoves ++ specialMoves
-
           in
-            List.member destination <| watch "valid moves" validMoves
+            takeToLeft
+            ++ takeToRight
+            ++  enPassant
+        _ -> []
 
+    allowedMoves = regularMoves ++ specialMoves
 
-    otherColor : Bool
-    otherColor =
-      case destinationSquare of
+    -- a piece cant take an ally
+    destinationHasNoAlly destination =
+      case getSquareContent' destination of
         Just piece ->
-          (piece.color /= game.turn)
-
+          piece.color /= game.turn
         Nothing ->
           True
 
+    filterDestinations destination =
+      (destinationHasNoAlly destination)
+      && origin /= destination
+
   in
-     -- a piece cant move to the same place
-     (origin /= destination)
-     -- a piece cant move to a place out of range
-     && isDestinationValid
-     -- a piece cant take an ally
-     && otherColor
+    List.filter destinationHasNoAlly allowedMoves
+
