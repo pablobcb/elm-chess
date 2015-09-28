@@ -121,9 +121,9 @@ takeWhileInclusive : (a -> Bool) -> List a -> List a
 takeWhileInclusive p xs =
   case xs of
     [] -> []
-    x::xs' -> x :: if p x
-                  then takeWhileInclusive p xs'
-                  else []
+    (x::xs') -> x :: if p x
+                     then takeWhileInclusive p xs'
+                     else []
     
 
 getRegularMoves : Color -> Board -> Piece -> Position -> List Position
@@ -149,20 +149,13 @@ getRegularMoves turn board piece position =
         rangeToSquare : Range -> Square
         rangeToSquare = (getSquareContent board) << shift position
 
-        takeWhileEmpty : List Range -> List Range
-        takeWhileEmpty ranges =
-          List.Extra.takeWhile (isNothing << rangeToSquare) ranges
-
         --takeWhileEmpty : List Range -> List Range
-        --takeWhileEmpty rangesInclusive =
-        --  takeWhileInclusive (\range ->
-        --    case watch "square" <| rangeToSquare range of
-        --      Just piece ->
-        --        if piece.color == turn
-        --        then False
-        --        else True
-        --      Nothing -> True
-        --  ) ranges
+        --takeWhileEmpty ranges =
+        --  List.Extra.takeWhile (isNothing << rangeToSquare) ranges
+
+        takeWhileEmpty : List Range -> List Range
+        takeWhileEmpty rangesInclusive =
+          takeWhileInclusive (isNothing << rangeToSquare) rangesInclusive
 
 
         --zipAndTakeEmpty = takeWhileEmpty << zip
