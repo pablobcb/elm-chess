@@ -60,8 +60,9 @@ renderBoardSquare address state position square =
   let
     highlight =
       (case state of
-        Destination _ validPositions ->
+        Destination origin validPositions ->
           if List.member position validPositions
+             || position == origin
           -- fix me: repetion of ""
           then " valid-destination"
           else ""
@@ -72,11 +73,13 @@ renderBoardSquare address state position square =
       Nothing ->
         div [ class <| "square" ++ highlight
             , onClick address (Select position)
+            , title <| toString position
             ] []
 
       Just piece ->
         div [ class <| "square " ++ (getPieceClass piece) ++ highlight
             , onClick address (Select position)
+            , title <| toString position
             ] []
 
 

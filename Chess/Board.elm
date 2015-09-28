@@ -6,6 +6,8 @@ import Dict        exposing (..)
 import Maybe       exposing (..)
 import Maybe.Extra exposing (..)
 
+import List.Extra  exposing (..)
+
 import Chess.Color exposing (..)
 import Chess.Piece exposing (..)
 
@@ -93,16 +95,137 @@ shift (char, number) (x, y) =
   in
     (shiftedChar, number + y)
 
-getRegularMoves : List Range -> Position -> List Position
-getRegularMoves ranges position =
+
+positionAhead : Color -> Position -> Position
+positionAhead color position =
+  case color of
+    White ->
+      shift position (0, 1)
+    Black ->
+      shift position (0, -1)
+
+
+-- because pawns take pieces in a different
+-- way from how they move, this function is necessary
+pawnTakeRanges : Color -> { left : Range, right : Range }
+pawnTakeRanges color =
+  case color of
+     White ->
+       { right = (1, 1), left = (-1, 1) }
+
+     Black ->
+       { right = (1, -1), left = (-1, -1) }
+
+
+takeWhileInclusive : (a -> Bool) -> List a -> List a
+takeWhileInclusive p xs =
+  case xs of
+    [] -> []
+    (x::xs') -> x :: if p x
+                     then takeWhileInclusive p xs'
+                     else []
+    
+
+getRegularMoves : Color -> Board -> Piece -> Position -> List Position
+getRegularMoves turn board piece position =
   let
     filterPosition pos =
     -- excludes ranges with ! and negative values
       (List.member (fst pos) letters) &&
         (List.member (snd pos) [1..8])
+
+
+    ranges =
+      let
+        zip = List.map2 (,)
+
+        zeros = List.repeat 7 0
+
+        oneToSeven = [ 1 .. 7 ]
+
+        negativeOneToSeven =
+          List.map ( (*) (-1)) oneToSeven
+
+        rangeToSquare : Range -> Square
+        rangeToSquare = (getSquareContent board) << shift position
+
+        --takeWhileEmpty : List Range -> List Range
+        --takeWhileEmpty ranges =
+        --  List.Extra.takeWhile (isNothing << rangeToSquare) ranges
+
+        takeWhileEmpty : List Range -> List Range
+        takeWhileEmpty rangesInclusive =
+          takeWhileInclusive (isNothing << rangeToSquare) rangesInclusive
+
+
+        --zipAndTakeEmpty = takeWhileEmpty << zip
+
+        rookMoves =
+          (takeWhileEmpty <| zip  oneToSeven zeros) ++
+          (takeWhileEmpty <| zip negativeOneToSeven zeros) ++
+          (takeWhileEmpty <| zip zeros oneToSeven        ) ++
+          (takeWhileEmpty <| zip zeros negativeOneToSeven)
+
+        bishopMoves =
+          (takeWhileEmpty <| zip oneToSeven oneToSeven        ) ++
+          (takeWhileEmpty <| zip negativeOneToSeven oneToSeven) ++
+          (takeWhileEmpty <| zip oneToSeven negativeOneToSeven) ++
+          (takeWhileEmpty <| zip negativeOneToSeven negativeOneToSeven)
+
+        kingMoves =
+          [ (  0,  1 )
+          , (  1,  1 )
+          , (  1,  0 )
+          , (  1, -1 )
+          , (  0, -1 )
+          , ( -1, -1 )
+          , ( -1,  0 )
+          , ( -1,  1 )
+          ]
+
+      in
+        case piece.figure of
+          Pawn ->
+            case piece.color of
+              White ->
+                [(0, 1)] ++
+                  if piece.moved
+                      then []
+                      else [(0, 2)]
+
+              Black ->
+                [(0, -1)] ++
+                  if piece.moved
+                  then []
+                  else [(0, -2)]
+
+          Rook ->
+            rookMoves
+
+          Bishop ->
+            bishopMoves
+
+          Knight ->
+            [ (  1,  2 )
+            , ( -1,  2 )
+            , (  2,  1 )
+            , (  2, -1 )
+            , (  1, -2 )
+            , ( -1, -2 )
+            , ( -2,  1 )
+            , ( -2, -1 )
+            ]
+
+          King ->
+            kingMoves
+
+          Queen ->
+            bishopMoves
+            ++ rookMoves
+
   in
     List.filter filterPosition <|
-    watch "unfiltered" <| List.map (shift position) ranges
+    List.map (shift position) ranges
 
 charToNum : Char -> Maybe Int
 charToNum char =
