@@ -60,8 +60,9 @@ renderBoardSquare address state position square =
   let
     highlight =
       (case state of
-        Destination _ validPositions ->
+        Destination origin validPositions ->
           if List.member position validPositions
+             || position == origin
           -- fix me: repetion of ""
           then " valid-destination"
           else ""
