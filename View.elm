@@ -72,11 +72,13 @@ renderBoardSquare address state position square =
       Nothing ->
         div [ class <| "square" ++ highlight
             , onClick address (Select position)
+            , title <| toString position
             ] []
 
       Just piece ->
         div [ class <| "square " ++ (getPieceClass piece) ++ highlight
             , onClick address (Select position)
+            , title <| toString position
             ] []
 
 

@@ -32,7 +32,7 @@ piece f c =
 
 -- because pawns take pieces in a different
 -- way from how they move, this function is necessary
---pawnTakeRanges : Color -> List Range
+pawnTakeRanges : Color -> { left : Range, right : Range }
 pawnTakeRanges color =
   case color of
      White ->
@@ -40,6 +40,7 @@ pawnTakeRanges color =
 
      Black ->
        { right = (1, -1), left = (-1, -1) }
+
 
 -- movement ranges for each piece
 ranges : Piece -> List Range
@@ -52,7 +53,6 @@ ranges piece =
     oneToSeven = [ 1 .. 7 ]
 
     negativeOneToSeven =
-      --[ -1, -2, -3, -4, -5, -6, -7 ]
       List.map ( (*) (-1)) oneToSeven
 
     rookRanges =

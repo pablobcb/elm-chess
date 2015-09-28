@@ -93,6 +93,14 @@ shift (char, number) (x, y) =
   in
     (shiftedChar, number + y)
 
+positionAhead : Color -> Position -> Position
+positionAhead color position =
+  case color of
+    White ->
+      shift position (0, 1)
+    Black ->
+      shift position (0, -1)
+
 getRegularMoves : List Range -> Position -> List Position
 getRegularMoves ranges position =
   let
@@ -102,7 +110,7 @@ getRegularMoves ranges position =
         (List.member (snd pos) [1..8])
   in
     List.filter filterPosition <|
-    watch "unfiltered" <| List.map (shift position) ranges
+    List.map (shift position) ranges
 
 charToNum : Char -> Maybe Int
 charToNum char =
