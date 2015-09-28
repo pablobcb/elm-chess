@@ -95,6 +95,7 @@ shift (char, number) (x, y) =
   in
     (shiftedChar, number + y)
 
+
 positionAhead : Color -> Position -> Position
 positionAhead color position =
   case color of
@@ -102,6 +103,7 @@ positionAhead color position =
       shift position (0, 1)
     Black ->
       shift position (0, -1)
+
 
 -- because pawns take pieces in a different
 -- way from how they move, this function is necessary
@@ -114,16 +116,18 @@ pawnTakeRanges color =
      Black ->
        { right = (1, -1), left = (-1, -1) }
 
+
 takeWhileInclusive : (a -> Bool) -> List a -> List a
-takeWhileInclusive p xs' =
-  case xs' of
-    x::xs -> x :: if p x
-                  then takeWhileInclusive p xs
-                  else []
+takeWhileInclusive p xs =
+  case xs of
     [] -> []
+    x::xs' -> x :: if p x
+                  then takeWhileInclusive p xs'
+                  else []
+    
 
 getRegularMoves : Color -> Board -> Piece -> Position -> List Position
-getRegularMoves turn  board piece position =
+getRegularMoves turn board piece position =
   let
     filterPosition pos =
     -- excludes ranges with ! and negative values
@@ -145,23 +149,21 @@ getRegularMoves turn  board piece position =
         rangeToSquare : Range -> Square
         rangeToSquare = (getSquareContent board) << shift position
 
-      --  takeWhileEmpty : List Range -> List Range
-      --  takeWhileEmpty ranges =
-      --    List.Extra.takeWhile (isNothing << rangeToSquare) ranges
-
         takeWhileEmpty : List Range -> List Range
-        takeWhileEmpty rangesInclusive =
-          takeWhileInclusive (\range ->
-            case watch "square" <| rangeToSquare range of
-              Just piece ->
-                if piece.color == turn
-                then False
-                else True
-              Nothing -> True
-          ) ranges
+        takeWhileEmpty ranges =
+          List.Extra.takeWhile (isNothing << rangeToSquare) ranges
 
-        antes  = watch "antes" <| zip oneToSeven zeros
-        depois  = watch "depois" <| takeWhileEmpty <| zip oneToSeven zeros
+        --takeWhileEmpty : List Range -> List Range
+        --takeWhileEmpty rangesInclusive =
+        --  takeWhileInclusive (\range ->
+        --    case watch "square" <| rangeToSquare range of
+        --      Just piece ->
+        --        if piece.color == turn
+        --        then False
+        --        else True
+        --      Nothing -> True
+        --  ) ranges
+
 
         --zipAndTakeEmpty = takeWhileEmpty << zip
 

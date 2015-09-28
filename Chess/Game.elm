@@ -14,15 +14,12 @@ import Chess.Piece exposing (..)
 type alias Graveyard = List (Maybe Figure)
 
 
-type alias Winner = Color
-
-
 type GameState = Origin
            | Destination Position (List Position)
            | Promotion Position
            | EnPassant Position
            | CheckMate
-           | Finished Winner
+           | Finished Color
 
 
 type alias Game =
@@ -92,15 +89,17 @@ move game origin destination =
       Nothing -> --just move
         game'
 
+
 remove : a -> List a -> List a
 remove x = List.filter ((/=) x)
+
 
 getValidDestinations : Position -> Piece -> Game -> List Position
 getValidDestinations origin piece game =
   let
     getSquareContent' = getSquareContent game.board
 
-    regularMoves  = getRegularMoves game.board piece origin
+    regularMoves  = getRegularMoves game.turn game.board piece origin
 
     allowedMoves =
       case piece.figure of
