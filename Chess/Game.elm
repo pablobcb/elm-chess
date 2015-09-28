@@ -100,7 +100,7 @@ getValidDestinations origin piece game =
   let
     getSquareContent' = getSquareContent game.board
 
-    regularMoves  = watch "regular moves" <| getRegularMoves (ranges piece) origin
+    regularMoves  = getRegularMoves game.board piece origin
 
     allowedMoves =
       case piece.figure of
@@ -133,17 +133,17 @@ getValidDestinations origin piece game =
                 _ -> []
 
             positionAhead =
-              watch "positionAhead" <| Board.positionAhead game.turn origin
+              Board.positionAhead game.turn origin
 
             isPositionAheadBlocked =
-              watch "isPositionAheadBlocked" <| isJust <| getSquareContent game.board positionAhead
+              isJust <| getSquareContent game.board positionAhead
 
           in
             takeToLeft
             ++ takeToRight
             ++  enPassant
             ++ if isPositionAheadBlocked
-               then watch "after remove" <| remove positionAhead regularMoves
+               then remove positionAhead regularMoves
                else regularMoves
 
         _ -> regularMoves

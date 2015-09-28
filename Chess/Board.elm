@@ -6,6 +6,8 @@ import Dict        exposing (..)
 import Maybe       exposing (..)
 import Maybe.Extra exposing (..)
 
+import List.Extra  exposing (..)
+
 import Chess.Color exposing (..)
 import Chess.Piece exposing (..)
 
@@ -112,94 +114,120 @@ pawnTakeRanges color =
      Black ->
        { right = (1, -1), left = (-1, -1) }
 
+takeWhileInclusive : (a -> Bool) -> List a -> List a
+takeWhileInclusive p xs' =
+  case xs' of
+    x::xs -> x :: if p x
+                  then takeWhileInclusive p xs
+                  else []
+    [] -> []
 
--- movement ranges for each piece
-ranges : Piece -> List Range
-ranges piece =
-  let
-    zip = List.map2 (,)
-
-    zeros = List.repeat 7 0
-
-    oneToSeven = [ 1 .. 7 ]
-
-    negativeOneToSeven =
-      List.map ( (*) (-1)) oneToSeven
-
-    rookRanges =
-      zip oneToSeven zeros ++
-      zip negativeOneToSeven zeros ++
-      zip zeros oneToSeven ++
-      zip zeros negativeOneToSeven
-
-    bishopRanges =
-      zip oneToSeven oneToSeven ++
-      zip negativeOneToSeven oneToSeven ++
-      zip oneToSeven negativeOneToSeven ++
-      zip negativeOneToSeven negativeOneToSeven
-
-    kingRanges =
-      [ (  0,  1 )
-      , (  1,  1 )
-      , (  1,  0 )
-      , (  1, -1 )
-      , (  0, -1 )
-      , ( -1, -1 )
-      , ( -1,  0 )
-      , ( -1,  1 )
-      ]
-
-  in
-    case piece.figure of
-      Pawn ->
-        case piece.color of
-          White ->
-            [(0, 1)] ++
-              if piece.moved
-              then []
-              else [(0, 2)]
-
-          Black ->
-            [(0, -1)] ++
-              if piece.moved
-              then []
-              else [(0, -2)]
-
-      Rook ->
-        rookRanges
-
-      Bishop ->
-        watch "bishop Ranges" bishopRanges
-
-      Knight ->
-        [ (  1,  2 )
-        , ( -1,  2 )
-        , (  2,  1 )
-        , (  2, -1 )
-        , (  1, -2 )
-        , ( -1, -2 )
-        , ( -2,  1 )
-        , ( -2, -1 )
-        ]
-
-      King ->
-        kingRanges
-
-      Queen ->
-        bishopRanges
-        ++ rookRanges
-        ++ kingRanges
-
-
-
-
-getRegularMoves : List Range -> Position -> List Position
-getRegularMoves ranges position =
+getRegularMoves : Color -> Board -> Piece -> Position -> List Position
+getRegularMoves turn  board piece position =
   let
     filterPosition pos =
     -- excludes ranges with ! and negative values
       (List.member (fst pos) letters) &&
         (List.member (snd pos) [1..8])
+
+
+    ranges =
+      let
+        zip = List.map2 (,)
+
+        zeros = List.repeat 7 0
+
+        oneToSeven = [ 1 .. 7 ]
+
+        negativeOneToSeven =
+          List.map ( (*) (-1)) oneToSeven
+
+        rangeToSquare : Range -> Square
+        rangeToSquare = (getSquareContent board) << shift position
+
+      --  takeWhileEmpty : List Range -> List Range
+      --  takeWhileEmpty ranges =
+      --    List.Extra.takeWhile (isNothing << rangeToSquare) ranges
+
+        takeWhileEmpty : List Range -> List Range
+        takeWhileEmpty rangesInclusive =
+          takeWhileInclusive (\range ->
+            case watch "square" <| rangeToSquare range of
+              Just piece ->
+                if piece.color == turn
+                then False
+                else True
+              Nothing -> True
+          ) ranges
+
+        antes  = watch "antes" <| zip oneToSeven zeros
+        depois  = watch "depois" <| takeWhileEmpty <| zip oneToSeven zeros
+
+        --zipAndTakeEmpty = takeWhileEmpty << zip
+
+        rookMoves =
+          (takeWhileEmpty <| zip  oneToSeven zeros) ++
+          (takeWhileEmpty <| zip negativeOneToSeven zeros) ++
+          (takeWhileEmpty <| zip zeros oneToSeven        ) ++
+          (takeWhileEmpty <| zip zeros negativeOneToSeven)
+
+        bishopMoves =
+          (takeWhileEmpty <| zip oneToSeven oneToSeven        ) ++
+          (takeWhileEmpty <| zip negativeOneToSeven oneToSeven) ++
+          (takeWhileEmpty <| zip oneToSeven negativeOneToSeven) ++
+          (takeWhileEmpty <| zip negativeOneToSeven negativeOneToSeven)
+
+        kingMoves =
+          [ (  0,  1 )
+          , (  1,  1 )
+          , (  1,  0 )
+          , (  1, -1 )
+          , (  0, -1 )
+          , ( -1, -1 )
+          , ( -1,  0 )
+          , ( -1,  1 )
+          ]
+
+      in
+        case piece.figure of
+          Pawn ->
+            case piece.color of
+              White ->
+                [(0, 1)] ++
+                  if piece.moved
+                      then []
+                      else [(0, 2)]
+
+              Black ->
+                [(0, -1)] ++
+                  if piece.moved
+                  then []
+                  else [(0, -2)]
+
+          Rook ->
+            rookMoves
+
+          Bishop ->
+            bishopMoves
+
+          Knight ->
+            [ (  1,  2 )
+            , ( -1,  2 )
+            , (  2,  1 )
+            , (  2, -1 )
+            , (  1, -2 )
+            , ( -1, -2 )
+            , ( -2,  1 )
+            , ( -2, -1 )
+            ]
+
+          King ->
+            kingMoves
+
+          Queen ->
+            bishopMoves
+            ++ rookMoves
+
   in
     List.filter filterPosition <|
     List.map (shift position) ranges
