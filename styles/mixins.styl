@@ -2,3 +2,9 @@ inset-dark-background()
   background #ccc
   background linear-gradient(to bottom, #ccc, #eee)
   box-shadow inset 0 0 10px rgba(0,0,0,.4)
+
+highlight-piece()
+  border: $square-highlight-width solid green
+
+  &::before
+    transform: translateY(-($square-highlight-width))
