@@ -14,12 +14,13 @@ import Chess.Piece exposing (..)
 type alias Graveyard = List (Maybe Figure)
 
 
-type GameState = Origin
-           | Destination Position (List Position)
-           | Promotion Position
-           | EnPassant Position
-           | CheckMate
-           | Finished Color
+type GameState
+  = Origin
+  | Destination Position (List Position)
+  | Promotion Position
+  | EnPassant Position
+  | CheckMate
+  | Finished Color
 
 
 type alias Game =

@@ -40,20 +40,20 @@ renderBoardSquare address state position square =
           if List.member position validPositions
              || position == origin
           -- fix me: repetion of ""
-          then " valid-destination"
+          then "valid-destination"
           else ""
 
         _ -> "")
   in
     case square of
       Nothing ->
-        div [ class <| "square" ++ highlight
+        div [ class <| String.join " " ["square", highlight]
             , onClick address (Select position)
             , title <| toString position
             ] []
 
       Just piece ->
-        div [ class <| "square " ++ (getPieceClass piece) ++ highlight
+        div [ class <| String.join " " ["square", (getPieceClass piece), highlight]
             , onClick address (Select position)
             , title <| toString position
             ] []

@@ -11,10 +11,11 @@ import Chess.Piece as Game exposing (..)
 
 
 
-type Action = UpdateTimer
-            | Select Position
-            | Promote Position Figure
-            | Restart
+type Action
+  = UpdateTimer
+  | Select Position
+  | Promote Position Figure
+  | Restart
 
 
 update : Action -> Game -> Game

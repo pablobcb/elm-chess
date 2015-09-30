@@ -4,12 +4,13 @@ import Debug exposing (..)
 
 import Chess.Color exposing (..)
 
-type Figure = Pawn
-            | Knight
-            | Bishop
-            | Rook
-            | Queen
-            | King
+type Figure
+  = Pawn
+  | Knight
+  | Bishop
+  | Rook
+  | Queen
+  | King
 
 
 type alias Range = (Int, Int)
