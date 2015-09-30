@@ -79,12 +79,12 @@ move game origin destination =
         case game.turn of
           White ->
             { game'
-            | graveyard2 <- List.take 16 <| Just piece.figure :: game'.graveyard2
+            | graveyard2 <- List.drop 1 <| game'.graveyard1 ++ [ Just piece.figure ]
             }
 
           Black ->
-            { game'
-            | graveyard1 <- List.take 16 <| Just piece.figure :: game'.graveyard1
+            { game
+            | graveyard1 <- List.drop 1 <| game'.graveyard1 ++ [ Just piece.figure ]
             }
 
       Nothing -> --just move
