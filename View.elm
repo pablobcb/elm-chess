@@ -24,34 +24,10 @@ import Update          exposing (..)
 
 getPieceClass : Piece -> String
 getPieceClass piece =
-  let className =
-    case piece.figure of
-      King -> case piece.color of
-        Black -> "black king"
-        White -> "white king"
-
-      Queen -> case piece.color of
-        Black -> "black queen"
-        White -> "white queen"
-
-      Rook -> case piece.color of
-        Black -> "black rook"
-        White -> "white rook"
-
-      Bishop -> case piece.color of
-        Black -> "black bishop"
-        White -> "white bishop"
-
-      Knight -> case piece.color of
-        Black -> "black knight"
-        White -> "white knight"
-
-      Pawn -> case piece.color of
-        Black -> "black pawn"
-        White -> "white pawn"
-
-  in "piece " ++ className
-
+  toLower <| String.join " " [ "piece"
+                             , toString piece.figure
+                             , toString piece.color
+                             ]
 
 {----------------------------- Board ----------------------------}
 
