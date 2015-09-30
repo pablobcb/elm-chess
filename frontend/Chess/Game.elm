@@ -73,18 +73,20 @@ move game origin destination =
     game' = --cleans origin
       { game | board <- Dict.insert origin Nothing board'}
 
+    updateGraveyard graveyard figure = List.drop 1 <| graveyard ++ [ Just figure ]
+
   in
     case destinationSquare of
-      Just piece -> --take piece
+      Just piece -> --take piece moving it to the correct graveyard
         case game.turn of
           White ->
             { game'
-            | graveyard2 <- List.drop 1 <| game'.graveyard1 ++ [ Just piece.figure ]
+            | graveyard2 <- updateGraveyard game'.graveyard1 piece.figure
             }
 
           Black ->
             { game
-            | graveyard1 <- List.drop 1 <| game'.graveyard1 ++ [ Just piece.figure ]
+            | graveyard1 <- updateGraveyard game'.graveyard1 piece.figure
             }
 
       Nothing -> --just move
