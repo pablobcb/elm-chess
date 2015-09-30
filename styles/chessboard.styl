@@ -23,11 +23,8 @@
   for color in 'black' 'white'
     &.highlight-{color}-pieces
       .square.piece.{color}:hover
-        border: 4px solid green
-
-        &::before
-          transform: translateY(-4px)
+        highlight-piece()
 
   &.highlight-destinations
     .square:not(.piece):hover
-      border: 4px solid green
+      border: $square-highlight-width solid green
