@@ -101,6 +101,7 @@ makeInitialGame =
     }
 
 
+-- TODO: quebrar essa função em duas
 move : Game -> Position -> Position -> Game
 move game origin destination =
   let
@@ -311,4 +312,6 @@ handleClick game selectedPosition =
                    waitForPieceSelection game'
 
                | otherwise ->
-                   waitForPieceSelection game'
+                   { game'
+                   | state <- EnPassant selectedPosition
+                   }
