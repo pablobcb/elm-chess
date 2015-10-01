@@ -10,8 +10,6 @@ import Chess.Board as Board exposing (..)
 import Chess.Piece as Game exposing (..)
 
 
--- tentar tirar tudo que seta o estado do jogo da update
-
 type Action
   = UpdateTimer
   | Restart
@@ -23,6 +21,7 @@ update : Action -> Game -> Game
 update action game =
   case action of
 
+    -- increase turn timer by 1 second
     UpdateTimer ->
       Game.tick game
 
@@ -36,6 +35,6 @@ update action game =
       Game.promotePiece game promotedPiecePosition figure
 
 
-    -- Select represents a click on the board
+    -- Position of a click on the board
     Click selectedPosition ->
       Game.handleClick game selectedPosition
