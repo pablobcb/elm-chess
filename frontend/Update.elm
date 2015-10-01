@@ -6,133 +6,122 @@ import Dict exposing (..)
 
 import Chess.Game  as Game exposing (..)
 import Chess.Color as Game exposing (..)
-import Chess.Board as Game exposing (..)
+import Chess.Board as Board exposing (..)
 import Chess.Piece as Game exposing (..)
 
 
+-- tentar tirar tudo que seta o estado do jogo da update
 
 type Action
   = UpdateTimer
-  | Select Position
+  | Click Position
   | Promote Position Figure
   | Restart
 
 
 update : Action -> Game -> Game
 update action game =
-  let
-    player : Color
-    player = game.turn
+  case action of
 
-    board = game.board
-  in
-    case action of
-
-      UpdateTimer ->
-        { game
-        | turnInSeconds <- game.turnInSeconds + 1
-        }
+    UpdateTimer ->
+      Game.tick game
 
 
-      Restart ->
-        makeInitialGame
+    Restart ->
+      Game.makeInitialGame
 
 
-      -- sets promoted piece into position on board
-      Promote promotedPiecePosition figure ->
-        let
-          promotedTo = Just <| { figure = figure, moved = True, color = player }
-
-          board' = Dict.insert promotedPiecePosition promotedTo board
-        in
-          { game
-          | board         <- board'
-          , turn          <- other player
-          , state         <- Origin
-          , turnInSeconds <- 0
-          }
+    -- sets promoted piece into position on board
+    Promote promotedPiecePosition figure ->
+      Game.promotePiece game promotedPiecePosition figure
 
 
-      -- Select represents a click on the board
-      Select selectedPosition ->
-        case game.state of
-          -- ingores click on board because its waiting for a click from statusbar
-          Promotion _ ->
-            game
+    -- Select represents a click on the board
+    Click selectedPosition ->
+      case game.state of
+        -- ingores click on board because its waiting for a click from statusbar
+        Promotion _ ->
+          game
+
+        -- sets origin as state and waits from a click
+        -- on the board indicating the destination
+        Origin ->
+          let
+            selectedSquare =
+              Board.getSquareContent game.board selectedPosition
+
+          in
+            case selectedSquare of
+              Nothing -> -- ignores click because its expecting a piece
+                game
+
+              Just piece ->
+                let
+                  validDestinations =
+                    Game.getValidDestinations
+                      game
+                      selectedPosition
+                      piece
+                in
+                  if game.turn /= piece.color
+                  then game
+                  else
+                    { game
+                    | state <-
+                        Destination
+                          selectedPosition
+                          validDestinations
+                    }
 
 
-          -- sets origin as state and waits from a click
-          -- on the board indicating the destination
-          Origin ->
+        --  validates the destination
+        -- checks if promotion happened
+        -- checks if en passant happened
+        Destination originPosition validDestinations ->
+          if not <| List.member selectedPosition validDestinations
+          then
+            -- invalid move
+            Game.waitForPieceSelection game
+          else
+          -- valid move
             let
-              selectedOrigin = getSquareContent board selectedPosition
+              game' = move game originPosition selectedPosition
+
+              row = snd selectedPosition
+
+              selectedDestination =
+                getSquareContent game'.board selectedPosition
+
+              isPawn =
+                case selectedDestination of
+                  Just piece ->
+                    if piece.figure == Pawn
+                    then True
+                    else False
+
+                  Nothing ->
+                    False
+
+              hasMovedTwoSquares =
+                selectedPosition ==
+                Board.shift originPosition
+                  (case game'.turn of
+                    White ->
+                      (0, 2)
+
+                    Black ->
+                      (0, -2))
+
             in
-              case selectedOrigin of
-                Nothing -> -- ignores click because its expecting a piece
-                  game
+              Game.passTurn <|
+                if not isPawn
+                then -- passes turn
+                  Game.waitForPieceSelection game'
+                else  -- checks pawn special states
+                  if | row == 1 || row == 8 -> -- settng state to promotion
+                         { game'
+                         | state <- Promotion selectedPosition
+                         }
 
-
-                Just piece ->
-                  let
-                    validDestinations =
-                      Game.getValidDestinations
-                        selectedPosition
-                        piece
-                        game
-                  in
-                    if player /= piece.color
-                    then game
-                    else
-                      { game
-                      | turn  <- player
-                      , state <-
-                          Destination
-                            selectedPosition
-                            validDestinations
-                      }
-
-
-            -- validates the destination  nd checks if promotion
-            -- should be granted to the moved piece
-          Destination origin validDestinations ->
-            if List.member selectedPosition validDestinations
-            then -- valid move
-              let
-                game' = move game origin selectedPosition
-
-                row = snd selectedPosition
-
-                selectedDestination =
-                  getSquareContent game'.board selectedPosition
-
-                isPawn =
-                  case selectedDestination of
-                    Just piece ->
-                      if piece.figure == Pawn
-                      then True
-                      else False
-
-                    Nothing ->
-                      False
-
-                promoted = (row == 1 || row == 8) && isPawn
-
-              in
-                if promoted
-                then -- sets state to promotion
-                  { game'
-                  | turn  <- player
-                  , state <- Promotion selectedPosition
-                  }
-                else -- passes the turn
-                  { game'
-                  | turn  <- other player
-                  , turnInSeconds <- 0
-                  , state <- Origin
-                  }
-            else -- invalid move
-              { game
-              | turn  <- player
-              , state <- Origin
-              }
-
+                     | hasMovedTwoSquares -> -- setting state to enpassant
+                         Game.waitForPieceSelection game'

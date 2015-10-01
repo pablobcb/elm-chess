@@ -33,6 +33,57 @@ type alias Game =
   }
 
 
+resetClock : Game -> Game
+resetClock game =
+  { game
+  | turnInSeconds <- 0
+  }
+
+
+passTurn : Game -> Game
+passTurn game =
+  resetClock
+    { game
+    | turn <- other game.turn
+    }
+
+
+waitForPieceSelection : Game -> Game
+waitForPieceSelection game =
+  { game
+  | state <- Origin
+  }
+
+
+tick : Game -> Game
+tick game =
+  { game
+  | turnInSeconds <- game.turnInSeconds + 1
+  }
+
+
+promotePiece : Game -> Position -> Figure -> Game
+promotePiece game promotedPiecePosition figure =
+  let
+    promotedTo =
+      Just <|
+        { figure = figure
+        , moved = True
+        , color = game.turn
+        }
+
+    board' =
+      Dict.insert
+        promotedPiecePosition
+        promotedTo
+        game.board
+  in
+    passTurn <|
+      { game
+      | board <- board'
+      , state <- Origin
+      }
+
 
 makeInitialGame : Game
 makeInitialGame =
@@ -54,10 +105,10 @@ move game origin destination =
     board = game.board
 
     destinationSquare =
-      getSquareContent board destination
+      Board.getSquareContent board destination
 
     originSquare =
-      getSquareContent board origin
+      Board.getSquareContent board origin
 
     board' =
       let
@@ -73,7 +124,8 @@ move game origin destination =
     game' = --cleans origin
       { game | board <- Dict.insert origin Nothing board'}
 
-    updateGraveyard graveyard figure = List.drop 1 <| graveyard ++ [ Just figure ]
+    updateGraveyard graveyard figure =
+      List.drop 1 <| graveyard ++ [ Just figure ]
 
   in
     case destinationSquare of
@@ -81,7 +133,7 @@ move game origin destination =
         case game.turn of
           White ->
             { game'
-            | graveyard2 <- updateGraveyard game'.graveyard1 piece.figure
+            | graveyard2 <-watch "breno"<| updateGraveyard game'.graveyard2 piece.figure
             }
 
           Black ->
@@ -97,8 +149,8 @@ remove : a -> List a -> List a
 remove x = List.filter ((/=) x)
 
 
-getValidDestinations : Position -> Piece -> Game -> List Position
-getValidDestinations origin piece game =
+getValidDestinations : Game -> Position -> Piece -> List Position
+getValidDestinations game origin piece =
   let
     getSquareContent' = getSquareContent game.board
 

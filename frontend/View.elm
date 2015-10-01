@@ -44,18 +44,22 @@ renderBoardSquare address state position square =
           else ""
 
         _ -> "")
+
+    title' =
+      title <| toString position
+
   in
     case square of
       Nothing ->
-        div [ class <| String.join " " ["square", highlight]
-            , onClick address (Select position)
-            , title <| toString position
+        div [ class <| String.join " " [ "square", highlight ]
+            , onClick address <| Click position
+            , title'
             ] []
 
       Just piece ->
-        div [ class <| String.join " " ["square", (getPieceClass piece), highlight]
-            , onClick address (Select position)
-            , title <| toString position
+        div [ class <| String.join " " [ "square", getPieceClass piece, highlight ]
+            , onClick address <| Click position
+            , title'
             ] []
 
 
@@ -77,13 +81,13 @@ renderBoard address turn state board =
 
     squares = List.map2 (renderBoardSquare address state) positions pieces
 
-    highlight = case state of
-      Origin ->
-        String.join "-" ["highlight", toLower <| toString turn, "pieces"]
+    highlight =
+      case state of
+        Origin ->
+          String.join "-" ["highlight", toLower <| toString turn, "pieces"]
 
-
-      _ ->
-        ""
+        _ ->
+          ""
 
     className = String.join " " ["chessboard", highlight]
 
