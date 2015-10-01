@@ -57,9 +57,10 @@ passTurn game =
 
 waitForPieceSelection : Game -> Game
 waitForPieceSelection game =
-  { game
-  | state <- Origin
-  }
+  passTurn <|
+    { game
+    | state <- Origin
+    }
 
 
 promotePiece : Game -> Position -> Figure -> Game
@@ -69,7 +70,7 @@ promotePiece game promotedPiecePosition figure =
       Just <|
         { figure = figure
         , moved = True
-        , color = other game.turn
+        , color = game.turn
         }
 
     board' =

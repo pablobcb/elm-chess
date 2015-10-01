@@ -113,18 +113,17 @@ update action game =
                       (0, -2))
 
             in
-              Game.passTurn <|
-                if not isPawn
-                then -- passes turn
-                  Game.waitForPieceSelection game'
-                else  -- checks pawn special states
-                  if | row == 1 || row == 8 -> -- settng state to promotion
-                         { game'
-                         | state <- Promotion selectedPosition
-                         }
+              if not isPawn
+              then -- passes turn
+                Game.waitForPieceSelection game'
+              else  -- checks pawn special states
+                if | row == 1 || row == 8 -> -- settng state to promotion
+                       { game'
+                       | state <- Promotion selectedPosition
+                       }
 
-                     | hasMovedTwoSquares -> -- setting state to enpassant
-                         Game.waitForPieceSelection game'
+                   | hasMovedTwoSquares -> -- setting state to enpassant
+                       Game.waitForPieceSelection game'
 
-                     | otherwise ->
-                         Game.waitForPieceSelection game'
+                   | otherwise ->
+                       Game.waitForPieceSelection game'
