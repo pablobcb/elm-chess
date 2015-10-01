@@ -40,6 +40,13 @@ resetClock game =
   }
 
 
+tick : Game -> Game
+tick game =
+  { game
+  | turnInSeconds <- game.turnInSeconds + 1
+  }
+
+
 passTurn : Game -> Game
 passTurn game =
   resetClock
@@ -55,13 +62,6 @@ waitForPieceSelection game =
   }
 
 
-tick : Game -> Game
-tick game =
-  { game
-  | turnInSeconds <- game.turnInSeconds + 1
-  }
-
-
 promotePiece : Game -> Position -> Figure -> Game
 promotePiece game promotedPiecePosition figure =
   let
@@ -69,7 +69,7 @@ promotePiece game promotedPiecePosition figure =
       Just <|
         { figure = figure
         , moved = True
-        , color = game.turn
+        , color = other game.turn
         }
 
     board' =
@@ -83,6 +83,7 @@ promotePiece game promotedPiecePosition figure =
       | board <- board'
       , state <- Origin
       }
+
 
 
 makeInitialGame : Game
@@ -122,27 +123,29 @@ move game origin destination =
         Dict.insert destination piece board
 
     game' = --cleans origin
-      { game | board <- Dict.insert origin Nothing board'}
+      { game
+      | board <- Dict.insert origin Nothing board'
+      }
 
     updateGraveyard graveyard figure =
       List.drop 1 <| graveyard ++ [ Just figure ]
 
   in
     case destinationSquare of
+      Nothing -> --just move
+        game'
+
       Just piece -> --take piece moving it to the correct graveyard
-        case game.turn of
+        case game'.turn of
           White ->
             { game'
-            | graveyard2 <-watch "breno"<| updateGraveyard game'.graveyard2 piece.figure
+            | graveyard2 <- updateGraveyard game'.graveyard2 piece.figure
             }
 
           Black ->
-            { game
+            { game'
             | graveyard1 <- updateGraveyard game'.graveyard1 piece.figure
             }
-
-      Nothing -> --just move
-        game'
 
 
 remove : a -> List a -> List a

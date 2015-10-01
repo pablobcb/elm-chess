@@ -48,19 +48,22 @@ renderBoardSquare address state position square =
     title' =
       title <| toString position
 
-  in
+    emitPosition =
+      onClick address <| Click position
+
+    renderSquare pieceStyle =
+      div [ class <| String.join " " [ "square", highlight, pieceStyle ]
+          , emitPosition
+          , title'
+          ] []
+
+ in
     case square of
       Nothing ->
-        div [ class <| String.join " " [ "square", highlight ]
-            , onClick address <| Click position
-            , title'
-            ] []
+        renderSquare ""
 
       Just piece ->
-        div [ class <| String.join " " [ "square", getPieceClass piece, highlight ]
-            , onClick address <| Click position
-            , title'
-            ] []
+        renderSquare <| getPieceClass piece
 
 
 renderBoard : Address Action -> Color -> GameState -> Board -> Html

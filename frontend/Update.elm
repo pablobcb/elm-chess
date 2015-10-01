@@ -85,7 +85,7 @@ update action game =
           else
           -- valid move
             let
-              game' = move game originPosition selectedPosition
+              game' = Game.move game originPosition selectedPosition
 
               row = snd selectedPosition
 
@@ -124,4 +124,7 @@ update action game =
                          }
 
                      | hasMovedTwoSquares -> -- setting state to enpassant
+                         Game.waitForPieceSelection game'
+
+                     | otherwise ->
                          Game.waitForPieceSelection game'
