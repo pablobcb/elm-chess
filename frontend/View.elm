@@ -2,17 +2,13 @@ module View where
 
 import Debug exposing (..)
 
-import Dict            exposing (..)
 import Html            exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events     exposing (..)
 import Maybe           exposing ( Maybe(..) )
-import Maybe.Extra     exposing (..)
 
 import Signal          exposing (..)
-import StartApp.Simple exposing (..)
 import String          exposing (..)
-import Text            exposing ( Text(..) )
 
 import Chess.Game      exposing (..)
 import Chess.Color     exposing (..)

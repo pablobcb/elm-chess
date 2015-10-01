@@ -309,9 +309,9 @@ handleClick game selectedPosition =
                    }
 
                | hasMovedTwoSquares -> -- setting state to enpassant
-                   waitForPieceSelection game'
-
-               | otherwise ->
                    { game'
                    | state <- EnPassant selectedPosition
                    }
+
+               | otherwise ->
+                   waitForPieceSelection game'
