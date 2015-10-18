@@ -124,32 +124,48 @@ renderGraveyard graveyard color =
 
 
 {----------------------------- Status Bar ----------------------------}
-
-renderStatusBar : Address Action -> Game -> Html
-renderStatusBar address game =
+clock : Game -> Html
+clock game =
   let
-    prefix = "waiting for " ++ (toString game.turn)
-
-    assert2digits str =
+    ensure2digits str =
       if length str == 1
       then "0" ++ str
       else str
 
     time f = toString <| f game.turnInSeconds 60
 
-    seconds = assert2digits <| time rem
+    seconds = ensure2digits <| time rem
 
     minutes = time (//)
 
     parsedTime = minutes ++ ":" ++ seconds
 
-    statusBar =
+    turn = toLower <| toString game.turn
+
+    clockClassName =
+      "status-bar__clock status-bar__clock--" ++ turn
+
+    clockIcon =
+      span [ class "fa fa-clock-o status-bar__clock-icon" ] []
+
+    clockMessage =
+      let
+        msg = "waiting for " ++ turn
+      in
+        span [ class "status-bar__clock-message" ] [ text msg ]
+  in
+   span [ class clockClassName ] [ clockIcon, text parsedTime, clockMessage ]
+
+renderStatusBar : Address Action -> Game -> Html
+renderStatusBar address game =
+  let
+    statusMsg =
       case game.state of
         Origin ->
-          [ text <| prefix ++ " to select a piece" ]
+          [ text "select a piece" ]
 
         Destination _ _ ->
-          [ text <| prefix ++ " to select a destination" ]
+          [ text  "to select a destination" ]
 
         Promotion position ->
           let
@@ -161,11 +177,17 @@ renderStatusBar address game =
             [ text "promote to:"
             , button
                [ onClick address <| Promote position queen.figure
-               , class <| "square " ++ (getPieceClass queen)
+               , class <| String.join " " [ getPieceClass queen
+                                          , "square"
+                                          , "status-bar__promotion-btn"
+                                          ]
                ] []
             , button
                 [ onClick address <| Promote position knight.figure
-                , class <| "square " ++ (getPieceClass knight)
+               , class <| String.join " " [ getPieceClass knight
+                                          , "square"
+                                          , "status-bar__promotion-btn"
+                                          ]
                 ] []
             ]
 
@@ -175,8 +197,11 @@ renderStatusBar address game =
               ++ (toString winner)
               ++ " has won!"
           ]
+
+    statusBar = [clock game] ++ statusMsg 
+
   in
-    div [ class "status-bar" ] (statusBar ++ [ text (" " ++ parsedTime )])
+    div [ class "status-bar" ] statusBar
 
 
 {----------------------------- Game ----------------------------}

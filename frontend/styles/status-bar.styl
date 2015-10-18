@@ -1,5 +1,5 @@
 .status-bar
-  inset-dark-background()
+  //inset-dark-background() //remove for  debug purposes
   position: absolute
   bottom: 0
   width: 100%
@@ -7,3 +7,35 @@
   line-height: @height
   font-size: 25px
   text-align: center
+  border-style: solid
+  border-width: 3px
+  border-color: black
+  padding: 0px
+  margin: 0px
+
+.status-bar__clock
+  float: left
+  padding-left: 30px
+  padding-right: 30px
+  border-right: 3px solid black
+
+.status-bar__clock-icon
+  margin-right: 10px
+
+.status-bar__clock-message
+  margin-left: 10px
+
+
+.status-bar__clock--white
+  background: white
+  color: black
+
+.status-bar__clock--black
+  background: black
+  color: white
+
+.status-bar__promotion-btn
+  padding: 0
+  border: none
+  background: none
+  position: relative
