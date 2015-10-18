@@ -222,6 +222,35 @@ getValidDestinations game origin piece =
   in
     List.filter destinationHasNoAlly allowedMoves
 
+validateSelectedDestination : Game -> Position -> Game
+validateSelectedDestination game selectedPosition =
+  let
+    selectedSquare =
+      Board.getSquareContent game.board selectedPosition
+
+  in
+    case selectedSquare of
+      Nothing -> -- ignores click because its expecting a piece
+        game
+
+      Just piece ->
+        let
+          validDestinations =
+            getValidDestinations
+              game
+              selectedPosition
+              piece
+        in
+          if game.turn /= piece.color
+          then game
+          else
+            { game
+            | state <-
+                Destination
+                  selectedPosition
+                  validDestinations
+            }
+
 
 handleClick : Game -> Position -> Game
 handleClick game selectedPosition =
@@ -233,64 +262,14 @@ handleClick game selectedPosition =
     -- sets origin as state and waits from a click
     -- on the board indicating the destination
     Origin ->
-      let
-        selectedSquare =
-          Board.getSquareContent game.board selectedPosition
+      validateSelectedDestination game selectedPosition
 
-      in
-        case selectedSquare of
-          Nothing -> -- ignores click because its expecting a piece
-            game
+    -- ignore pawn position because its also stored in game.state
+    EnPassant _ ->
+      validateSelectedDestination game selectedPosition
 
-          Just piece ->
-            let
-              validDestinations =
-                getValidDestinations
-                  game
-                  selectedPosition
-                  piece
-            in
-              if game.turn /= piece.color
-              then game
-              else
-                { game
-                | state <-
-                    Destination
-                      selectedPosition
-                      validDestinations
-                }
-
-    EnPassant pawnPosition ->
-      let
-        selectedSquare =
-          Board.getSquareContent game.board selectedPosition
-
-      in
-        case selectedSquare of
-          Nothing -> -- ignores click because its expecting a piece
-            game
-
-          Just piece ->
-            let
-              validDestinations =
-                getValidDestinations
-                  game
-                  selectedPosition
-                  piece
-            in
-              if game.turn /= piece.color
-              then game
-              else
-                { game
-                | state <-
-                    Destination
-                      selectedPosition
-                      validDestinations
-                }
-
-    --  validates the destination
-    -- checks if promotion happened
-    -- checks if en passant happened
+    -- validates the destination
+    -- checks if promotion or en passant occurred
     Destination originPosition validDestinations ->
       if not <| List.member selectedPosition validDestinations
       then

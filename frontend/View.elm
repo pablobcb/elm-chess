@@ -62,6 +62,7 @@ renderBoardSquare address state position square =
         renderSquare <| getPieceClass piece
 
 
+-- tentar remover cor dos parametros, css ta esquisito
 renderBoard : Address Action -> Color -> GameState -> Board -> Html
 renderBoard address turn state board =
   let
