@@ -191,6 +191,10 @@ renderStatusBar address game =
                 ] []
             ]
 
+        EnPassant position ->
+          [ text  "to select a destination" ]
+
+
         Finished winner ->
           [ text
               <| "the game has ended, "
@@ -198,7 +202,7 @@ renderStatusBar address game =
               ++ " has won!"
           ]
 
-    statusBar = [clock game] ++ statusMsg 
+    statusBar = [clock game] ++ statusMsg
 
   in
     div [ class "status-bar" ] statusBar

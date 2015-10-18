@@ -222,6 +222,7 @@ getValidDestinations game origin piece =
   in
     List.filter destinationHasNoAlly allowedMoves
 
+
 handleClick : Game -> Position -> Game
 handleClick game selectedPosition =
   case game.state of
@@ -259,6 +260,33 @@ handleClick game selectedPosition =
                       validDestinations
                 }
 
+    EnPassant pawnPosition ->
+      let
+        selectedSquare =
+          Board.getSquareContent game.board selectedPosition
+
+      in
+        case selectedSquare of
+          Nothing -> -- ignores click because its expecting a piece
+            game
+
+          Just piece ->
+            let
+              validDestinations =
+                getValidDestinations
+                  game
+                  selectedPosition
+                  piece
+            in
+              if game.turn /= piece.color
+              then game
+              else
+                { game
+                | state <-
+                    Destination
+                      selectedPosition
+                      validDestinations
+                }
 
     --  validates the destination
     -- checks if promotion happened
@@ -267,7 +295,9 @@ handleClick game selectedPosition =
       if not <| List.member selectedPosition validDestinations
       then
         -- invalid move
-        waitForPieceSelection game
+        { game
+        | state <- Origin
+        }
       else
       -- valid move
         let
@@ -311,6 +341,7 @@ handleClick game selectedPosition =
                | hasMovedTwoSquares -> -- setting state to enpassant
                    { game'
                    | state <- EnPassant selectedPosition
+                   , turn  <- other game'.turn
                    }
 
                | otherwise ->
