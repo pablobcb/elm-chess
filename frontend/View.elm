@@ -124,10 +124,6 @@ renderGraveyard graveyard color =
 
 
 {----------------------------- Status Bar ----------------------------}
---turnLabel : Color -> Html
---turnLabel color =
---   span [ class <| "status-bar__turn-lbl--" ++ (toString color) ] []
-
 clock : Game -> Html
 clock game =
   let
@@ -144,14 +140,21 @@ clock game =
 
     parsedTime = minutes ++ ":" ++ seconds
 
+    turn = toLower <| toString game.turn
+
     clockClassName =
-      "status-bar__clock status-bar__clock--" ++ (toLower <| toString game.turn)
+      "status-bar__clock status-bar__clock--" ++ turn
 
-    clockIcon = span [ class "fa fa-clock-o status-bar__clock-icon" ] []
+    clockIcon =
+      span [ class "fa fa-clock-o status-bar__clock-icon" ] []
 
-    clockSeparator = span [ class "status-bar__clock-separator" ] []
+    clockMessage =
+      let
+        msg = "waiting for " ++ turn
+      in
+        span [ class "status-bar__clock-message" ] [ text msg ]
   in
-   span [ class clockClassName ] [ clockIcon, text parsedTime ]
+   span [ class clockClassName ] [ clockIcon, text parsedTime, clockMessage ]
 
 renderStatusBar : Address Action -> Game -> Html
 renderStatusBar address game =
@@ -195,7 +198,7 @@ renderStatusBar address game =
               ++ " has won!"
           ]
 
-    statusBar = statusMsg ++ [clock game]
+    statusBar = [clock game] ++ statusMsg 
 
   in
     div [ class "status-bar" ] statusBar
