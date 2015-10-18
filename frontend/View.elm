@@ -2,17 +2,13 @@ module View where
 
 import Debug exposing (..)
 
-import Dict            exposing (..)
 import Html            exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events     exposing (..)
 import Maybe           exposing ( Maybe(..) )
-import Maybe.Extra     exposing (..)
 
 import Signal          exposing (..)
-import StartApp.Simple exposing (..)
 import String          exposing (..)
-import Text            exposing ( Text(..) )
 
 import Chess.Game      exposing (..)
 import Chess.Color     exposing (..)
@@ -128,32 +124,45 @@ renderGraveyard graveyard color =
 
 
 {----------------------------- Status Bar ----------------------------}
+--turnLabel : Color -> Html
+--turnLabel color =
+--   span [ class <| "status-bar__turn-lbl--" ++ (toString color) ] []
 
-renderStatusBar : Address Action -> Game -> Html
-renderStatusBar address game =
+clock : Game -> Html
+clock game =
   let
-    prefix = "waiting for " ++ (toString game.turn)
-
-    assert2digits str =
+    ensure2digits str =
       if length str == 1
       then "0" ++ str
       else str
 
     time f = toString <| f game.turnInSeconds 60
 
-    seconds = assert2digits <| time rem
+    seconds = ensure2digits <| time rem
 
     minutes = time (//)
 
     parsedTime = minutes ++ ":" ++ seconds
 
-    statusBar =
+    clockClassName =
+      "status-bar__clock status-bar__clock--" ++ (toLower <| toString game.turn)
+
+    clockIcon = span [ class "fa fa-clock-o status-bar__clock-icon" ] []
+
+    clockSeparator = span [ class "status-bar__clock-separator" ] []
+  in
+   span [ class clockClassName ] [ clockIcon, text parsedTime ]
+
+renderStatusBar : Address Action -> Game -> Html
+renderStatusBar address game =
+  let
+    statusMsg =
       case game.state of
         Origin ->
-          [ text <| prefix ++ " to select a piece" ]
+          [ text "select a piece" ]
 
         Destination _ _ ->
-          [ text <| prefix ++ " to select a destination" ]
+          [ text  "to select a destination" ]
 
         Promotion position ->
           let
@@ -165,11 +174,17 @@ renderStatusBar address game =
             [ text "promote to:"
             , button
                [ onClick address <| Promote position queen.figure
-               , class <| "square " ++ (getPieceClass queen)
+               , class <| String.join " " [ getPieceClass queen
+                                          , "square"
+                                          , "status-bar__promotion-btn"
+                                          ]
                ] []
             , button
                 [ onClick address <| Promote position knight.figure
-                , class <| "square " ++ (getPieceClass knight)
+               , class <| String.join " " [ getPieceClass knight
+                                          , "square"
+                                          , "status-bar__promotion-btn"
+                                          ]
                 ] []
             ]
 
@@ -179,8 +194,11 @@ renderStatusBar address game =
               ++ (toString winner)
               ++ " has won!"
           ]
+
+    statusBar = statusMsg ++ [clock game]
+
   in
-    div [ class "status-bar" ] (statusBar ++ [ text (" " ++ parsedTime )])
+    div [ class "status-bar" ] statusBar
 
 
 {----------------------------- Game ----------------------------}
