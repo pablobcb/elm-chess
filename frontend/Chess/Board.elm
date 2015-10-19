@@ -96,6 +96,10 @@ shift (char, number) (x, y) =
     (shiftedChar, number + y)
 
 
+getHorizontalAdjacentPositions : Position -> (Position, Position)
+getHorizontalAdjacentPositions position =
+    (shift position (1, 0), shift position (-1, 0) )
+
 positionAhead : Color -> Position -> Position
 positionAhead color position =
   case color of
@@ -121,10 +125,21 @@ takeWhileInclusive : (a -> Bool) -> List a -> List a
 takeWhileInclusive p xs =
   case xs of
     [] -> []
-    (x::xs') -> x :: if p x
-                     then takeWhileInclusive p xs'
-                     else []
-    
+    (x::xs') ->
+      x :: if p x
+           then takeWhileInclusive p xs'
+           else []
+
+filterPositions : List Position -> List Position
+filterPositions positions =
+  let
+    filterPosition pos =
+    -- excludes ranges with ! and negative values
+      (List.member (fst pos) letters) &&
+        (List.member (snd pos) [1..8])
+  in
+    List.filter filterPosition <| positions
+
 
 getRegularMoves : Color -> Board -> Piece -> Position -> List Position
 getRegularMoves turn board piece position =
@@ -161,7 +176,7 @@ getRegularMoves turn board piece position =
         --zipAndTakeEmpty = takeWhileEmpty << zip
 
         rookMoves =
-          (takeWhileEmpty <| zip  oneToSeven zeros) ++
+          (takeWhileEmpty <| zip oneToSeven zeros)         ++
           (takeWhileEmpty <| zip negativeOneToSeven zeros) ++
           (takeWhileEmpty <| zip zeros oneToSeven        ) ++
           (takeWhileEmpty <| zip zeros negativeOneToSeven)
@@ -224,8 +239,8 @@ getRegularMoves turn board piece position =
             ++ rookMoves
 
   in
-    List.filter filterPosition <|
-    List.map (shift position) ranges
+    filterPositions <| List.map (shift position) ranges
+
 
 charToNum : Char -> Maybe Int
 charToNum char =

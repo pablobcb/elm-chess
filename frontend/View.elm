@@ -32,7 +32,7 @@ renderBoardSquare address state position square =
   let
     highlight =
       (case state of
-        Destination origin validPositions ->
+        Destination origin validPositions _ ->
           if List.member position validPositions
              || position == origin
           -- fix me: repetion of ""
@@ -83,7 +83,7 @@ renderBoard address turn state board =
 
     highlight =
       case state of
-        Origin ->
+        Origin _ ->
           String.join "-" ["highlight", toLower <| toString turn, "pieces"]
 
         _ ->
@@ -162,10 +162,10 @@ renderStatusBar address game =
   let
     statusMsg =
       case game.state of
-        Origin ->
+        Origin _ ->
           [ text "select a piece" ]
 
-        Destination _ _ ->
+        Destination _ _ _ ->
           [ text  "to select a destination" ]
 
         Promotion position ->
@@ -191,9 +191,6 @@ renderStatusBar address game =
                                           ]
                 ] []
             ]
-
-        EnPassant position ->
-          [ text  "to select a destination" ]
 
 
         Finished winner ->
