@@ -108,6 +108,13 @@ positionAhead color position =
     Black ->
       shift position (0, -1)
 
+positionBelow : Color -> Position -> Position
+positionBelow color position =
+  case color of
+    White ->
+      shift position (0, -1)
+    Black ->
+      shift position (0, 1)
 
 -- because pawns take pieces in a different
 -- way from how they move, this function is necessary
@@ -141,102 +148,91 @@ filterPositions positions =
     List.filter filterPosition <| positions
 
 
-getRegularMoves : Color -> Board -> Piece -> Position -> List Position
-getRegularMoves turn board piece position =
-  let
-    filterPosition pos =
-    -- excludes ranges with ! and negative values
-      (List.member (fst pos) letters) &&
-        (List.member (snd pos) [1..8])
+rangeToSquare : Position -> Board -> Range -> Square
+rangeToSquare position board =
+  (getSquareContent board) << shift position
 
+isPopulated board position =
+  isJust << rangeToSquare position board
+
+getRegularDestinations : Color -> Board -> Piece -> Position -> List Position
+getRegularDestinations turn board piece position =
+  let
+    zeros = List.repeat 7 0
+
+    oneToSeven = [ 1 .. 7 ]
+
+    negativeOneToSeven = List.reverse [ -7 .. -1 ]
+
+
+    --zipAndTakeEmpty = takeWhileEmpty << zip
+    --FIXME
+    takeWhileEmpty : List Range -> List Range
+    takeWhileEmpty rangesInclusive =
+      takeWhileInclusive (isNothing << rangeToSquare position board) rangesInclusive
+
+
+    --zipAndTakeEmpty = takeWhileEmpty << zip
+
+    rookMoves =
+      (takeWhileEmpty <| zip  oneToSeven zeros) ++
+      (takeWhileEmpty <| zip negativeOneToSeven zeros) ++
+      (takeWhileEmpty <| zip zeros oneToSeven        ) ++
+      (takeWhileEmpty <| zip zeros negativeOneToSeven)
+
+    bishopMoves =
+      (takeWhileEmpty <| zip oneToSeven oneToSeven        ) ++
+      (takeWhileEmpty <| zip negativeOneToSeven oneToSeven) ++
+      (takeWhileEmpty <| zip oneToSeven negativeOneToSeven) ++
+      (takeWhileEmpty <| zip negativeOneToSeven negativeOneToSeven)
+
+    kingMoves =
+      [ (  0,  1 ) , (  1,  1 ) , (  1,  0 )
+      , (  1, -1 ) , (  0, -1 ) , ( -1, -1 )
+      , ( -1,  0 ) , ( -1,  1 )
+      ]
 
     ranges =
-      let
-        zip = List.map2 (,)
+      case piece.figure of
+        Rook ->
+          rookMoves
 
-        zeros = List.repeat 7 0
+        Bishop ->
+          bishopMoves
 
-        oneToSeven = [ 1 .. 7 ]
-
-        negativeOneToSeven =
-          List.map ( (*) (-1)) oneToSeven
-
-        rangeToSquare : Range -> Square
-        rangeToSquare = (getSquareContent board) << shift position
-
-        --takeWhileEmpty : List Range -> List Range
-        --takeWhileEmpty ranges =
-        --  List.Extra.takeWhile (isNothing << rangeToSquare) ranges
-
-        takeWhileEmpty : List Range -> List Range
-        takeWhileEmpty rangesInclusive =
-          takeWhileInclusive (isNothing << rangeToSquare) rangesInclusive
-
-
-        --zipAndTakeEmpty = takeWhileEmpty << zip
-
-        rookMoves =
-          (takeWhileEmpty <| zip oneToSeven zeros)         ++
-          (takeWhileEmpty <| zip negativeOneToSeven zeros) ++
-          (takeWhileEmpty <| zip zeros oneToSeven        ) ++
-          (takeWhileEmpty <| zip zeros negativeOneToSeven)
-
-        bishopMoves =
-          (takeWhileEmpty <| zip oneToSeven oneToSeven        ) ++
-          (takeWhileEmpty <| zip negativeOneToSeven oneToSeven) ++
-          (takeWhileEmpty <| zip oneToSeven negativeOneToSeven) ++
-          (takeWhileEmpty <| zip negativeOneToSeven negativeOneToSeven)
-
-        kingMoves =
-          [ (  0,  1 )
-          , (  1,  1 )
-          , (  1,  0 )
-          , (  1, -1 )
-          , (  0, -1 )
-          , ( -1, -1 )
-          , ( -1,  0 )
-          , ( -1,  1 )
+        Knight ->
+          [ (  1,  2 ) , ( -1,  2 ) , (  2,  1 )
+          , (  2, -1 ) , (  1, -2 ) , ( -1, -2 )
+          , ( -2,  1 ) , ( -2, -1 )
           ]
 
-      in
-        case piece.figure of
-          Pawn ->
-            case piece.color of
-              White ->
-                [(0, 1)] ++
+        King ->
+          kingMoves
+
+        Queen ->
+          bishopMoves ++ rookMoves
+
+        Pawn ->
+          let
+            verticalDestinations oneSquareAhead twoSquaresAhead =
+              if isPopulated board position oneSquareAhead
+              then []
+              else
+                if isPopulated board position twoSquaresAhead
+                then [oneSquareAhead]
+                else
                   if piece.moved
-                      then []
-                      else [(0, 2)]
+                      then [oneSquareAhead]
+                      else [oneSquareAhead, twoSquaresAhead]
+          in
+              case piece.color of
+                White ->
+                  verticalDestinations (0, 1) (0, 2)
 
-              Black ->
-                [(0, -1)] ++
-                  if piece.moved
-                  then []
-                  else [(0, -2)]
+                Black ->
+                  verticalDestinations (0, -1) (0, -2)
 
-          Rook ->
-            rookMoves
 
-          Bishop ->
-            bishopMoves
-
-          Knight ->
-            [ (  1,  2 )
-            , ( -1,  2 )
-            , (  2,  1 )
-            , (  2, -1 )
-            , (  1, -2 )
-            , ( -1, -2 )
-            , ( -2,  1 )
-            , ( -2, -1 )
-            ]
-
-          King ->
-            kingMoves
-
-          Queen ->
-            bishopMoves
-            ++ rookMoves
 
   in
     filterPositions <| List.map (shift position) ranges
