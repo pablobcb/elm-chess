@@ -104,6 +104,19 @@ promotePiece game promotedPiecePosition figure =
       }
 
 
+checkForPromotion : Game -> Piece -> Position -> Game
+checkForPromotion game piece position =
+  let
+    row = snd position
+  in
+    if | row == 1 || row == 8 -> -- settng state to promotion
+           { game
+           | state <- Promotion position
+           }
+
+       | otherwise ->
+           waitForPieceSelection game
+
 
 makeInitialGame : Game
 makeInitialGame =
@@ -191,11 +204,13 @@ move game origin destination =
 remove : a -> List a -> List a
 remove x = List.filter ((/=) x)
 
-getSpecialDestinations : Game -> Position -> Piece -> List Position
+getSpecialDestinations : Game -> Position -> Piece -> (List Position, Maybe SpecialMove)
 getSpecialDestinations game origin piece =
   case piece.figure of
     Pawn ->
       let
+        -- checks if pawn cant take to right or left
+        canTakeTo : ({ left : Range, right : Range } -> Range) -> List Position
         canTakeTo f =
           let
             range : Range
@@ -211,25 +226,68 @@ getSpecialDestinations game origin piece =
             then [Board.shift origin range]
             else []
 
+      in
+            case game.state of
+              Origin Nothing ->
+                ([], Nothing)
 
-        in
-          --enpassant goes here
-          (canTakeTo .left) ++ (canTakeTo .right)
+              Origin (Just positionOfPawnWhichMoved2Squares) ->
+                let
+                  adjacentPositions =
+                    Board.getHorizontalAdjacentPositions positionOfPawnWhichMoved2Squares
 
-    King -> []
+                  left = fst adjacentPositions
 
-    _ -> []
+                  right = snd adjacentPositions
 
-getValidDestinations : Game -> Position -> Piece -> List Position
+                  pawnTakePositions : List Position
+                  pawnTakePositions =
+                    (canTakeTo .left) ++ (canTakeTo .right)
+
+                  getEnPassantDestination : Position -> Position
+                  getEnPassantDestination enemyPawnPos =
+                    Board.shift enemyPawnPos <|
+                      case game.turn of
+                        White ->
+                          (0, -1)
+
+                        Black ->
+                          (0, 1)
+
+                in
+                  --passar essas lsitas la pra cima
+                  if | left == positionOfPawnWhichMoved2Squares ->
+                         ( pawnTakePositions ++ [left]
+                         , Just
+                           <| EnPassant
+                           <| getEnPassantDestination positionOfPawnWhichMoved2Squares
+                         )
+
+                     | right == positionOfPawnWhichMoved2Squares ->
+                         ( pawnTakePositions ++ [right]
+                         , Just
+                           <| EnPassant
+                           <| getEnPassantDestination positionOfPawnWhichMoved2Squares
+                         )
+
+                     | otherwise ->
+                       (pawnTakePositions, Nothing)
+
+
+
+    King -> ([], Nothing)
+
+    _ -> ([], Nothing)
+
+getValidDestinations : Game -> Position -> Piece -> (List Position, Maybe SpecialMove)
 getValidDestinations game origin piece =
   let
-      --regularDestinations : List Position
+      regularDestinations : List Position
       regularDestinations =
         Board.getRegularDestinations
           game.turn game.board piece origin
 
-      --specialDestinations : List Position
-      specialDestinations =
+      (specialDestinations, specialMove) =
         getSpecialDestinations
           game origin piece
 
@@ -251,8 +309,9 @@ getValidDestinations game origin piece =
           (regularDestinations ++ specialDestinations)
 
   in
-    validDestinations
+    (validDestinations, specialMove)
 
+--FIXME  rename
 setValidDestinations : Game -> Position -> Game
 setValidDestinations game selectedPosition =
   let
@@ -269,7 +328,7 @@ setValidDestinations game selectedPosition =
         then game -- ignores click because its expecting an enemy piece
         else
           let
-            validDestinations =
+            (validDestinations, specialMove) =
               getValidDestinations
                 game
                 selectedPosition
@@ -292,39 +351,8 @@ setValidDestinations game selectedPosition =
                     Destination
                       selectedPosition
                       validDestinations
-                      <| Just <| EnPassant enPassantDestination'
+                      specialMove
                 }
-                {--let
-                  adjacentPositions =
-                    getHorizontalAdjacentPositions passedPawnPosition
-
-                  left = Debug.log "left" <|fst adjacentPositions
-
-                  right = Debug.log "right" <| snd adjacentPositions
-
-                  enPassantDestination pos =
-                    Board.shift pos <|
-                      case game.turn of
-                        White ->
-                          (0, -1)
-
-                        Black ->
-                          (0, 1)
-
-                  enPassantDestination' =
-                    if | left == passedPawnPosition ->
-                           enPassantDestination left
-                       | right == passedPawnPosition ->
-                           enPassantDestination right
-                in
-                  { game
-                  | state <-
-                      Destination
-                        selectedPosition
-                        (validDestinations ++ [enPassantDestination'])
-                        <| Just <| EnPassant enPassantDestination'
-                  }
-              -}
 
 
 handleClick : Game -> Position -> Game
@@ -381,6 +409,8 @@ handleClick game selectedPosition =
                     Black ->
                       (0, -2))
 
+
+
             in
               if not isPawn
               then -- passes turn
@@ -400,7 +430,13 @@ handleClick game selectedPosition =
 
                    | otherwise ->
                        waitForPieceSelection game'
+
         Just (EnPassant behindEnemyPawnPosition) ->
+          let
+              a = Debug.log "selected pos" selectedPosition
+              b' = Debug.log "valid destinations" validDestinations
+              c'' = Debug.log "is meber" <| List.member selectedPosition validDestinations
+          in
           if not <| List.member selectedPosition validDestinations
           then
             -- invalid move
