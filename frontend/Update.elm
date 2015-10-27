@@ -20,7 +20,6 @@ type Action
 update : Action -> Game -> Game
 update action game =
   case action of
-
     -- increase turn timer by 1 second
     UpdateTimer ->
       Game.tick game
