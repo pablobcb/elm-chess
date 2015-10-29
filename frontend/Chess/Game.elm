@@ -13,24 +13,29 @@ import Chess.Piece exposing (..)
 
 type alias Graveyard = List (Maybe Figure)
 
+--FIXME: is this type really necessary?
 type SpecialMove
   -- @Position:  the position behind the enemy pawn,
   --             where the attacking pawn will land
-  --             after taking with en-passant
+  --             after taking another pawn with EnPassant
   = EnPassant Position
 
-  | Castling
+  -- @Position:  the position the king will land
+  --             after a Castling move
+  | Castling Position
+
+  -- @Position: position of the pawn which will be replaced for a new piece
+  | Promotion Position
+
 
 type GameState
   -- This state is a dummy value for the
-  -- 'previousState' inside the game record
-  = Initial
-
+  -- 'previousState' inside the game record = Initial
   -- Waiting a player to select the piece he wants to move
   -- @(Maybe Position): indicates the position of a pawn if
   --                    it has moved 2 squares in the last play,
   --                    helping with enPassant detection
-  |  Origin (Maybe Position)
+  =  Origin (Maybe Position)
 
   -- Waiting a player to select a destination for the selected piece
   -- @Position:            the origin of the moving piece
@@ -39,8 +44,7 @@ type GameState
   | Destination Position (List Position) (Maybe SpecialMove)
 
   -- Waiting a player to select the new piece for the promotion
-  -- @Position: position of the pawn which will be replaced for a new piece
-  | Promotion Position
+  | SelectPromotion SpecialMove
   | CheckMate
   | Finished Color
 
@@ -118,7 +122,7 @@ checkForPromotion game position =
     if | row == 1 || row == 8 -> -- settng state to promotion
            { game
            | previousState <- game.state
-           , state <- Promotion position
+           , state <- SelectPromotion <| Promotion position
            }
 
        | otherwise ->
@@ -135,7 +139,7 @@ makeInitialGame =
     , graveyard2     = emptyGraveyard
     , turn           = White
     , state          = Origin Nothing
-    , previousState  = Initial
+    , previousState  = Origin Nothing
     , turnInSeconds  = 0
     }
 
@@ -258,9 +262,9 @@ getSpecialDestinations game origin piece =
               -- 2 squares last turn
               Origin (Just pawnPosition) ->
                 let
-                  getEnPassantDestination : Position -> Position
-                  getEnPassantDestination enemyPawnPos =
-                    Board.shift enemyPawnPos <|
+                  enPassantDestination : Position
+                  enPassantDestination =
+                    Board.shift pawnPosition <|
                       case game.turn of
                         White ->
                           (0, -1)
@@ -268,24 +272,33 @@ getSpecialDestinations game origin piece =
                         Black ->
                           (0, 1)
 
+
+
+                  promotedPiecePosition = Board.positionBelow game.turn origin
+
+                  row = snd <| promotedPiecePosition
+
                 in
                   --passar essas lsitas la pra cima
                   if | left == pawnPosition ->
                          ( pawnTakePositions ++ [left]
                          , Just
                            <| EnPassant
-                           <| getEnPassantDestination pawnPosition
+                           <| enPassantDestination
                          )
 
                      | right == pawnPosition ->
                          ( pawnTakePositions ++ [right]
                          , Just
                            <| EnPassant
-                           <| getEnPassantDestination pawnPosition
+                           <| enPassantDestination
                          )
 
                      | otherwise ->
-                       (pawnTakePositions, Nothing)
+                        if row == 1 || row == 8 -- settng state to promotion
+                        --then checkForPromotion game selectedPosition
+                        then (pawnTakePositions, Just <| Promotion promotedPiecePosition)
+                        else (pawnTakePositions, Nothing)
 
 
 
@@ -373,7 +386,7 @@ handleClick : Game -> Position -> Game
 handleClick game selectedPosition =
   case game.state of
     -- ingores click on board because its waiting for a click from statusbar
-    Promotion _ ->
+    SelectPromotion _ ->
       game
 
     -- sets origin as state and waits from a click
@@ -417,7 +430,7 @@ handleClick game selectedPosition =
         if not <| List.member selectedPosition validDestinations
         then
           -- invalid move
-            { game'
+          { game'
           | state <- Origin Nothing
           }
         else
@@ -431,12 +444,10 @@ handleClick game selectedPosition =
                     | previousState <- game'.state
                     , state <- Origin Nothing
                     }
-                else  -- checks pawn special states
-                  if | row == 1 || row == 8 -> -- settng state to promotion
-                         checkForPromotion game' selectedPosition
+                else
 
                      -- set the pawn position for enpassant detection
-                     | hasMovedTwoSquares ->
+                  if | hasMovedTwoSquares ->
                          { game'
                          | previousState <- game'.state
                          , state <- Origin (Just selectedPosition)
@@ -467,9 +478,6 @@ handleClick game selectedPosition =
                   --  Board.positionBelow game.turn selectedPosition
                 else
                   let
-
-                    row = snd selectedPosition
-
                     selectedDestination =
                       getSquareContent game'.board selectedPosition
 
@@ -493,16 +501,13 @@ handleClick game selectedPosition =
                           Black ->
                             (0, -2))
 
+                    row = snd selectedPosition
                   in
                     if not isPawn
                     then -- passes turn
                       waitForPieceSelection game'
                     else  -- checks pawn special states
-                      if | row == 1 || row == 8 -> -- settng state to promotion
-                             checkForPromotion game' selectedPosition
-
-                         -- set the pawn position for enpassant detection
-                         | hasMovedTwoSquares ->
+                      if | hasMovedTwoSquares ->
                              { game'
                              | previousState <- game'.state
                              , state <- Origin (Just selectedPosition)
