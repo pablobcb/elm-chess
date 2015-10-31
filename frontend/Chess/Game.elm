@@ -1,5 +1,4 @@
 module Chess.Game where
-
 import Debug       exposing (..)
 
 import Maybe       exposing (..)
@@ -114,22 +113,6 @@ promotePiece game promotedPiecePosition figure =
       }
 
 
--- checkForPromotion : Game -> Piece -> Position -> Game
---checkForPromotion : Game -> Position -> Game
---checkForPromotion game position =
---  let
---    row = snd position
---  in
---    if | row == 1 || row == 8 -> -- settng state to promotion
---           { game
---           | previousState <- game.state
---           , state <- SelectPromotion <| Promotion position
---           }
---
---       | otherwise ->
---          passTurn <|
---            game
-
 makeInitialGame : Game
 makeInitialGame =
   let
@@ -217,29 +200,39 @@ move game origin destination =
 remove : a -> List a -> List a
 remove x = List.filter ((/=) x)
 
+getPawnValidTakes : Game -> Position -> List Position
+getPawnValidTakes game origin =
+  let
+    -- checks if pawn cant take to right or left
+    canTakeTo : ({ left : Range, right : Range } -> Range) -> List Position
+    canTakeTo f =
+      let
+        range : Range
+        range =
+          f <| Board.pawnTakeRanges game.turn
+
+        enemyPiece : Maybe Piece
+        enemyPiece =
+          Board.getSquareContent game.board
+            <| Board.shift origin range
+      in
+        if isJust enemyPiece
+        then [Board.shift origin range]
+        else []
+
+    pawnTakePositions : List Position
+    pawnTakePositions =
+      (canTakeTo .left) ++ (canTakeTo .right)
+
+  in
+      pawnTakePositions
+
+
 getSpecialDestinations : Game -> Position -> Piece -> (List Position, Maybe SpecialMove)
 getSpecialDestinations game origin piece =
   case piece.figure of
     Pawn ->
       let
-
-        -- checks if pawn cant take to right or left
-        canTakeTo : ({ left : Range, right : Range } -> Range) -> List Position
-        canTakeTo f =
-          let
-            range : Range
-            range =
-              f <| Board.pawnTakeRanges game.turn
-
-            enemyPiece : Maybe Piece
-            enemyPiece =
-              Board.getSquareContent game.board
-                <| Board.shift origin range
-          in
-            if isJust enemyPiece
-            then [Board.shift origin range]
-            else []
-
         adjacentPositions =
           Board.getHorizontalAdjacentPositions origin
           --positionOfPawnWhichMoved2Squares
@@ -247,10 +240,6 @@ getSpecialDestinations game origin piece =
         left = fst adjacentPositions
 
         right = snd adjacentPositions
-
-        pawnTakePositions : List Position
-        pawnTakePositions =
-          (canTakeTo .left) ++ (canTakeTo .right)
 
         nextPosition = Board.positionAhead game.turn origin
 
@@ -260,33 +249,23 @@ getSpecialDestinations game origin piece =
           if | nextRow == 1 || nextRow == 8 ->
                  Just <| Promotion nextPosition
              | otherwise ->
-                 Nothing
+                 case game.state of
+                   Origin (Just pawnPosition) ->
+                     let
+                       enPassantDestination : Position
+                       enPassantDestination =
+                         Board.shift pawnPosition <|
+                           case game.turn of
+                             White ->
+                               (0, -1)
 
+                             Black ->
+                               (0, 1)
+                      in Nothing
+
+                   _ -> Nothing
       in
-            case game.state of
-              Origin Nothing ->
-                (pawnTakePositions, specialMove)
-
-              -- pawnPosition is the position
-              -- behind the enemy pawn which moved
-              -- 2 squares last turn
-              Origin (Just pawnPosition) ->
-                let
-                    a = 10
-
-                  --enPassantDestination : Position
-                  --enPassantDestination =
-                  --  Board.shift pawnPosition <|
-                  --    case game.turn of
-                  --      White ->
-                  --        (0, -1)
-
-                  --      Black ->
-                  --        (0, 1)
-
-
-                in
-                    (pawnTakePositions, specialMove)
+          (getPawnValidTakes game origin, specialMove)
                   --passar essas lsitas la pra cima
                   --if | left == pawnPosition ->
                   --       ( pawnTakePositions ++ [left]
@@ -301,12 +280,6 @@ getSpecialDestinations game origin piece =
                   --         <| EnPassant
                   --         <| enPassantDestination
                   --       )
-
-                  --   | otherwise ->
-                  --      if row == 1 || row == 8 -- settng state to promotion
-                  --      --then checkForPromotion game selectedPosition
-                  --      then (pawnTakePositions, Just <| Promotion promotedPiecePosition)
-                  --      else (pawnTakePositions, Nothing)
 
 
 
@@ -351,6 +324,7 @@ getValidDestinations game origin piece =
 setValidDestinations : Game -> Position -> Game
 setValidDestinations game selectedPosition =
   let
+    j' = Debug.log "state" game.state
     selectedSquare =
       Board.getSquareContent game.board selectedPosition
 
@@ -370,26 +344,143 @@ setValidDestinations game selectedPosition =
                 selectedPosition
                 piece
 
-            _ = Debug.log "breno" specialMove
+            j = Debug.log "specialMove" specialMove
           in
-            case game.state of
-              Origin Nothing ->
-                  { game
-                  | state <-
-                        Destination
-                        selectedPosition
-                        validDestinations
-                        specialMove
-                  }
+            { game
+            | state <-
+                  Destination
+                  selectedPosition
+                  validDestinations
+                  specialMove
+            }
 
-              Origin (Just passedPawnPosition) ->
-                    { game
-                    | state <-
-                        Destination
-                          selectedPosition
-                          validDestinations
-                          specialMove
-                    }
+-- FIXME rename
+handleDestination : Game -> Position -> Position -> List Position -> Maybe SpecialMove -> Game
+handleDestination game selectedPosition originPosition validDestinations specialMove =
+  let
+    isPositionValid = List.member selectedPosition validDestinations
+
+    game' = move game originPosition selectedPosition
+
+    selectedDestination =
+      getSquareContent game'.board selectedPosition
+
+    isPawn =
+      case selectedDestination of
+        Just piece ->
+          if piece.figure == Pawn
+          then True
+          else False
+
+        Nothing ->
+          False
+
+    hasMovedTwoSquares =
+      selectedPosition ==
+      Board.shift originPosition
+        (case game'.turn of
+          White ->
+            (0, 2)
+
+          Black ->
+            (0, -2))
+
+  in
+    if not isPositionValid
+    then
+      -- invalid move
+      { game
+      | previousState <- game.state
+      , state <- Origin Nothing
+      }
+    else
+      case specialMove of
+        Nothing ->
+        -- valid move
+          passTurn <|
+            if not isPawn
+            then -- passes turn
+                { game'
+                | previousState <- game'.state
+                , state <- Origin Nothing
+                }
+            else
+                 -- set the pawn position for enpassant detection
+              if | hasMovedTwoSquares ->
+                     { game'
+                     | previousState <- game'.state
+                     , state <- Origin (Just selectedPosition)
+                     }
+
+                 | otherwise ->
+                       { game'
+                       | previousState <- game'.state
+                       , state <- Origin Nothing
+                       }
+        Just (Promotion pos) ->
+           { game'
+           | previousState <- game'.state
+           , state <- SelectPromotion pos
+           }
+
+        Just (EnPassant behindEnemyPawnPosition) ->
+          if not <| List.member selectedPosition validDestinations
+          then
+            -- invalid move
+            { game'
+            | previousState <- game'.state
+            , state <- Origin Nothing
+            }
+          else
+          -- valid move
+            if selectedPosition == behindEnemyPawnPosition
+            then -- enpassant take detected
+              game'
+              --makeEnPassant game originPosition selectedPosition <|
+              --  Board.positionBelow game.turn selectedPosition
+            else
+              let
+                selectedDestination =
+                  getSquareContent game'.board selectedPosition
+
+                isPawn =
+                  case selectedDestination of
+                    Just piece ->
+                      if piece.figure == Pawn
+                      then True
+                      else False
+
+                    Nothing ->
+                      False
+
+                hasMovedTwoSquares =
+                  selectedPosition ==
+                  Board.shift originPosition
+                    (case game'.turn of
+                      White ->
+                        (0, 2)
+
+                      Black ->
+                        (0, -2))
+
+              in
+                if not isPawn
+                then -- passes turn
+                  waitForPieceSelection game'
+                else  -- checks pawn special states
+                  if | hasMovedTwoSquares ->
+                         { game'
+                         | previousState <- game'.state
+                         , state <- Origin (Just selectedPosition)
+                         , turn  <- other game'.turn
+                         }
+
+                     | otherwise ->
+                          passTurn <|
+                            { game'
+                            | previousState <- game'.state
+                            , state <- Origin Nothing
+                            }
 
 
 handleClick : Game -> Position -> Game
@@ -408,128 +499,5 @@ handleClick game selectedPosition =
     -- validates the destination
     -- checks if promotion or en passant occurred
     Destination originPosition validDestinations specialMove ->
-      let
-        isPositionValid = List.member selectedPosition validDestinations
+      handleDestination game selectedPosition originPosition validDestinations specialMove
 
-        game' = move game originPosition selectedPosition
-
-        selectedDestination =
-          getSquareContent game'.board selectedPosition
-
-        isPawn =
-          case selectedDestination of
-            Just piece ->
-              if piece.figure == Pawn
-              then True
-              else False
-
-            Nothing ->
-              False
-
-        hasMovedTwoSquares =
-          selectedPosition ==
-          Board.shift originPosition
-            (case game'.turn of
-              White ->
-                (0, 2)
-
-              Black ->
-                (0, -2))
-
-      in
-        if not isPositionValid
-        then
-          -- invalid move
-          { game
-          | previousState <- game.state
-          , state <- Origin Nothing
-          }
-        else
-          case specialMove of
-            Nothing ->
-            -- valid move
-              passTurn <|
-                if not isPawn
-                then -- passes turn
-                    { game'
-                    | previousState <- game'.state
-                    , state <- Origin Nothing
-                    }
-                else
-                     -- set the pawn position for enpassant detection
-                  if | hasMovedTwoSquares ->
-                         { game'
-                         | previousState <- game'.state
-                         , state <- Origin (Just selectedPosition)
-                         }
-
-                     | otherwise ->
-                           { game'
-                           | previousState <- game'.state
-                           , state <- Origin Nothing
-                           }
-            Just (Promotion pos) ->
-              let _ = Debug.log "brenao" 20 in
-               { game'
-               | previousState <- game'.state
-               , state <- SelectPromotion pos
-               }
-
-            Just (EnPassant behindEnemyPawnPosition) ->
-              if not <| List.member selectedPosition validDestinations
-              then
-                -- invalid move
-                { game'
-                | previousState <- game'.state
-                , state <- Origin Nothing
-                }
-              else
-              -- valid move
-                if selectedPosition == behindEnemyPawnPosition
-                then -- enpassant take detected
-                  game'
-                  --makeEnPassant game originPosition selectedPosition <|
-                  --  Board.positionBelow game.turn selectedPosition
-                else
-                  let
-                    selectedDestination =
-                      getSquareContent game'.board selectedPosition
-
-                    isPawn =
-                      case selectedDestination of
-                        Just piece ->
-                          if piece.figure == Pawn
-                          then True
-                          else False
-
-                        Nothing ->
-                          False
-
-                    hasMovedTwoSquares =
-                      selectedPosition ==
-                      Board.shift originPosition
-                        (case game'.turn of
-                          White ->
-                            (0, 2)
-
-                          Black ->
-                            (0, -2))
-
-                  in
-                    if not isPawn
-                    then -- passes turn
-                      waitForPieceSelection game'
-                    else  -- checks pawn special states
-                      if | hasMovedTwoSquares ->
-                             { game'
-                             | previousState <- game'.state
-                             , state <- Origin (Just selectedPosition)
-                             , turn  <- other game'.turn
-                             }
-
-                         | otherwise ->
-                              passTurn <|
-                                { game'
-                                | previousState <- game'.state
-                                , state <- Origin Nothing
-                                }
