@@ -335,8 +335,6 @@ getValidDestinations game origin piece =
           destinationHasNoAlly
           (regularDestinations ++ specialDestinations)
 
-      _ = Debug.log "valiDest" validDestinations
-
 
   in
     (validDestinations, specialMove)
@@ -404,8 +402,6 @@ handleClick game selectedPosition =
       let
         isPositionValid = List.member selectedPosition validDestinations
 
-        _ = Debug.log "isPositionValid" isPositionValid
-
         game' = move game originPosition selectedPosition
 
         selectedDestination =
@@ -434,7 +430,6 @@ handleClick game selectedPosition =
       in
         if not isPositionValid
         then
-          let _ = Debug.log "breno" 10 in
           -- invalid move
           { game
           | state <- Origin Nothing
@@ -460,7 +455,6 @@ handleClick game selectedPosition =
                          }
 
                      | otherwise ->
-                         passTurn <|
                            { game'
                            | previousState <- game'.state
                            , state <- Origin Nothing
