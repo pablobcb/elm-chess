@@ -152,6 +152,7 @@ rangeToSquare : Position -> Board -> Range -> Square
 rangeToSquare position board =
   (getSquareContent board) << shift position
 
+isPopulated : Board -> Position -> Range -> Bool
 isPopulated board position =
   isJust << rangeToSquare position board
 
