@@ -168,7 +168,7 @@ renderStatusBar address game =
         Destination _ _ _ ->
           [ text  "to select a destination" ]
 
-        SelectPromotion (Promotion position) ->
+        SelectPromotion position ->
           let
             queen = piece Queen game.turn
 

@@ -44,7 +44,7 @@ type GameState
   | Destination Position (List Position) (Maybe SpecialMove)
 
   -- Waiting a player to select the new piece for the promotion
-  | SelectPromotion SpecialMove
+  | SelectPromotion Position
   | CheckMate
   | Finished Color
 
@@ -252,53 +252,61 @@ getSpecialDestinations game origin piece =
         pawnTakePositions =
           (canTakeTo .left) ++ (canTakeTo .right)
 
+        nextPosition = Board.positionAhead game.turn origin
+
+        nextRow = snd <| nextPosition
+
+        specialMove =
+          if | nextRow == 1 || nextRow == 8 ->
+                 Just <| Promotion nextPosition
+             | otherwise ->
+                 Nothing
+
       in
             case game.state of
               Origin Nothing ->
-                -- aqui mora o bug
-                (pawnTakePositions, Nothing)
+                (pawnTakePositions, specialMove)
 
               -- pawnPosition is the position
               -- behind the enemy pawn which moved
               -- 2 squares last turn
               Origin (Just pawnPosition) ->
                 let
+                    a = 10
 
-                  enPassantDestination : Position
-                  enPassantDestination =
-                    Board.shift pawnPosition <|
-                      case game.turn of
-                        White ->
-                          (0, -1)
+                  --enPassantDestination : Position
+                  --enPassantDestination =
+                  --  Board.shift pawnPosition <|
+                  --    case game.turn of
+                  --      White ->
+                  --        (0, -1)
 
-                        Black ->
-                          (0, 1)
+                  --      Black ->
+                  --        (0, 1)
 
-                  promotedPiecePosition = Board.positionAhead game.turn origin
-
-                  row = snd <| promotedPiecePosition
 
                 in
+                    (pawnTakePositions, specialMove)
                   --passar essas lsitas la pra cima
-                  if | left == pawnPosition ->
-                         ( pawnTakePositions ++ [left]
-                         , Just
-                           <| EnPassant
-                           <| Debug.log "enPassantDestination" enPassantDestination
-                         )
+                  --if | left == pawnPosition ->
+                  --       ( pawnTakePositions ++ [left]
+                  --       , Just
+                  --         <| EnPassant
+                  --         <| Debug.log "enPassantDestination" enPassantDestination
+                  --       )
 
-                     | right == pawnPosition ->
-                         ( pawnTakePositions ++ [right]
-                         , Just
-                           <| EnPassant
-                           <| enPassantDestination
-                         )
+                  --   | right == pawnPosition ->
+                  --       ( pawnTakePositions ++ [right]
+                  --       , Just
+                  --         <| EnPassant
+                  --         <| enPassantDestination
+                  --       )
 
-                     | otherwise ->
-                        if row == 1 || row == 8 -- settng state to promotion
-                        --then checkForPromotion game selectedPosition
-                        then (pawnTakePositions, Just <| Promotion promotedPiecePosition)
-                        else (pawnTakePositions, Nothing)
+                  --   | otherwise ->
+                  --      if row == 1 || row == 8 -- settng state to promotion
+                  --      --then checkForPromotion game selectedPosition
+                  --      then (pawnTakePositions, Just <| Promotion promotedPiecePosition)
+                  --      else (pawnTakePositions, Nothing)
 
 
 
@@ -362,6 +370,7 @@ setValidDestinations game selectedPosition =
                 selectedPosition
                 piece
 
+            _ = Debug.log "breno" specialMove
           in
             case game.state of
               Origin Nothing ->
@@ -370,7 +379,7 @@ setValidDestinations game selectedPosition =
                         Destination
                         selectedPosition
                         validDestinations
-                        Nothing
+                        specialMove
                   }
 
               Origin (Just passedPawnPosition) ->
@@ -432,21 +441,21 @@ handleClick game selectedPosition =
         then
           -- invalid move
           { game
-          | state <- Origin Nothing
+          | previousState <- game.state
+          , state <- Origin Nothing
           }
         else
           case specialMove of
             Nothing ->
             -- valid move
+              passTurn <|
                 if not isPawn
                 then -- passes turn
-                  passTurn <|
                     { game'
                     | previousState <- game'.state
                     , state <- Origin Nothing
                     }
                 else
-                  passTurn <|
                      -- set the pawn position for enpassant detection
                   if | hasMovedTwoSquares ->
                          { game'
@@ -459,6 +468,12 @@ handleClick game selectedPosition =
                            | previousState <- game'.state
                            , state <- Origin Nothing
                            }
+            Just (Promotion pos) ->
+              let _ = Debug.log "brenao" 20 in
+               { game'
+               | previousState <- game'.state
+               , state <- SelectPromotion pos
+               }
 
             Just (EnPassant behindEnemyPawnPosition) ->
               if not <| List.member selectedPosition validDestinations
