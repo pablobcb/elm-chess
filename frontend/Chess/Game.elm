@@ -272,7 +272,6 @@ getSpecialDestinations game origin piece =
                                   Black ->
                                     (0, -1)
                        in
-                         let _ = Debug.log "enPassantDestination" enPassantDestination in
                          ([enPassantDestination], Just <| EnPassant enPassantDestination)
                      else
                        ([], Nothing)
@@ -292,31 +291,31 @@ getSpecialDestinations game origin piece =
 getValidDestinations : Game -> Position -> Piece -> (List Position, Maybe SpecialMove)
 getValidDestinations game origin piece =
   let
-      regularDestinations : List Position
-      regularDestinations =
-        Board.getRegularDestinations
-          game.turn game.board piece origin
+    regularDestinations : List Position
+    regularDestinations =
+      Board.getRegularDestinations
+        game.turn game.board piece origin
 
-      (specialDestinations, specialMove) =
-        getSpecialDestinations
-          game origin piece
+    (specialDestinations, specialMove) =
+      getSpecialDestinations
+        game origin piece
 
-      -- a piece cant take an ally
-      destinationHasNoAlly destination =
-        case getSquareContent game.board destination of
-          Just piece ->
-            piece.color /= game.turn
-          Nothing ->
-            True
+    -- a piece cant take an ally
+    destinationHasNoAlly destination =
+      case getSquareContent game.board destination of
+        Just piece ->
+          piece.color /= game.turn
+        Nothing ->
+          True
 
-      filterDestinations destination =
-        (destinationHasNoAlly destination)
-        && origin /= destination
+    filterDestinations destination =
+      (destinationHasNoAlly destination)
+      && origin /= destination
 
-      validDestinations =
-        List.filter
-          destinationHasNoAlly
-          (regularDestinations ++ specialDestinations)
+    validDestinations =
+      List.filter
+        destinationHasNoAlly
+        (regularDestinations ++ specialDestinations)
 
 
   in
@@ -326,12 +325,13 @@ getValidDestinations game origin piece =
 setValidDestinations : Game -> Position -> Game
 setValidDestinations game selectedPosition =
   let
-    j' = Debug.log "state" game.state
+
     selectedSquare =
       Board.getSquareContent game.board selectedPosition
 
   in
     case selectedSquare of
+
       Nothing -> -- ignores click because its expecting a piece
         game
 
@@ -346,7 +346,6 @@ setValidDestinations game selectedPosition =
                 selectedPosition
                 piece
 
-            j = Debug.log "specialMove" specialMove
           in
             { game
             | state <-
@@ -360,6 +359,7 @@ setValidDestinations game selectedPosition =
 handleDestination : Game -> Position -> Position -> List Position -> Maybe SpecialMove -> Game
 handleDestination game selectedPosition originPosition validDestinations specialMove =
   let
+
     isPositionValid = List.member selectedPosition validDestinations
 
     game' = move game originPosition selectedPosition
@@ -391,10 +391,16 @@ handleDestination game selectedPosition originPosition validDestinations special
     if not isPositionValid
     then
       -- invalid move
-      { game
-      | previousState <- game.state
-      , state <- Origin Nothing
-      }
+        let
+          _ = Debug.log "selectedPosition" selectedPosition
+          lastState = game.previousState
+          a = Debug.log "currentState" game.state
+          b = Debug.log "lastState" lastState
+      in
+        { game
+        | previousState <- game.state
+        , state <- lastState
+        }
     else
       case specialMove of
         Nothing ->
@@ -426,15 +432,6 @@ handleDestination game selectedPosition originPosition validDestinations special
            }
 
         Just (EnPassant behindEnemyPawnPosition) ->
-          --if not <| List.member selectedPosition validDestinations
-          --then
-          --  -- invalid move
-          --  { game'
-          --  | previousState <- game'.state
-          --  , state <- Origin Nothing
-          --  }
-          --else
-          ---- valid move
             if selectedPosition == behindEnemyPawnPosition
             then -- enpassant take detected
               makeEnPassant game originPosition selectedPosition <|
