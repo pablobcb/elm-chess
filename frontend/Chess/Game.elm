@@ -128,6 +128,7 @@ makeInitialGame =
     }
 
 
+-- FIXME: better naming to those game variables
 makeEnPassant : Game -> Position -> Position -> Position -> Game
 makeEnPassant game origin destination enemyPawnPosition =
   let
@@ -137,16 +138,34 @@ makeEnPassant game origin destination enemyPawnPosition =
     -- clear origin
     board = Dict.insert origin Nothing game'.board
 
-
     -- remove enemy pawn from game
     board' = Dict.insert enemyPawnPosition Nothing game'.board
 
+    game'' = updateGraveyard game' Pawn
   in
-    { game'
+    { game''
     | board <- board'
-    , turn <- other game'.turn
+    , previousState <- game''.state
+    , state <- Origin Nothing
+    , turn <- other game''.turn
     }
 
+updateGraveyard : Game -> Figure -> Game
+updateGraveyard game deadFigure =
+  let
+    updateGraveyard graveyard  =
+      List.drop 1 <| graveyard ++ [ Just deadFigure ]
+  in
+    case game.turn of
+      White ->
+        { game
+        | graveyard2 <- updateGraveyard game.graveyard2
+        }
+
+      Black ->
+        { game
+        | graveyard1 <- updateGraveyard game.graveyard1
+        }
 
 -- TODO: quebrar essa função em duas
 move : Game -> Position -> Position -> Game
@@ -176,8 +195,6 @@ move game origin destination =
       | board <- Dict.insert origin Nothing board'
       }
 
-    updateGraveyard graveyard figure =
-      List.drop 1 <| graveyard ++ [ Just figure ]
 
   in
     case destinationSquare of
@@ -185,16 +202,7 @@ move game origin destination =
         game'
 
       Just piece -> --take piece moving it to the correct graveyard
-        case game'.turn of
-          White ->
-            { game'
-            | graveyard2 <- updateGraveyard game'.graveyard2 piece.figure
-            }
-
-          Black ->
-            { game'
-            | graveyard1 <- updateGraveyard game'.graveyard1 piece.figure
-            }
+        updateGraveyard game' piece.figure
 
 
 remove : a -> List a -> List a
@@ -233,21 +241,21 @@ getSpecialDestinations game origin piece =
   case piece.figure of
     Pawn ->
       let
-        adjacentPositions =
-          Board.getHorizontalAdjacentPositions origin
+        --adjacentPositions =
+         -- Board.getHorizontalAdjacentPositions origin
           --positionOfPawnWhichMoved2Squares
 
-        left = fst adjacentPositions
+        --left = fst adjacentPositions
 
-        right = snd adjacentPositions
+        --right = snd adjacentPositions
 
         nextPosition = Board.positionAhead game.turn origin
 
         nextRow = snd <| nextPosition
 
-        specialMove =
+        (specialDestinations, specialMove) =
           if | nextRow == 1 || nextRow == 8 ->
-                 Just <| Promotion nextPosition
+                 ([], Just <| Promotion nextPosition)
              | otherwise ->
                  case game.state of
                    Origin (Just pawnPosition) ->
@@ -257,31 +265,20 @@ getSpecialDestinations game origin piece =
                          Board.shift pawnPosition <|
                            case game.turn of
                              White ->
-                               (0, -1)
+                               (0, 1)
 
                              Black ->
-                               (0, 1)
-                      in Nothing
+                               (0, -1)
+                      in
+                        let _ = Debug.log "enPassantDestination" enPassantDestination in
+                        ([enPassantDestination], Just <| EnPassant enPassantDestination)
 
-                   _ -> Nothing
+                   _ -> ([], Nothing)
+
+        destinations = (getPawnValidTakes game origin) ++ specialDestinations
+
       in
-          (getPawnValidTakes game origin, specialMove)
-                  --passar essas lsitas la pra cima
-                  --if | left == pawnPosition ->
-                  --       ( pawnTakePositions ++ [left]
-                  --       , Just
-                  --         <| EnPassant
-                  --         <| Debug.log "enPassantDestination" enPassantDestination
-                  --       )
-
-                  --   | right == pawnPosition ->
-                  --       ( pawnTakePositions ++ [right]
-                  --       , Just
-                  --         <| EnPassant
-                  --         <| enPassantDestination
-                  --       )
-
-
+        (destinations, specialMove)
 
     King -> ([], Nothing)
 
@@ -424,20 +421,19 @@ handleDestination game selectedPosition originPosition validDestinations special
            }
 
         Just (EnPassant behindEnemyPawnPosition) ->
-          if not <| List.member selectedPosition validDestinations
-          then
-            -- invalid move
-            { game'
-            | previousState <- game'.state
-            , state <- Origin Nothing
-            }
-          else
-          -- valid move
+          --if not <| List.member selectedPosition validDestinations
+          --then
+          --  -- invalid move
+          --  { game'
+          --  | previousState <- game'.state
+          --  , state <- Origin Nothing
+          --  }
+          --else
+          ---- valid move
             if selectedPosition == behindEnemyPawnPosition
             then -- enpassant take detected
-              game'
-              --makeEnPassant game originPosition selectedPosition <|
-              --  Board.positionBelow game.turn selectedPosition
+              makeEnPassant game originPosition selectedPosition <|
+                Board.positionBelow game.turn selectedPosition
             else
               let
                 selectedDestination =
