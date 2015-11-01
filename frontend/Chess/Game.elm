@@ -141,6 +141,7 @@ makeEnPassant game origin destination enemyPawnPosition =
     -- remove enemy pawn from game
     board' = Dict.insert enemyPawnPosition Nothing game'.board
 
+    -- put enemy pawn in the graveyard
     game'' = updateGraveyard game' Pawn
   in
     { game''
@@ -391,16 +392,9 @@ handleDestination game selectedPosition originPosition validDestinations special
     if not isPositionValid
     then
       -- invalid move
-        let
-          _ = Debug.log "selectedPosition" selectedPosition
-          lastState = game.previousState
-          a = Debug.log "currentState" game.state
-          b = Debug.log "lastState" lastState
-      in
-        { game
-        | previousState <- game.state
-        , state <- lastState
-        }
+      { game
+      | state <- game.previousState
+      }
     else
       case specialMove of
         Nothing ->
@@ -498,4 +492,3 @@ handleClick game selectedPosition =
     -- checks if promotion or en passant occurred
     Destination originPosition validDestinations specialMove ->
       handleDestination game selectedPosition originPosition validDestinations specialMove
-

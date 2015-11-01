@@ -2,10 +2,7 @@ module Update where
 
 import Debug exposing (..)
 
-import Dict exposing (..)
-
 import Chess.Game  as Game exposing (..)
-import Chess.Color as Game exposing (..)
 import Chess.Board as Board exposing (..)
 import Chess.Piece as Game exposing (..)
 

@@ -4,3 +4,6 @@ build:
 open:
 	open public/index.html
 
+debug:
+	elm-reactor
+
