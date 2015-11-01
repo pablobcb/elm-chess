@@ -241,13 +241,13 @@ getSpecialDestinations game origin piece =
   case piece.figure of
     Pawn ->
       let
-        --adjacentPositions =
-         -- Board.getHorizontalAdjacentPositions origin
-          --positionOfPawnWhichMoved2Squares
+        adjacentPositions =
+          Board.getHorizontalAdjacentPositions origin
+            --positionOfPawnWhichMoved2Squares
 
-        --left = fst adjacentPositions
+        left = fst adjacentPositions
 
-        --right = snd adjacentPositions
+        right = snd adjacentPositions
 
         nextPosition = Board.positionAhead game.turn origin
 
@@ -259,19 +259,24 @@ getSpecialDestinations game origin piece =
              | otherwise ->
                  case game.state of
                    Origin (Just pawnPosition) ->
-                     let
-                       enPassantDestination : Position
-                       enPassantDestination =
-                         Board.shift pawnPosition <|
-                           case game.turn of
-                             White ->
-                               (0, 1)
+                     if pawnPosition == left || pawnPosition == right
+                     then
+                       let
+                         enPassantDestination : Position
+                         enPassantDestination =
+                             Board.shift pawnPosition <|
+                                case game.turn of
+                                  White ->
+                                    (0, 1)
 
-                             Black ->
-                               (0, -1)
-                      in
-                        let _ = Debug.log "enPassantDestination" enPassantDestination in
-                        ([enPassantDestination], Just <| EnPassant enPassantDestination)
+                                  Black ->
+                                    (0, -1)
+                       in
+                         let _ = Debug.log "enPassantDestination" enPassantDestination in
+                         ([enPassantDestination], Just <| EnPassant enPassantDestination)
+                     else
+                       ([], Nothing)
+
 
                    _ -> ([], Nothing)
 
