@@ -170,26 +170,18 @@ renderStatusBar address game =
 
         SelectPromotion position ->
           let
-            queen = piece Queen game.turn
-
-            knight = piece Knight game.turn
-
+            renderPromotionBtn piece =
+              button
+                 [ onClick address <| Promote position piece.figure
+                 , class <| String.join " " [ getPieceClass piece
+                                            , "square"
+                                            , "status-bar__promotion-btn"
+                                            ]
+                 ] []
           in
             [ text "promote to:"
-            , button
-               [ onClick address <| Promote position queen.figure
-               , class <| String.join " " [ getPieceClass queen
-                                          , "square"
-                                          , "status-bar__promotion-btn"
-                                          ]
-               ] []
-            , button
-                [ onClick address <| Promote position knight.figure
-               , class <| String.join " " [ getPieceClass knight
-                                          , "square"
-                                          , "status-bar__promotion-btn"
-                                          ]
-                ] []
+            , renderPromotionBtn <| piece Queen game.turn
+            , renderPromotionBtn <| piece Knight game.turn
             ]
 
 

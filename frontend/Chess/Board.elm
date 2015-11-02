@@ -188,27 +188,44 @@ getRegularDestinations turn board piece position =
 
     negativeOneToSeven = List.reverse [ -7 .. -1 ]
 
-
-    --zipAndTakeEmpty = takeWhileEmpty << zip
-    --FIXME
     takeWhileEmpty : List Range -> List Range
     takeWhileEmpty rangesInclusive =
-      takeWhileInclusive (isNothing << rangeToSquare position board) rangesInclusive
+      takeWhileInclusive
+        (isNothing << rangeToSquare position board)
+          rangesInclusive
 
+--    takeWhileEmpty' a b =
+--      takeWhileEmpty <| zip a b
+--
+--    rookMoves =
+--      ( takeWhileEmpty' oneToSeven zeros         ) ++
+--      ( takeWhileEmpty' negativeOneToSeven zeros ) ++
+--      ( takeWhileEmpty' zeros oneToSeven         ) ++
+--      ( takeWhileEmpty' zeros negativeOneToSeven )
+--
+--    bishopMoves =
+--      ( takeWhileEmpty' oneToSeven oneToSeven                ) ++
+--      ( takeWhileEmpty' negativeOneToSeven oneToSeven        ) ++
+--      ( takeWhileEmpty' oneToSeven negativeOneToSeven        ) ++
+--      ( takeWhileEmpty' negativeOneToSeven negativeOneToSeven)
+--    takeWhileEmpty' a b =
+--      takeWhileEmpty <| zip a b
 
-    --zipAndTakeEmpty = takeWhileEmpty << zip
+    takeWhileEmpty' : (List Int , List Int) -> List (Int, Int)
+    takeWhileEmpty' (a, b) =
+      takeWhileEmpty <| zip a b
 
     rookMoves =
-      ( takeWhileEmpty <| zip oneToSeven zeros         ) ++
-      ( takeWhileEmpty <| zip negativeOneToSeven zeros ) ++
-      ( takeWhileEmpty <| zip zeros oneToSeven         ) ++
-      ( takeWhileEmpty <| zip zeros negativeOneToSeven )
+      ( takeWhileEmpty' (oneToSeven, zeros)         ) ++
+      ( takeWhileEmpty' (negativeOneToSeven, zeros) ) ++
+      ( takeWhileEmpty' (zeros, oneToSeven)         ) ++
+      ( takeWhileEmpty' (zeros, negativeOneToSeven) )
 
     bishopMoves =
-      ( takeWhileEmpty <| zip oneToSeven oneToSeven                ) ++
-      ( takeWhileEmpty <| zip negativeOneToSeven oneToSeven        ) ++
-      ( takeWhileEmpty <| zip oneToSeven negativeOneToSeven        ) ++
-      ( takeWhileEmpty <| zip negativeOneToSeven negativeOneToSeven)
+      ( takeWhileEmpty' (oneToSeven, oneToSeven)                ) ++
+      ( takeWhileEmpty' (negativeOneToSeven, oneToSeven)        ) ++
+      ( takeWhileEmpty' (oneToSeven, negativeOneToSeven)        ) ++
+      ( takeWhileEmpty' (negativeOneToSeven, negativeOneToSeven))
 
     kingMoves =
       [ (  0,  1 ) , (  1,  1 ) , (  1,  0 )
@@ -262,8 +279,6 @@ getRegularDestinations turn board piece position =
     filterPositions <| List.map ( shift position ) ranges
 
 
---FIX ME
--- create list of pairs and search for the content
 charToNum : Char -> Maybe Int
 charToNum char =
     Maybe.map snd <|
