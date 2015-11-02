@@ -12,7 +12,7 @@ import String          exposing (..)
 
 import Chess.Game      exposing (..)
 import Chess.Color     exposing (..)
-import Chess.Board     exposing (..)
+import Chess.Board as Board exposing (..)
 import Chess.Piece     exposing (..)
 import Update          exposing (..)
 
@@ -66,14 +66,7 @@ renderBoardSquare address state position square =
 renderBoard : Address Action -> Color -> GameState -> Board -> Html
 renderBoard address turn state board =
   let
---    positions = keys board
-    positions =
-      List.concat <|
-          List.map (\digit ->
-            List.map (\letter->
-               (letter, digit))
-                 ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'])
-                   [1 .. 8]
+    positions = Board.getPositions
 
     pieces : List Square
     pieces =

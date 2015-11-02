@@ -26,6 +26,18 @@ letters =
   [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' ]
 
 
+-- FIX ME: use Dict.Keys
+-- no list comprehension :(
+getPositions : List Position
+getPositions =
+  List.concat <|
+      List.map ( \ digit ->
+        List.map ( \ letter->
+           ( letter, digit )
+        ) letters
+      ) [1 .. 8]
+
+
 getSquareContent : Board -> Position -> Square
 getSquareContent board =
   Maybe.Extra.join << ( flip Dict.get ) board
@@ -53,22 +65,22 @@ makeInitialBoard =
         ]
 
 
-      zip = List.map2 (,)
-
-
-      makeRow number = zip
+      makeRow number = List.Extra.zip
         letters
         (List.repeat 8 number)
 
+      zip' (a,b) = List.Extra.zip a b
 
-  in Dict.fromList <| zip ( makeRow 8 ) ( makeFirstRow Black )
-                   ++ zip ( makeRow 7 ) ( pawnRow Black )
-                   ++ zip ( makeRow 6 ) emptyRow
-                   ++ zip ( makeRow 5 ) emptyRow
-                   ++ zip ( makeRow 4 ) emptyRow
-                   ++ zip ( makeRow 3 ) emptyRow
-                   ++ zip ( makeRow 2 ) ( pawnRow White )
-                   ++ zip ( makeRow 1 ) ( makeFirstRow White )
+  in Dict.fromList <| List.concat <| List.map zip'
+       [ ( makeRow 8, makeFirstRow Black )
+       , ( makeRow 7, pawnRow Black )
+       , ( makeRow 6, emptyRow )
+       , ( makeRow 5, emptyRow )
+       , ( makeRow 4, emptyRow )
+       , ( makeRow 3, emptyRow )
+       , ( makeRow 2, pawnRow White )
+       , ( makeRow 1, makeFirstRow White )
+       ]
 
 shift : Position -> Range -> Position
 shift ( char, number ) ( x, y ) =
@@ -78,6 +90,7 @@ shift ( char, number ) ( x, y ) =
         Just num ->
           num
 
+        -- fixme: use applicative lists to solve this
         Nothing ->
           -10000 --fatal error?
 
@@ -194,38 +207,28 @@ getRegularDestinations turn board piece position =
         (isNothing << rangeToSquare position board)
           rangesInclusive
 
---    takeWhileEmpty' a b =
---      takeWhileEmpty <| zip a b
---
---    rookMoves =
---      ( takeWhileEmpty' oneToSeven zeros         ) ++
---      ( takeWhileEmpty' negativeOneToSeven zeros ) ++
---      ( takeWhileEmpty' zeros oneToSeven         ) ++
---      ( takeWhileEmpty' zeros negativeOneToSeven )
---
---    bishopMoves =
---      ( takeWhileEmpty' oneToSeven oneToSeven                ) ++
---      ( takeWhileEmpty' negativeOneToSeven oneToSeven        ) ++
---      ( takeWhileEmpty' oneToSeven negativeOneToSeven        ) ++
---      ( takeWhileEmpty' negativeOneToSeven negativeOneToSeven)
---    takeWhileEmpty' a b =
---      takeWhileEmpty <| zip a b
 
-    takeWhileEmpty' : (List Int , List Int) -> List (Int, Int)
     takeWhileEmpty' (a, b) =
       takeWhileEmpty <| zip a b
 
+    getDirectionalMoves directions =
+      List.concat <| List.map takeWhileEmpty' directions
+
     rookMoves =
-      ( takeWhileEmpty' (oneToSeven, zeros)         ) ++
-      ( takeWhileEmpty' (negativeOneToSeven, zeros) ) ++
-      ( takeWhileEmpty' (zeros, oneToSeven)         ) ++
-      ( takeWhileEmpty' (zeros, negativeOneToSeven) )
+      getDirectionalMoves
+        [ (oneToSeven, zeros)
+        , (negativeOneToSeven, zeros)
+        , (zeros, oneToSeven)
+        , (zeros, negativeOneToSeven)
+        ]
 
     bishopMoves =
-      ( takeWhileEmpty' (oneToSeven, oneToSeven)                ) ++
-      ( takeWhileEmpty' (negativeOneToSeven, oneToSeven)        ) ++
-      ( takeWhileEmpty' (oneToSeven, negativeOneToSeven)        ) ++
-      ( takeWhileEmpty' (negativeOneToSeven, negativeOneToSeven))
+      getDirectionalMoves
+        [ (oneToSeven, oneToSeven)
+        , (negativeOneToSeven, oneToSeven)
+        , (oneToSeven, negativeOneToSeven)
+        , (negativeOneToSeven, negativeOneToSeven)
+        ]
 
     kingMoves =
       [ (  0,  1 ) , (  1,  1 ) , (  1,  0 )
