@@ -26,7 +26,8 @@ letters =
   [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' ]
 
 
--- FIX ME: use Dict.Keys
+-- FIXME: use Dict.Keys, but it inverts the board
+-- is the board inverted better?
 -- no list comprehension :(
 getPositions : List Position
 getPositions =
@@ -49,38 +50,35 @@ emptyRow = List.repeat 8 Nothing
 
 makeInitialBoard : Board
 makeInitialBoard =
-  let pawnRow pawnColor = List.repeat 8
-        <| Just
-        <| piece Pawn pawnColor
+  let
+    pawnRow pawnColor =
+      List.repeat 8 <| Just <| piece Pawn pawnColor
 
-
-      makePiece pieceColor figure =
-          Just <| piece figure pieceColor
-
-
-      makeFirstRow color = List.map
-        ( makePiece color )
+    makeFirstRow color =
+      List.map
+        ( Just << ( flip piece ) color )
         [ Rook, Knight, Bishop , Queen
         , King, Bishop, Knight, Rook
         ]
 
 
-      makeRow number = List.Extra.zip
-        letters
-        (List.repeat 8 number)
+    makeRow number = List.Extra.zip
+      letters
+      ( List.repeat 8 number )
 
-      zip' (a,b) = List.Extra.zip a b
+    zip' ( a, b ) = List.Extra.zip a b
 
-  in Dict.fromList <| List.concat <| List.map zip'
-       [ ( makeRow 8, makeFirstRow Black )
-       , ( makeRow 7, pawnRow Black )
-       , ( makeRow 6, emptyRow )
-       , ( makeRow 5, emptyRow )
-       , ( makeRow 4, emptyRow )
-       , ( makeRow 3, emptyRow )
-       , ( makeRow 2, pawnRow White )
-       , ( makeRow 1, makeFirstRow White )
-       ]
+  in
+    Dict.fromList <| List.concat <| List.map zip'
+      [ ( makeRow 8, makeFirstRow Black )
+      , ( makeRow 7, pawnRow Black      )
+      , ( makeRow 6, emptyRow           )
+      , ( makeRow 5, emptyRow           )
+      , ( makeRow 4, emptyRow           )
+      , ( makeRow 3, emptyRow           )
+      , ( makeRow 2, pawnRow White      )
+      , ( makeRow 1, makeFirstRow White )
+      ]
 
 shift : Position -> Range -> Position
 shift ( char, number ) ( x, y ) =
@@ -90,7 +88,7 @@ shift ( char, number ) ( x, y ) =
         Just num ->
           num
 
-        -- fixme: use applicative lists to solve this
+        -- FIXME: use applicative lists to solve this
         Nothing ->
           -10000 --fatal error?
 
@@ -113,6 +111,7 @@ getHorizontalAdjacentPositions : Position -> ( Position, Position )
 getHorizontalAdjacentPositions position =
     ( shift position ( 1, 0 ), shift position ( -1, 0 ) )
 
+
 positionAhead : Color -> Position -> Position
 positionAhead color position =
   case color of
@@ -121,6 +120,7 @@ positionAhead color position =
     Black ->
       shift position ( 0, -1 )
 
+
 positionBelow : Color -> Position -> Position
 positionBelow color position =
   case color of
@@ -128,6 +128,7 @@ positionBelow color position =
       shift position ( 0, -1 )
     Black ->
       shift position ( 0, 1 )
+
 
 -- because pawns take pieces in a different
 -- way from how they move, this function is necessary
@@ -258,11 +259,13 @@ getRegularDestinations turn board piece position =
 
         Pawn ->
           let
+            isPopulated' = isPopulated board position
+
             verticalDestinations oneSquareAhead twoSquaresAhead =
-              if isPopulated board position oneSquareAhead
+              if isPopulated' oneSquareAhead
               then []
               else
-                if isPopulated board position twoSquaresAhead
+                if isPopulated' twoSquaresAhead
                 then [ oneSquareAhead ]
                 else
                   if piece.moved

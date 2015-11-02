@@ -19,7 +19,6 @@ actions : Signal Action
 actions =
   inbox.signal
 
---format timeInSeconds =
 
 ticker : Signal Action
 ticker =
