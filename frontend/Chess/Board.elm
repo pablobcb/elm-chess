@@ -23,15 +23,15 @@ type alias Board = Dict Position Square
 
 letters: List Char
 letters =
-  ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+  [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' ]
 
 
 getSquareContent : Board -> Position -> Square
 getSquareContent board =
-  Maybe.Extra.join << (flip Dict.get) board
+  Maybe.Extra.join << ( flip Dict.get ) board
 
 
-emptyRow : List (Maybe a)
+emptyRow : List ( Maybe a )
 emptyRow = List.repeat 8 Nothing
 
 
@@ -47,7 +47,7 @@ makeInitialBoard =
 
 
       makeFirstRow color = List.map
-        (makePiece color)
+        ( makePiece color )
         [ Rook, Knight, Bishop , Queen
         , King, Bishop, Knight, Rook
         ]
@@ -61,17 +61,17 @@ makeInitialBoard =
         (List.repeat 8 number)
 
 
-  in Dict.fromList <| zip (makeRow 8) (makeFirstRow Black)
-                   ++ zip (makeRow 7) (pawnRow Black)
-                   ++ zip (makeRow 6) emptyRow
-                   ++ zip (makeRow 5) emptyRow
-                   ++ zip (makeRow 4) emptyRow
-                   ++ zip (makeRow 3) emptyRow
-                   ++ zip (makeRow 2) (pawnRow White)
-                   ++ zip (makeRow 1) (makeFirstRow White)
+  in Dict.fromList <| zip ( makeRow 8 ) ( makeFirstRow Black )
+                   ++ zip ( makeRow 7 ) ( pawnRow Black )
+                   ++ zip ( makeRow 6 ) emptyRow
+                   ++ zip ( makeRow 5 ) emptyRow
+                   ++ zip ( makeRow 4 ) emptyRow
+                   ++ zip ( makeRow 3 ) emptyRow
+                   ++ zip ( makeRow 2 ) ( pawnRow White )
+                   ++ zip ( makeRow 1 ) ( makeFirstRow White )
 
 shift : Position -> Range -> Position
-shift (char, number) (x, y) =
+shift ( char, number ) ( x, y ) =
   let
     charNumericalRepresentation =
       case charToNum char of
@@ -93,28 +93,28 @@ shift (char, number) (x, y) =
           '!' --fatal error?
 
   in
-    (shiftedChar, number + y)
+    ( shiftedChar, number + y )
 
 
-getHorizontalAdjacentPositions : Position -> (Position, Position)
+getHorizontalAdjacentPositions : Position -> ( Position, Position )
 getHorizontalAdjacentPositions position =
-    (shift position (1, 0), shift position (-1, 0) )
+    ( shift position ( 1, 0 ), shift position ( -1, 0 ) )
 
 positionAhead : Color -> Position -> Position
 positionAhead color position =
   case color of
     White ->
-      shift position (0, 1)
+      shift position ( 0, 1 )
     Black ->
-      shift position (0, -1)
+      shift position ( 0, -1 )
 
 positionBelow : Color -> Position -> Position
 positionBelow color position =
   case color of
     White ->
-      shift position (0, -1)
+      shift position ( 0, -1 )
     Black ->
-      shift position (0, 1)
+      shift position ( 0, 1 )
 
 -- because pawns take pieces in a different
 -- way from how they move, this function is necessary
@@ -129,21 +129,42 @@ pawnTakeRanges color =
 
 
 takeWhileInclusive : (a -> Bool) -> List a -> List a
-takeWhileInclusive p xs =
+takeWhileInclusive predicate xs =
   case xs of
     [] -> []
     (x::xs') ->
-      x :: if p x
-           then takeWhileInclusive p xs'
+      x :: if predicate x
+           then takeWhileInclusive predicate xs'
            else []
+
+getRookInitialPosition : Color -> (Position, Position)
+getRookInitialPosition turn =
+  case turn of
+    Black ->
+      ( ( 'A', 8 ), ( 'H', 8 ) )
+
+    White ->
+       ( ( 'A', 1 ), ( 'H', 1 ) )
+
+getCastlingIntermediatePositions :
+  Color -> ( ( Position, Position ), ( Position, Position ) )
+getCastlingIntermediatePositions turn =
+  case turn of
+    Black ->
+      ( ( ( 'B', 8 ), ( 'C', 8 ) ), ( ( 'F', 8 ), ( 'G', 8 ) ) )
+
+    White ->
+      ( ( ( 'B', 1 ), ( 'C', 1 ) ), ( ( 'F', 1 ), ( 'G', 1 ) ) )
+
+
 
 filterPositions : List Position -> List Position
 filterPositions positions =
   let
     filterPosition pos =
     -- excludes ranges with ! and negative values
-      (List.member (fst pos) letters) &&
-        (List.member (snd pos) [1..8])
+      ( List.member ( fst pos ) letters ) &&
+        ( List.member ( snd pos ) [ 1 .. 8 ] )
   in
     List.filter filterPosition <| positions
 
@@ -152,9 +173,11 @@ rangeToSquare : Position -> Board -> Range -> Square
 rangeToSquare position board =
   (getSquareContent board) << shift position
 
+
 isPopulated : Board -> Position -> Range -> Bool
 isPopulated board position =
   isJust << rangeToSquare position board
+
 
 getRegularDestinations : Color -> Board -> Piece -> Position -> List Position
 getRegularDestinations turn board piece position =
@@ -176,16 +199,16 @@ getRegularDestinations turn board piece position =
     --zipAndTakeEmpty = takeWhileEmpty << zip
 
     rookMoves =
-      (takeWhileEmpty <| zip  oneToSeven zeros) ++
-      (takeWhileEmpty <| zip negativeOneToSeven zeros) ++
-      (takeWhileEmpty <| zip zeros oneToSeven        ) ++
-      (takeWhileEmpty <| zip zeros negativeOneToSeven)
+      ( takeWhileEmpty <| zip oneToSeven zeros         ) ++
+      ( takeWhileEmpty <| zip negativeOneToSeven zeros ) ++
+      ( takeWhileEmpty <| zip zeros oneToSeven         ) ++
+      ( takeWhileEmpty <| zip zeros negativeOneToSeven )
 
     bishopMoves =
-      (takeWhileEmpty <| zip oneToSeven oneToSeven        ) ++
-      (takeWhileEmpty <| zip negativeOneToSeven oneToSeven) ++
-      (takeWhileEmpty <| zip oneToSeven negativeOneToSeven) ++
-      (takeWhileEmpty <| zip negativeOneToSeven negativeOneToSeven)
+      ( takeWhileEmpty <| zip oneToSeven oneToSeven                ) ++
+      ( takeWhileEmpty <| zip negativeOneToSeven oneToSeven        ) ++
+      ( takeWhileEmpty <| zip oneToSeven negativeOneToSeven        ) ++
+      ( takeWhileEmpty <| zip negativeOneToSeven negativeOneToSeven)
 
     kingMoves =
       [ (  0,  1 ) , (  1,  1 ) , (  1,  0 )
@@ -220,45 +243,44 @@ getRegularDestinations turn board piece position =
               then []
               else
                 if isPopulated board position twoSquaresAhead
-                then [oneSquareAhead]
+                then [ oneSquareAhead ]
                 else
                   if piece.moved
-                      then [oneSquareAhead]
-                      else [oneSquareAhead, twoSquaresAhead]
+                      then [ oneSquareAhead ]
+                      else [ oneSquareAhead, twoSquaresAhead ]
           in
               case piece.color of
                 White ->
-                  verticalDestinations (0, 1) (0, 2)
+                  verticalDestinations ( 0, 1 ) ( 0, 2 )
 
                 Black ->
-                  verticalDestinations (0, -1) (0, -2)
+                  verticalDestinations ( 0, -1 ) ( 0, -2 )
 
 
 
   in
-    filterPositions <| List.map (shift position) ranges
+    filterPositions <| List.map ( shift position ) ranges
 
 
+--FIX ME
+-- create list of pairs and search for the content
 charToNum : Char -> Maybe Int
 charToNum char =
-  if | char == 'A' -> Just 1
-     | char == 'B' -> Just 2
-     | char == 'C' -> Just 3
-     | char == 'D' -> Just 4
-     | char == 'E' -> Just 5
-     | char == 'F' -> Just 6
-     | char == 'G' -> Just 7
-     | char == 'H' -> Just 8
-     | otherwise   -> Nothing
+    Maybe.map snd <|
+      List.Extra.find
+        ( \ ( char', _ ) -> char' == char )
+        [ ( 'A', 1 ) , ( 'B', 2 ) , ( 'C', 3 )
+        , ( 'D', 4 ) , ( 'E', 5 ) , ( 'F', 6 )
+        , ( 'G', 7 ) , ( 'H', 8 )
+        ]
+
 
 numToChar : Int -> Maybe Char
 numToChar num =
-  if | num == 1  -> Just 'A'
-     | num == 2  -> Just 'B'
-     | num == 3  -> Just 'C'
-     | num == 4  -> Just 'D'
-     | num == 5  -> Just 'E'
-     | num == 6  -> Just 'F'
-     | num == 7  -> Just 'G'
-     | num == 8  -> Just 'H'
-     | otherwise -> Nothing
+    Maybe.map snd <|
+      List.Extra.find
+        ( \ ( num', _ ) -> num' == num )
+        [ ( 1, 'A' ) , ( 2, 'B' ) , ( 3, 'C' )
+        , ( 4, 'D' ) , ( 5, 'E' ) , ( 6, 'F' )
+        , ( 7, 'G' ) , ( 8, 'H' )
+        ]

@@ -1,3 +1,5 @@
+--FIXME: search for situations where applicative functions
+-- like andMap would be useful
 module Chess.Game where
 import Debug       exposing (..)
 
@@ -19,9 +21,9 @@ type SpecialMove
   --             after taking another pawn with EnPassant
   = EnPassant Position
 
-  -- @Position:  the position the king will land
-  --             after a Castling move
-  | Castling Position
+  -- @Position:  the left or right position
+  --             King will land after a Castling move
+  | Castling ( Maybe Position, Maybe Position )
 
   -- @Position: position of the pawn which will be replaced for a new piece
   | Promotion Position
@@ -34,13 +36,13 @@ type GameState
   -- @(Maybe Position): indicates the position of a pawn if
   --                    it has moved 2 squares in the last play,
   --                    helping with enPassant detection
-  =  Origin (Maybe Position)
+  =  Origin ( Maybe Position )
 
   -- Waiting a player to select a destination for the selected piece
   -- @Position:            the origin of the moving piece
   -- @(List Position):     list contaning a all valid destinations
   -- @(Maybe SpecialMove): indicates if and wich special move is possible
-  | Destination Position (List Position) (Maybe SpecialMove)
+  | Destination Position ( List Position ) ( Maybe SpecialMove )
 
   -- Waiting a player to select the new piece for the promotion
   | SelectPromotion Position
@@ -213,7 +215,7 @@ getPawnValidTakes : Game -> Position -> List Position
 getPawnValidTakes game origin =
   let
     -- checks if pawn cant take to right or left
-    canTakeTo : ({ left : Range, right : Range } -> Range) -> List Position
+    canTakeTo : ( { left : Range, right : Range } -> Range ) -> List Position
     canTakeTo f =
       let
         range : Range
@@ -226,68 +228,150 @@ getPawnValidTakes game origin =
             <| Board.shift origin range
       in
         if isJust enemyPiece
-        then [Board.shift origin range]
+        then [ Board.shift origin range ]
         else []
 
     pawnTakePositions : List Position
     pawnTakePositions =
-      (canTakeTo .left) ++ (canTakeTo .right)
+      ( canTakeTo .left ) ++ ( canTakeTo .right )
 
   in
       pawnTakePositions
 
 
+noSpecialMove : ( List Position, Maybe SpecialMove )
+noSpecialMove = ( [], Nothing )
+
+
+getPawnSpecialDestinations : Game -> Position -> (List Position, Maybe SpecialMove)
+getPawnSpecialDestinations game origin =
+  let
+    adjacentPositions =
+      Board.getHorizontalAdjacentPositions origin
+        --positionOfPawnWhichMoved2Squares
+
+    left = fst adjacentPositions
+
+    right = snd adjacentPositions
+
+    nextPosition = Board.positionAhead game.turn origin
+
+    nextRow = snd <| nextPosition
+
+    ( specialDestinations, specialMove ) =
+      if | nextRow == 1 || nextRow == 8 ->
+             ([], Just <| Promotion nextPosition)
+         | otherwise ->
+             case game.state of
+               Origin (Just pawnPosition) ->
+                 if pawnPosition == left || pawnPosition == right
+                 then
+                   let
+                     enPassantDestination : Position
+                     enPassantDestination =
+                         Board.shift pawnPosition <|
+                            case game.turn of
+                              White ->
+                                (0, 1)
+
+                              Black ->
+                                (0, -1)
+                   in
+                     ([enPassantDestination], Just <| EnPassant enPassantDestination)
+                 else
+                  noSpecialMove
+
+               _ ->
+                  noSpecialMove
+
+    destinations = (getPawnValidTakes game origin) ++ specialDestinations
+
+  in
+    (destinations, specialMove)
+
 getSpecialDestinations : Game -> Position -> Piece -> (List Position, Maybe SpecialMove)
 getSpecialDestinations game origin piece =
-  case piece.figure of
-    Pawn ->
-      let
-        adjacentPositions =
-          Board.getHorizontalAdjacentPositions origin
-            --positionOfPawnWhichMoved2Squares
+  let
+    noSpecialMove = ([], Nothing)
+  in
+    case piece.figure of
+      Pawn ->
+        getPawnSpecialDestinations game origin
 
-        left = fst adjacentPositions
+      King ->
+        noSpecialMove
+        --if piece.moved
+        --then
+        --  noSpecialMove
+        --else
+        --  let
+        --    listOfNothings : List (Maybe a) -> Bool
+        --    listOfNothings =
+        --      List.all Maybe.Extra.isNothing
 
-        right = snd adjacentPositions
+        --    getSquareContent' = Board.getSquareContent game.board
 
-        nextPosition = Board.positionAhead game.turn origin
+        --    ( leftRookPosition, rightRookPosition ) =
+        --      Board.getRookInitialPosition game.turn
 
-        nextRow = snd <| nextPosition
+        --    ( leftCastlingIntermediatePositions
+        --    , rightCastlingIntermediatePositions
+        --    ) =
+        --      getCastlingIntermediatePositions game.turn
 
-        (specialDestinations, specialMove) =
-          if | nextRow == 1 || nextRow == 8 ->
-                 ([], Just <| Promotion nextPosition)
-             | otherwise ->
-                 case game.state of
-                   Origin (Just pawnPosition) ->
-                     if pawnPosition == left || pawnPosition == right
-                     then
-                       let
-                         enPassantDestination : Position
-                         enPassantDestination =
-                             Board.shift pawnPosition <|
-                                case game.turn of
-                                  White ->
-                                    (0, 1)
+        --
+        --    getKingCastlingArrivalPosition : (Position, Position) -> Maybe Position
+        --    getKingCastlingArrivalPosition castlingIntermediatePositions =
+        --      case getSquareContent' leftRookPosition of
+        --        -- FIXME: looks like applicative functions would be nice here
+        --        Nothing -> Nothing
+        --        Just piece ->
+        --          if not (piece.figure == Rook && piece.moved == False)
+        --          then
+        --            Nothing
+        --          else
+        --            let
+        --              isIntermediateCastlingSquaresEmpty =
+        --                listOfNothings [ fst castlingIntermediatePositions
+        --                               , snd castlingIntermediatePositions
+        --                               ]
 
-                                  Black ->
-                                    (0, -1)
-                       in
-                         ([enPassantDestination], Just <| EnPassant enPassantDestination)
-                     else
-                       ([], Nothing)
+        --            in
+        --              if not isIntermediateCastlingSquaresEmpty
+        --              then
+        --                Nothing
+        --              else
+        --                Just <| snd leftCastlingIntermediatePositions
 
+        --    leftKingCastlingArrivalPosition =
+        --      getKingCastlingArrivalPosition leftCastlingIntermediatePositions
 
-                   _ -> ([], Nothing)
+        --    rightKingCastlingArrivalPosition =
+        --      getKingCastlingArrivalPosition rightCastlingIntermediatePositions
 
-        destinations = (getPawnValidTakes game origin) ++ specialDestinations
+        --    castlingPositions =
+        --      (Maybe.Extra.maybeToList
+        --        leftKingCastlingArrivalPosition)
+        --      ++
+        --      (Maybe.Extra.maybeToList
+        --        rightKingCastlingArrivalPosition)
 
-      in
-        (destinations, specialMove)
+        --    noCastling =
+        --      castlingPositions == []
 
-    King -> ([], Nothing)
+        --  in
+        --    if noCastling
+        --    then
+        --      noSpecialMove
+        --    else
+        --      ( castlingPositions
+        --      , Castling ( leftKingCastlingArrivalPosition
+        --                 , rightKingCastlingArrivalPosition
+        --                 )
+        --      )
 
-    _ -> ([], Nothing)
+      _ ->
+        noSpecialMove
 
 getValidDestinations : Game -> Position -> Piece -> (List Position, Maybe SpecialMove)
 getValidDestinations game origin piece =
