@@ -540,16 +540,6 @@ handleDestination game selectedPosition originPosition validDestinations special
                     Nothing ->
                       False
 
-                hasMovedTwoSquares =
-                  selectedPosition ==
-                  Board.shift originPosition
-                    (case game'.turn of
-                      White ->
-                        (0, 2)
-
-                      Black ->
-                        (0, -2))
-
               in
                 if not isPawn
                 then -- passes turn
