@@ -70,14 +70,14 @@ makeInitialBoard =
 
   in
     Dict.fromList <| List.concat <| List.map zip'
-      [ ( makeRow 8, makeFirstRow Black )
-      , ( makeRow 7, pawnRow Black      )
+      [ ( makeRow 8, makeFirstRow White )
+      , ( makeRow 7, pawnRow White      )
       , ( makeRow 6, emptyRow           )
       , ( makeRow 5, emptyRow           )
       , ( makeRow 4, emptyRow           )
       , ( makeRow 3, emptyRow           )
-      , ( makeRow 2, pawnRow White      )
-      , ( makeRow 1, makeFirstRow White )
+      , ( makeRow 2, pawnRow Black      )
+      , ( makeRow 1, makeFirstRow Black )
       ]
 
 shift : Position -> Range -> Position
@@ -115,18 +115,18 @@ getHorizontalAdjacentPositions position =
 positionAhead : Color -> Position -> Position
 positionAhead color position =
   case color of
-    White ->
-      shift position ( 0, 1 )
     Black ->
+      shift position ( 0, 1 )
+    White ->
       shift position ( 0, -1 )
 
 
 positionBelow : Color -> Position -> Position
 positionBelow color position =
   case color of
-    White ->
-      shift position ( 0, -1 )
     Black ->
+      shift position ( 0, -1 )
+    White ->
       shift position ( 0, 1 )
 
 
@@ -135,11 +135,11 @@ positionBelow color position =
 pawnTakeRanges : Color -> { left : Range, right : Range }
 pawnTakeRanges color =
   case color of
-     White ->
+     Black ->
        { right = (1, 1), left = (-1, 1) }
 
-     Black ->
-       { right = (1, -1), left = (-1, -1) }
+     White ->
+       { right = (1, -1), left = (1, -1) }
 
 
 takeWhileInclusive : (a -> Bool) -> List a -> List a
@@ -154,20 +154,20 @@ takeWhileInclusive predicate xs =
 getRookInitialPosition : Color -> (Position, Position)
 getRookInitialPosition turn =
   case turn of
-    Black ->
+    White ->
       ( ( 'A', 8 ), ( 'H', 8 ) )
 
-    White ->
+    Black ->
        ( ( 'A', 1 ), ( 'H', 1 ) )
 
 getCastlingIntermediatePositions :
   Color -> ( ( Position, Position ), ( Position, Position ) )
 getCastlingIntermediatePositions turn =
   case turn of
-    Black ->
+    White ->
       ( ( ( 'B', 8 ), ( 'C', 8 ) ), ( ( 'F', 8 ), ( 'G', 8 ) ) )
 
-    White ->
+    Black ->
       ( ( ( 'B', 1 ), ( 'C', 1 ) ), ( ( 'F', 1 ), ( 'G', 1 ) ) )
 
 
@@ -273,10 +273,10 @@ getRegularDestinations turn board piece position =
                       else [ oneSquareAhead, twoSquaresAhead ]
           in
               case piece.color of
-                White ->
+                Black ->
                   verticalDestinations ( 0, 1 ) ( 0, 2 )
 
-                Black ->
+                White ->
                   verticalDestinations ( 0, -1 ) ( 0, -2 )
 
 

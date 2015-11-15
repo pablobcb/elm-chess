@@ -269,10 +269,10 @@ getPawnSpecialDestinations game origin =
                      enPassantDestination =
                          Board.shift pawnPosition <|
                             case game.turn of
-                              White ->
+                              Black ->
                                 (0, 1)
 
-                              Black ->
+                              White ->
                                 (0, -1)
                    in
                      ( [enPassantDestination]
@@ -478,10 +478,10 @@ handleDestination game selectedPosition originPosition validDestinations special
       selectedPosition ==
       Board.shift originPosition
         (case game'.turn of
-          White ->
+          Black ->
             (0, 2)
 
-          Black ->
+          White ->
             (0, -2))
 
   in
