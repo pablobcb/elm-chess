@@ -61,15 +61,13 @@ type alias Game =
 
 resetClock : Game -> Game
 resetClock game =
-  { game
-  | turnInSeconds <- 0
-  }
+  { game | turnInSeconds = 0 }
 
 
 tick : Game -> Game
 tick game =
   { game
-  | turnInSeconds <- game.turnInSeconds + 1
+  | turnInSeconds = game.turnInSeconds + 1
   }
 
 
@@ -77,8 +75,8 @@ passTurn : Game -> Game
 passTurn game =
   resetClock
     { game
-    | previousState <- game.state
-    , turn <- other game.turn
+    | previousState = game.state
+    , turn = other game.turn
     }
 
 
@@ -86,7 +84,7 @@ waitForPieceSelection : Game -> Game
 waitForPieceSelection game =
   passTurn <|
     { game
-    | state <- Origin Nothing
+    | state = Origin Nothing
     }
 
 
@@ -108,8 +106,8 @@ promotePiece game promotedPiecePosition figure =
   in
     passTurn <|
       { game
-      | board <- board'
-      , state <- Origin Nothing
+      | board = board'
+      , state = Origin Nothing
       }
 
 
@@ -145,10 +143,10 @@ makeEnPassant game origin destination enemyPawnPosition =
     game'' = updateGraveyard game' Pawn
   in
     { game''
-    | board <- board'
-    , previousState <- game''.state
-    , state <- Origin Nothing
-    , turn <- other game''.turn
+    | board = board'
+    , previousState = game''.state
+    , state = Origin Nothing
+    , turn = other game''.turn
     }
 
 updateGraveyard : Game -> Figure -> Game
@@ -160,12 +158,12 @@ updateGraveyard game deadFigure =
     case game.turn of
       White ->
         { game
-        | graveyard2 <- updateGraveyard game.graveyard2
+        | graveyard2 = updateGraveyard game.graveyard2
         }
 
       Black ->
         { game
-        | graveyard1 <- updateGraveyard game.graveyard1
+        | graveyard1 = updateGraveyard game.graveyard1
         }
 
 -- TODO: quebrar essa função em duas
@@ -186,14 +184,22 @@ move game origin destination =
           case originSquare of
             Just piece' -> Just
               { piece'
-              | moved <- True
+              | moved = True
               }
+
+            -- TODO: I'm pretty sure there's some sort of applicative function
+            -- that allows us to return the Nothing on the Nothing branch
+            -- automatically. --ad
+            Nothing ->
+              Nothing
+
+
       in -- copies piece to destination
         Dict.insert destination piece board
 
     game' = --cleans origin
       { game
-      | board <- Dict.insert origin Nothing board'
+      | board = Dict.insert origin Nothing board'
       }
 
 
@@ -257,32 +263,31 @@ getPawnSpecialDestinations game origin =
     nextRow = snd <| nextPosition
 
     ( specialDestinations, specialMove ) =
-      if | nextRow == 1 || nextRow == 8 ->
-             ([], Just <| Promotion nextPosition)
-         | otherwise ->
-             case game.state of
-               Origin (Just pawnPosition) ->
-                 if pawnPosition == left || pawnPosition == right
-                 then
-                   let
-                     enPassantDestination : Position
-                     enPassantDestination =
-                         Board.shift pawnPosition <|
-                            case game.turn of
-                              Black ->
-                                (0, 1)
+      if nextRow == 1 || nextRow == 8 then
+        ([], Just <| Promotion nextPosition)
+      else
+        case game.state of
+          Origin (Just pawnPosition) ->
+            if pawnPosition == left || pawnPosition == right then
+              let
+                enPassantDestination : Position
+                enPassantDestination =
+                    Board.shift pawnPosition <|
+                       case game.turn of
+                         Black ->
+                           (0, 1)
 
-                              White ->
-                                (0, -1)
-                   in
-                     ( [enPassantDestination]
-                     , Just <| EnPassant enPassantDestination
-                     )
-                 else
-                  noSpecialMove
+                         White ->
+                           (0, -1)
+              in
+                ( [enPassantDestination]
+                , Just <| EnPassant enPassantDestination
+                )
+            else
+             noSpecialMove
 
-               _ ->
-                  noSpecialMove
+          _ ->
+             noSpecialMove
 
     destinations = (getPawnValidTakes game origin) ++ specialDestinations
 
@@ -444,7 +449,7 @@ setValidDestinations game selectedPosition =
 
           in
             { game
-            | state <-
+            | state =
                   Destination
                   selectedPosition
                   validDestinations
@@ -489,7 +494,7 @@ handleDestination game selectedPosition originPosition validDestinations special
     then
       -- invalid move
       { game
-      | state <- game.previousState
+      | state = game.previousState
       }
     else
       case specialMove of
@@ -499,26 +504,28 @@ handleDestination game selectedPosition originPosition validDestinations special
             if not isPawn
             then -- passes turn
                 { game'
-                | state <- Origin Nothing
+                | state = Origin Nothing
                 }
             else
                  -- set the pawn position for enpassant detection
-              if | hasMovedTwoSquares ->
-                     { game'
-                     | previousState <- game'.state
-                     , state <- Origin (Just selectedPosition)
-                     }
+              if hasMovedTwoSquares then
+                { game'
+                | previousState = game'.state
+                , state = Origin (Just selectedPosition)
+                }
+              else
+                { game'
+                | previousState = game'.state
+                , state = Origin Nothing
+                }
 
-                 | otherwise ->
-                       { game'
-                       | previousState <- game'.state
-                       , state <- Origin Nothing
-                       }
+
         Just (Promotion pos) ->
            { game'
-           | previousState <- game'.state
-           , state <- SelectPromotion pos
+           | previousState = game'.state
+           , state = SelectPromotion pos
            }
+
 
         Just (EnPassant behindEnemyPawnPosition) ->
             if selectedPosition == behindEnemyPawnPosition
@@ -545,19 +552,24 @@ handleDestination game selectedPosition originPosition validDestinations special
                 then -- passes turn
                   waitForPieceSelection game'
                 else  -- checks pawn special states
-                  if | hasMovedTwoSquares ->
-                         { game'
-                         | previousState <- game'.state
-                         , state <- Origin (Just selectedPosition)
-                         , turn  <- other game'.turn
-                         }
+                  if hasMovedTwoSquares then
+                    { game'
+                    | previousState = game'.state
+                    , state = Origin (Just selectedPosition)
+                    , turn  = other game'.turn
+                    }
+                  else
+                    passTurn <|
+                      { game'
+                      | previousState = game'.state
+                      , state = Origin Nothing
+                      }
 
-                     | otherwise ->
-                          passTurn <|
-                            { game'
-                            | previousState <- game'.state
-                            , state <- Origin Nothing
-                            }
+        CheckMate ->
+          Nothing -- Not Implemented
+
+        Finished _ ->
+          Nothing -- Not Implemented
 
 
 handleClick : Game -> Position -> Game
