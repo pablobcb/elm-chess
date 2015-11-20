@@ -185,6 +185,8 @@ renderStatusBar address game =
               ++ " has won!"
           ]
 
+        _ -> []
+
     statusBar = [clock game] ++ statusMsg
 
   in

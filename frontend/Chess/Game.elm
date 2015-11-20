@@ -565,11 +565,8 @@ handleDestination game selectedPosition originPosition validDestinations special
                       , state = Origin Nothing
                       }
 
-        CheckMate ->
-          Nothing -- Not Implemented
-
-        Finished _ ->
-          Nothing -- Not Implemented
+        Just (Castling _) ->
+          game'
 
 
 handleClick : Game -> Position -> Game
@@ -589,3 +586,9 @@ handleClick game selectedPosition =
     -- checks if promotion or en passant occurred
     Destination originPosition validDestinations specialMove ->
       handleDestination game selectedPosition originPosition validDestinations specialMove
+
+    CheckMate ->
+      game
+
+    Finished _->
+      game
