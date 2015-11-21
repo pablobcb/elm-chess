@@ -161,14 +161,14 @@ getRookInitialPosition turn =
       ( ( 'A', 8 ), ( 'H', 8 ) )
 
 
-getCastlingIntermediatePositions : Color -> ( ( Position, Position ), ( Position, Position ) )
+getCastlingIntermediatePositions : Color -> ( { fst: Position, snd: Position, thrd: Position }, { fst: Position, snd: Position } )
 getCastlingIntermediatePositions turn =
   case turn of
-    White ->
-      ( ( ( 'B', 1 ), ( 'C', 1 ) ), ( ( 'F', 1 ), ( 'G', 1 ) ) )
-
     Black ->
-      ( ( ( 'B', 8 ), ( 'C', 8 ) ), ( ( 'F', 8 ), ( 'G', 8 ) ) )
+      ( { fst = ('B', 1 ), snd = ( 'C', 1 ), thrd = ( 'D', 1 ) }, { fst = ( 'F', 1 ), snd = ( 'G', 1 ) } )
+
+    White ->
+      ( { fst = ('B', 8 ), snd = ( 'C', 8 ), thrd = ( 'D', 8 ) }, { fst = ( 'F', 8 ), snd = ( 'G', 8 ) } )
 
 
 filterPositions : List Position -> List Position

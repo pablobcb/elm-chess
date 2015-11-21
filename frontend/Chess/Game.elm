@@ -149,6 +149,28 @@ makeEnPassant game origin destination enemyPawnPosition =
     , turn = other game''.turn
     }
 
+--makeCastling : Game -> Position -> Position -> Position -> Game
+--makeCastling game origin destination enemyPawnPosition =
+--  let
+--    -- move piece behind enemy pawn
+--    game' = move game origin destination
+--
+--    -- clear origin
+--    board = Dict.insert origin Nothing game'.board
+--
+--    -- remove enemy pawn from game
+--    board' = Dict.insert enemyPawnPosition Nothing game'.board
+--
+--    -- put enemy pawn in the graveyard
+--    game'' = updateGraveyard game' Pawn
+--  in
+--    { game''
+--    | board = board'
+--    , previousState = game''.state
+--    , state = Origin Nothing
+--    , turn = other game''.turn
+--    }
+
 updateGraveyard : Game -> Figure -> Game
 updateGraveyard game deadFigure =
   let
@@ -214,8 +236,6 @@ getPawnValidTakes game origin =
     canTakeTo : ( { left : Range, right : Range } -> Range ) -> List Position
     canTakeTo f =
       let
-        magro = Debug.log "pawnTakeRanges" <| Board.pawnTakeRanges game.turn 
-
         range : Range
         range =
           f <| Board.pawnTakeRanges game.turn
@@ -231,11 +251,7 @@ getPawnValidTakes game origin =
 
     pawnTakePositions : List Position
     pawnTakePositions =
-      let
-        l = Debug.log "left" <| ( canTakeTo .left )
-        r = Debug.log "right" <| ( canTakeTo .right )
-      in
-        l ++ r
+      ( canTakeTo .left ) ++ ( canTakeTo .right )
 
   in
       pawnTakePositions
@@ -293,18 +309,18 @@ getPawnSpecialDestinations game origin =
     (destinations, specialMove)
 
 
--- TODO FIXME remove code duplication
-getKingCastlingArrivalPosition : Game -> (Position, Position) -> Maybe Position
-getKingCastlingArrivalPosition game castlingIntermediatePositions =
+
+-- remove nasty duplicated code
+getKingCastlingArrivalPositionLeft : Game -> { fst : Position, snd : Position, thrd: Position } -> Maybe Position
+getKingCastlingArrivalPositionLeft game castlingIntermediatePositions =
   let
     getSquareContent' = Board.getSquareContent game.board
 
     ( leftRookPosition, rightRookPosition ) =
       Board.getRookInitialPosition game.turn
 
-
     kingLandingPoint : Position
-    kingLandingPoint = snd castlingIntermediatePositions
+    kingLandingPoint = .snd castlingIntermediatePositions
 
     leftRookSquare : Maybe Piece
     leftRookSquare = getSquareContent' leftRookPosition
@@ -320,11 +336,48 @@ getKingCastlingArrivalPosition game castlingIntermediatePositions =
           let
             isIntermediateCastlingSquaresEmpty : Bool
             isIntermediateCastlingSquaresEmpty =
-              List.all Maybe.Extra.isNothing <|
-                [ getSquareContent' <| fst castlingIntermediatePositions
-                , getSquareContent' <| snd castlingIntermediatePositions
-                ]
+              (isNothing <| getSquareContent' <| .fst castlingIntermediatePositions) &&
+              (isNothing <| getSquareContent' <| .snd castlingIntermediatePositions) &&
+              (isNothing <| getSquareContent' <| .thrd castlingIntermediatePositions)
           in
+
+
+            if not isIntermediateCastlingSquaresEmpty then
+              Nothing
+            else
+              Just <| kingLandingPoint
+
+
+getKingCastlingArrivalPositionRight : Game -> { fst : Position, snd : Position } -> Maybe Position
+getKingCastlingArrivalPositionRight game castlingIntermediatePositions =
+  let
+    getSquareContent' = Board.getSquareContent game.board
+
+    ( leftRookPosition, rightRookPosition ) =
+      Board.getRookInitialPosition game.turn
+
+    kingLandingPoint : Position
+    kingLandingPoint = .snd castlingIntermediatePositions
+
+    leftRookSquare : Maybe Piece
+    leftRookSquare = getSquareContent' leftRookPosition
+
+  in
+    case leftRookSquare of
+      -- FIXME: looks like Maybe.map would be nice
+      Nothing -> Nothing
+      Just piece ->
+        if not (piece.figure == Rook && piece.moved == False) then
+          Nothing
+        else
+          let
+            isIntermediateCastlingSquaresEmpty : Bool
+            isIntermediateCastlingSquaresEmpty =
+              (isNothing <| getSquareContent' <| .fst castlingIntermediatePositions) &&
+              (isNothing <| getSquareContent' <| .snd castlingIntermediatePositions)
+          in
+
+
             if not isIntermediateCastlingSquaresEmpty then
               Nothing
             else
@@ -344,10 +397,10 @@ getCastlingDestinations game origin king =
         Board.getCastlingIntermediatePositions game.turn
 
       leftKingCastlingArrivalPosition =
-        getKingCastlingArrivalPosition game leftCastlingIntermediatePositions
+        getKingCastlingArrivalPositionLeft game leftCastlingIntermediatePositions
 
       rightKingCastlingArrivalPosition =
-        getKingCastlingArrivalPosition game rightCastlingIntermediatePositions
+        getKingCastlingArrivalPositionRight game rightCastlingIntermediatePositions
 
       castlingPositions =
         (Maybe.Extra.maybeToList
@@ -379,8 +432,8 @@ getSpecialDestinations game origin piece =
       getPawnSpecialDestinations game origin
 
     King ->
-      --getCastlingDestinations game origin piece
-      noSpecialMove
+      getCastlingDestinations game origin piece
+
     _ ->
       noSpecialMove
 
@@ -396,6 +449,8 @@ getValidDestinations game origin piece =
     ( specialDestinations, specialMove ) =
       getSpecialDestinations
         game origin piece
+
+    a = Debug.log "ENPASSANT FOI?" specialMove
 
     -- a piece cant take an ally
     destinationHasNoAlly destination =
@@ -562,6 +617,7 @@ handleDestination game selectedPosition originPosition validDestinations special
                       }
 
         Just (Castling _) ->
+          let a = Debug.log "UHUL" 420 in
           game'
 
 

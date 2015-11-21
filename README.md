@@ -12,3 +12,6 @@ Study Project
 - run `elm-reactor`
 - debugger will be avaliable at `http://localhost:8000/index.html`
 
+
+### NEVER FORGET
+`move : board -> (board, takenPiece)`
