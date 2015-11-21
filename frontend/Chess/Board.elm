@@ -139,7 +139,7 @@ pawnTakeRanges color =
        { right = (1, 1), left = (-1, 1) }
 
      White ->
-       { right = (1, -1), left = (1, -1) }
+       { right = (1, -1), left = (-1, -1) }
 
 
 takeWhileInclusive : (a -> Bool) -> List a -> List a
@@ -155,21 +155,20 @@ getRookInitialPosition : Color -> (Position, Position)
 getRookInitialPosition turn =
   case turn of
     White ->
-      ( ( 'A', 8 ), ( 'H', 8 ) )
-
-    Black ->
        ( ( 'A', 1 ), ( 'H', 1 ) )
 
-getCastlingIntermediatePositions :
-  Color -> ( ( Position, Position ), ( Position, Position ) )
+    Black ->
+      ( ( 'A', 8 ), ( 'H', 8 ) )
+
+
+getCastlingIntermediatePositions : Color -> ( ( Position, Position ), ( Position, Position ) )
 getCastlingIntermediatePositions turn =
   case turn of
     White ->
-      ( ( ( 'B', 8 ), ( 'C', 8 ) ), ( ( 'F', 8 ), ( 'G', 8 ) ) )
-
-    Black ->
       ( ( ( 'B', 1 ), ( 'C', 1 ) ), ( ( 'F', 1 ), ( 'G', 1 ) ) )
 
+    Black ->
+      ( ( ( 'B', 8 ), ( 'C', 8 ) ), ( ( 'F', 8 ), ( 'G', 8 ) ) )
 
 
 filterPositions : List Position -> List Position

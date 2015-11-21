@@ -181,21 +181,13 @@ move game origin destination =
     board' =
       let
         piece =
-          case originSquare of
-            Just piece' -> Just
-              { piece'
-              | moved = True
-              }
-
-            -- TODO: I'm pretty sure there's some sort of applicative function
-            -- that allows us to return the Nothing on the Nothing branch
-            -- automatically. --ad
-            Nothing ->
-              Nothing
-
+          Maybe.map (\ piece -> { piece | moved = True }) originSquare
 
       in -- copies piece to destination
-        Dict.insert destination piece board
+        Dict.insert
+          destination
+          piece
+          board
 
     game' = --cleans origin
       { game
@@ -222,6 +214,8 @@ getPawnValidTakes game origin =
     canTakeTo : ( { left : Range, right : Range } -> Range ) -> List Position
     canTakeTo f =
       let
+        magro = Debug.log "pawnTakeRanges" <| Board.pawnTakeRanges game.turn 
+
         range : Range
         range =
           f <| Board.pawnTakeRanges game.turn
@@ -237,7 +231,11 @@ getPawnValidTakes game origin =
 
     pawnTakePositions : List Position
     pawnTakePositions =
-      ( canTakeTo .left ) ++ ( canTakeTo .right )
+      let
+        l = Debug.log "left" <| ( canTakeTo .left )
+        r = Debug.log "right" <| ( canTakeTo .right )
+      in
+        l ++ r
 
   in
       pawnTakePositions
@@ -294,85 +292,83 @@ getPawnSpecialDestinations game origin =
   in
     (destinations, specialMove)
 
---getCastlingDestinations : Game -> Position -> Piece -> (List Position, Maybe SpecialMove)
---getCastlingDestinations game origin king =
---  if king.moved
---  then
---    noSpecialMove
---  else
---    let
---      getSquareContent' = Board.getSquareContent game.board
---
---      ( leftRookPosition, rightRookPosition ) =
---        Board.getRookInitialPosition game.turn
---
---      ( leftCastlingIntermediatePositions
---      , rightCastlingIntermediatePositions
---      ) =
---        Board.getCastlingIntermediatePositions game.turn
---
---      breno : (Position, Position)
---      breno = leftCastlingIntermediatePositions
---
---      kingLandingPoint : Position
---      kingLandingPoint = snd leftCastlingIntermediatePositions
---
---      getKingCastlingArrivalPosition : (Position, Position) -> Maybe Position
---      getKingCastlingArrivalPosition castlingIntermediatePositions =
---        let
---          leftRookSquare : Maybe Piece
---          leftRookSquare = getSquareContent' leftRookPosition
---
---        in
---        case leftRookSquare of
---          -- FIXME: looks like applicative functions would be nice here
---          Nothing -> Nothing
---          Just piece ->
---            if not (piece.figure == Rook && piece.moved == False)
---            then
---              Nothing
---            else
---              let
---                isIntermediateCastlingSquaresEmpty : Bool
---                isIntermediateCastlingSquaresEmpty =
---                  List.all Maybe.Extra.isNothing <|
---                    [ fst castlingIntermediatePositions
---                    , snd castlingIntermediatePositions
---                    ]
---              in
---                if not isIntermediateCastlingSquaresEmpty
---                then
---                  Nothing
---                else
---                  Just <| kingLandingPoint
---
---      leftKingCastlingArrivalPosition =
---        getKingCastlingArrivalPosition leftCastlingIntermediatePositions
---
---      rightKingCastlingArrivalPosition =
---        getKingCastlingArrivalPosition rightCastlingIntermediatePositions
---
---      castlingPositions =
---        (Maybe.Extra.maybeToList
---          leftKingCastlingArrivalPosition)
---        ++
---        (Maybe.Extra.maybeToList
---          rightKingCastlingArrivalPosition)
---
---      noCastling =
---        castlingPositions == []
---
---    in
---      if noCastling
---      then
---        noSpecialMove
---      else
---        ( castlingPositions
---        , Just <| Castling
---           ( leftKingCastlingArrivalPosition
---           , rightKingCastlingArrivalPosition
---           )
---        )
+
+-- TODO FIXME remove code duplication
+getKingCastlingArrivalPosition : Game -> (Position, Position) -> Maybe Position
+getKingCastlingArrivalPosition game castlingIntermediatePositions =
+  let
+    getSquareContent' = Board.getSquareContent game.board
+
+    ( leftRookPosition, rightRookPosition ) =
+      Board.getRookInitialPosition game.turn
+
+
+    kingLandingPoint : Position
+    kingLandingPoint = snd castlingIntermediatePositions
+
+    leftRookSquare : Maybe Piece
+    leftRookSquare = getSquareContent' leftRookPosition
+
+  in
+    case leftRookSquare of
+      -- FIXME: looks like Maybe.map would be nice
+      Nothing -> Nothing
+      Just piece ->
+        if not (piece.figure == Rook && piece.moved == False) then
+          Nothing
+        else
+          let
+            isIntermediateCastlingSquaresEmpty : Bool
+            isIntermediateCastlingSquaresEmpty =
+              List.all Maybe.Extra.isNothing <|
+                [ getSquareContent' <| fst castlingIntermediatePositions
+                , getSquareContent' <| snd castlingIntermediatePositions
+                ]
+          in
+            if not isIntermediateCastlingSquaresEmpty then
+              Nothing
+            else
+              Just <| kingLandingPoint
+
+
+getCastlingDestinations : Game -> Position -> Piece -> (List Position, Maybe SpecialMove)
+getCastlingDestinations game origin king =
+  if king.moved
+  then
+    noSpecialMove
+  else
+    let
+      ( leftCastlingIntermediatePositions
+      , rightCastlingIntermediatePositions
+      ) =
+        Board.getCastlingIntermediatePositions game.turn
+
+      leftKingCastlingArrivalPosition =
+        getKingCastlingArrivalPosition game leftCastlingIntermediatePositions
+
+      rightKingCastlingArrivalPosition =
+        getKingCastlingArrivalPosition game rightCastlingIntermediatePositions
+
+      castlingPositions =
+        (Maybe.Extra.maybeToList
+          leftKingCastlingArrivalPosition)
+        ++
+        (Maybe.Extra.maybeToList
+          rightKingCastlingArrivalPosition)
+
+      noCastling =
+        castlingPositions == []
+
+    in
+      if noCastling then
+        noSpecialMove
+      else
+        ( castlingPositions
+        , Just <| Castling
+           ( leftKingCastlingArrivalPosition
+           , rightKingCastlingArrivalPosition
+           )
+        )
 
 
 getSpecialDestinations : Game -> Position -> Piece ->

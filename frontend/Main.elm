@@ -4,9 +4,6 @@ import Time        exposing (..)
 import Html        exposing (..)
 
 import Chess.Game  exposing (..)
-import Chess.Color exposing (..)
-import Chess.Board exposing (..)
-import Chess.Piece exposing (..)
 import View        exposing (..)
 import Update      exposing (..)
 
