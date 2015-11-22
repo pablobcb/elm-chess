@@ -1,6 +1,5 @@
---FIXME: search for situations where applicative functions
--- like andMap would be useful
 module Chess.Game where
+
 import Debug       exposing (..)
 
 import Maybe       exposing (..)
@@ -14,7 +13,6 @@ import Chess.Piece exposing (..)
 
 type alias Graveyard = List (Maybe Figure)
 
---FIXME: is this type really necessary?
 type SpecialMove
   -- @Position:  the position behind the enemy pawn,
   --             where the attacking pawn will land
@@ -80,11 +78,11 @@ passTurn game =
     }
 
 
-waitForPieceSelection : Game -> Game
-waitForPieceSelection game =
+waitForPieceSelection : Maybe Position -> Game -> Game
+waitForPieceSelection positionOfPawnWichMoved2Squares game =
   passTurn <|
     { game
-    | state = Origin Nothing
+    | state = Origin positionOfPawnWichMoved2Squares
     }
 
 
@@ -126,50 +124,42 @@ makeInitialGame =
     }
 
 
--- FIXME: better naming to those game variables
 makeEnPassant : Game -> Position -> Position -> Position -> Game
 makeEnPassant game origin destination enemyPawnPosition =
   let
     -- move piece behind enemy pawn
-    game' = move game origin destination
-
-    -- clear origin
-    board = Dict.insert origin Nothing game'.board
+    gameMovedPawn = move game origin destination
 
     -- remove enemy pawn from game
-    board' = Dict.insert enemyPawnPosition Nothing game'.board
+    board = Dict.insert enemyPawnPosition Nothing gameMovedPawn.board
 
     -- put enemy pawn in the graveyard
-    game'' = updateGraveyard game' Pawn
+    gameAfterEnPassant = updateGraveyard gameMovedPawn Pawn
+
   in
-    { game''
-    | board = board'
-    , previousState = game''.state
-    , state = Origin Nothing
-    , turn = other game''.turn
+    { gameAfterEnPassant
+    | board = board
     }
 
---makeCastling : Game -> Position -> Position -> Position -> Game
---makeCastling game origin destination enemyPawnPosition =
---  let
---    -- move piece behind enemy pawn
---    game' = move game origin destination
---
---    -- clear origin
---    board = Dict.insert origin Nothing game'.board
---
---    -- remove enemy pawn from game
---    board' = Dict.insert enemyPawnPosition Nothing game'.board
---
---    -- put enemy pawn in the graveyard
---    game'' = updateGraveyard game' Pawn
---  in
---    { game''
---    | board = board'
---    , previousState = game''.state
---    , state = Origin Nothing
---    , turn = other game''.turn
---    }
+makeCastling : Game -> Position -> Position -> Game
+makeCastling game origin destination =
+  let
+    -- move king to castling position
+    gameMovedKing = move game origin destination
+
+    column = fst destination
+
+    -- TODO FIXME Duplicated code
+    (rookOrigin, rookDestination) =
+      if column == 'C'
+      then ( Board.getLeftRookInitialPosition game.turn,  Board.positionLeft destination  )
+      else ( Board.getRightRookInitialPosition game.turn, Board.positionRight destination )
+
+    gameMovedRook = move gameMovedKing rookOrigin rookDestination
+
+  in
+    gameMovedRook
+
 
 updateGraveyard : Game -> Figure -> Game
 updateGraveyard game deadFigure =
@@ -215,7 +205,6 @@ move game origin destination =
       { game
       | board = Dict.insert origin Nothing board'
       }
-
 
   in
     case destinationSquare of
@@ -264,13 +253,9 @@ noSpecialMove = ( [], Nothing )
 getPawnSpecialDestinations : Game -> Position -> (List Position, Maybe SpecialMove)
 getPawnSpecialDestinations game origin =
   let
-    adjacentPositions =
-      Board.getHorizontalAdjacentPositions origin
-        --positionOfPawnWhichMoved2Squares
+    left = Board.positionLeft origin
 
-    left = fst adjacentPositions
-
-    right = snd adjacentPositions
+    right = Board.positionRight origin
 
     nextPosition = Board.positionAhead game.turn origin
 
@@ -309,15 +294,15 @@ getPawnSpecialDestinations game origin =
     (destinations, specialMove)
 
 
-
 -- remove nasty duplicated code
 getKingCastlingArrivalPositionLeft : Game -> { fst : Position, snd : Position, thrd: Position } -> Maybe Position
 getKingCastlingArrivalPositionLeft game castlingIntermediatePositions =
   let
     getSquareContent' = Board.getSquareContent game.board
 
-    ( leftRookPosition, rightRookPosition ) =
-      Board.getRookInitialPosition game.turn
+    leftRookPosition = Board.getRightRookInitialPosition game.turn
+
+    rightRookPosition = Board.getLeftRookInitialPosition game.turn
 
     kingLandingPoint : Position
     kingLandingPoint = .snd castlingIntermediatePositions
@@ -326,10 +311,8 @@ getKingCastlingArrivalPositionLeft game castlingIntermediatePositions =
     leftRookSquare = getSquareContent' leftRookPosition
 
   in
-    case leftRookSquare of
-      -- FIXME: looks like Maybe.map would be nice
-      Nothing -> Nothing
-      Just piece ->
+    Maybe.Extra.join
+    <| (flip Maybe.map) leftRookSquare (\ piece ->
         if not (piece.figure == Rook && piece.moved == False) then
           Nothing
         else
@@ -340,12 +323,10 @@ getKingCastlingArrivalPositionLeft game castlingIntermediatePositions =
               (isNothing <| getSquareContent' <| .snd castlingIntermediatePositions) &&
               (isNothing <| getSquareContent' <| .thrd castlingIntermediatePositions)
           in
-
-
             if not isIntermediateCastlingSquaresEmpty then
               Nothing
             else
-              Just <| kingLandingPoint
+              Just <| kingLandingPoint)
 
 
 getKingCastlingArrivalPositionRight : Game -> { fst : Position, snd : Position } -> Maybe Position
@@ -353,8 +334,9 @@ getKingCastlingArrivalPositionRight game castlingIntermediatePositions =
   let
     getSquareContent' = Board.getSquareContent game.board
 
-    ( leftRookPosition, rightRookPosition ) =
-      Board.getRookInitialPosition game.turn
+    leftRookPosition = Board.getRightRookInitialPosition game.turn
+
+    rightRookPosition = Board.getLeftRookInitialPosition game.turn
 
     kingLandingPoint : Position
     kingLandingPoint = .snd castlingIntermediatePositions
@@ -363,10 +345,8 @@ getKingCastlingArrivalPositionRight game castlingIntermediatePositions =
     leftRookSquare = getSquareContent' leftRookPosition
 
   in
-    case leftRookSquare of
-      -- FIXME: looks like Maybe.map would be nice
-      Nothing -> Nothing
-      Just piece ->
+    Maybe.Extra.join
+    <| (flip Maybe.map) leftRookSquare (\ piece ->
         if not (piece.figure == Rook && piece.moved == False) then
           Nothing
         else
@@ -381,7 +361,8 @@ getKingCastlingArrivalPositionRight game castlingIntermediatePositions =
             if not isIntermediateCastlingSquaresEmpty then
               Nothing
             else
-              Just <| kingLandingPoint
+              Just <| kingLandingPoint)
+
 
 
 getCastlingDestinations : Game -> Position -> Piece -> (List Position, Maybe SpecialMove)
@@ -449,8 +430,6 @@ getValidDestinations game origin piece =
     ( specialDestinations, specialMove ) =
       getSpecialDestinations
         game origin piece
-
-    a = Debug.log "ENPASSANT FOI?" specialMove
 
     -- a piece cant take an ally
     destinationHasNoAlly destination =
@@ -551,24 +530,15 @@ handleDestination game selectedPosition originPosition validDestinations special
       case specialMove of
         Nothing ->
         -- valid move
-          passTurn <|
             if not isPawn
             then -- passes turn
-                { game'
-                | state = Origin Nothing
-                }
+              waitForPieceSelection Nothing game'
             else
                  -- set the pawn position for enpassant detection
               if hasMovedTwoSquares then
-                { game'
-                | previousState = game'.state
-                , state = Origin (Just selectedPosition)
-                }
+                waitForPieceSelection (Just selectedPosition) game'
               else
-                { game'
-                | previousState = game'.state
-                , state = Origin Nothing
-                }
+                waitForPieceSelection Nothing game'
 
 
         Just (Promotion pos) ->
@@ -577,12 +547,12 @@ handleDestination game selectedPosition originPosition validDestinations special
            , state = SelectPromotion pos
            }
 
-
         Just (EnPassant behindEnemyPawnPosition) ->
             if selectedPosition == behindEnemyPawnPosition
             then -- enpassant take detected
-              makeEnPassant game originPosition selectedPosition <|
-                Board.positionBelow game.turn selectedPosition
+              waitForPieceSelection Nothing <|
+                makeEnPassant game originPosition selectedPosition <|
+                  Board.positionBelow game.turn selectedPosition
             else
               let
                 selectedDestination =
@@ -598,27 +568,34 @@ handleDestination game selectedPosition originPosition validDestinations special
                     Nothing ->
                       False
 
-              in
+              in passTurn <|
                 if not isPawn
                 then -- passes turn
-                  waitForPieceSelection game'
+                  waitForPieceSelection Nothing game'
                 else  -- checks pawn special states
                   if hasMovedTwoSquares then
-                    { game'
-                    | previousState = game'.state
-                    , state = Origin (Just selectedPosition)
-                    , turn  = other game'.turn
-                    }
+                    waitForPieceSelection (Just selectedPosition) game'
                   else
-                    passTurn <|
-                      { game'
-                      | previousState = game'.state
-                      , state = Origin Nothing
-                      }
+                    waitForPieceSelection Nothing game'
 
-        Just (Castling _) ->
-          let a = Debug.log "UHUL" 420 in
-          game'
+        Just (Castling (kingLeftPosition, kingRightPosition)) ->
+          waitForPieceSelection Nothing <|
+            case kingLeftPosition of
+              Just leftPosition ->
+                if selectedPosition == leftPosition then
+                  makeCastling game originPosition leftPosition
+                else
+                  game'
+              Nothing ->
+                case kingRightPosition of
+                  Just rightPosition ->
+                    if selectedPosition == rightPosition then
+                      makeCastling game originPosition rightPosition
+                    else
+                      game'
+
+                  Nothing ->
+                    Debug.crash "castling special move without both arguments being Nothing!"
 
 
 handleClick : Game -> Position -> Game

@@ -88,9 +88,8 @@ shift ( char, number ) ( x, y ) =
         Just num ->
           num
 
-        -- FIXME: use applicative lists to solve this
         Nothing ->
-          -10000 --fatal error?
+          -9999
 
     shiftedCharNumericalRepresentation =
       charNumericalRepresentation + x
@@ -101,15 +100,20 @@ shift ( char, number ) ( x, y ) =
           char
 
         Nothing ->
-          '!' --fatal error?
+          '!'
 
   in
     ( shiftedChar, number + y )
 
 
-getHorizontalAdjacentPositions : Position -> ( Position, Position )
-getHorizontalAdjacentPositions position =
-    ( shift position ( 1, 0 ), shift position ( -1, 0 ) )
+positionLeft : Position -> Position
+positionLeft position =
+  shift position ( 1, 0 )
+
+
+positionRight : Position -> Position
+positionRight position =
+  shift position ( -1, 0 )
 
 
 positionAhead : Color -> Position -> Position
@@ -151,14 +155,25 @@ takeWhileInclusive predicate xs =
            then takeWhileInclusive predicate xs'
            else []
 
-getRookInitialPosition : Color -> (Position, Position)
-getRookInitialPosition turn =
-  case turn of
-    White ->
-       ( ( 'A', 1 ), ( 'H', 1 ) )
 
+getLeftRookInitialPosition : Color -> Position
+getLeftRookInitialPosition turn =
+  case turn of
     Black ->
-      ( ( 'A', 8 ), ( 'H', 8 ) )
+      ( 'A', 1 )
+
+    White ->
+      ( 'A', 8 )
+
+
+getRightRookInitialPosition : Color -> Position
+getRightRookInitialPosition turn =
+  case turn of
+    Black ->
+      ( 'H', 1 )
+
+    White ->
+      ( 'H', 8 )
 
 
 getCastlingIntermediatePositions : Color -> ( { fst: Position, snd: Position, thrd: Position }, { fst: Position, snd: Position } )

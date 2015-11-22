@@ -13,5 +13,5 @@ Study Project
 - debugger will be avaliable at `http://localhost:8000/index.html`
 
 
-### NEVER FORGET
-`move : board -> (board, takenPiece)`
+### Refactor Ideas
+`move : board -> (board, Maybe takenPiece)`

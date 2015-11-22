@@ -35,7 +35,6 @@ renderBoardSquare address state position square =
         Destination origin validPositions _ ->
           if List.member position validPositions
              || position == origin
-          -- fix me: repetion of ""
           then "valid-destination"
           else ""
 
