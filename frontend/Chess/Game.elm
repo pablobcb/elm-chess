@@ -149,7 +149,6 @@ makeCastling game origin destination =
 
     column = fst destination
 
-    -- TODO FIXME Duplicated code
     (rookOrigin, rookDestination) =
       if column == 'C'
       then ( Board.getLeftRookInitialPosition game.turn,  Board.positionLeft destination  )
@@ -178,7 +177,7 @@ updateGraveyard game deadFigure =
         | graveyard1 = updateGraveyard game.graveyard1
         }
 
--- TODO: quebrar essa função em duas
+-- TODO FIXME : quebrar essa função em duas
 move : Game -> Position -> Position -> Game
 move game origin destination =
   let
