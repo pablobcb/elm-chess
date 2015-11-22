@@ -176,14 +176,14 @@ getRightRookInitialPosition turn =
       ( 'H', 8 )
 
 
-getCastlingIntermediatePositions : Color -> ( { fst: Position, snd: Position, thrd: Position }, { fst: Position, snd: Position } )
+getCastlingIntermediatePositions : Color -> ( List Position, List Position )
 getCastlingIntermediatePositions turn =
   case turn of
     Black ->
-      ( { fst = ('B', 1 ), snd = ( 'C', 1 ), thrd = ( 'D', 1 ) }, { fst = ( 'F', 1 ), snd = ( 'G', 1 ) } )
+      ( [('B', 1 ), ( 'C', 1 ), ( 'D', 1 ) ], [( 'F', 1 ), ( 'G', 1 ) ] )
 
     White ->
-      ( { fst = ('B', 8 ), snd = ( 'C', 8 ), thrd = ( 'D', 8 ) }, { fst = ( 'F', 8 ), snd = ( 'G', 8 ) } )
+      ( [('B', 8 ), ( 'C', 8 ), ( 'D', 8 ) ], [( 'F', 8 ), ( 'G', 8 ) ] )
 
 
 filterPositions : List Position -> List Position

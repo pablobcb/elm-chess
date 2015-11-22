@@ -3,8 +3,8 @@ module Chess.Game where
 import Debug       exposing (..)
 
 import Maybe       exposing (..)
+import Array       exposing (..)
 import Maybe.Extra exposing (..)
-
 import Dict        exposing (..)
 
 import Chess.Color exposing (..)
@@ -294,75 +294,42 @@ getPawnSpecialDestinations game origin =
     (destinations, specialMove)
 
 
--- remove nasty duplicated code
-getKingCastlingArrivalPositionLeft : Game -> { fst : Position, snd : Position, thrd: Position } -> Maybe Position
-getKingCastlingArrivalPositionLeft game castlingIntermediatePositions =
+getKingCastlingArrivalPosition :
+  Game ->
+  List Position ->
+  ( Color -> Position ) ->
+  Maybe Position
+
+getKingCastlingArrivalPosition game castlingIntermediatePositions getRookInitialPosition =
   let
-    getSquareContent' = Board.getSquareContent game.board
+    rookPosition = getRookInitialPosition game.turn
 
-    leftRookPosition = Board.getRightRookInitialPosition game.turn
+    intermediatePositionsArray =
+      Array.fromList castlingIntermediatePositions
 
-    rightRookPosition = Board.getLeftRookInitialPosition game.turn
+    kingLandingPoint : Maybe Position
+    kingLandingPoint = Array.get 1 intermediatePositionsArray
 
-    kingLandingPoint : Position
-    kingLandingPoint = .snd castlingIntermediatePositions
-
-    leftRookSquare : Maybe Piece
-    leftRookSquare = getSquareContent' leftRookPosition
+    rookSquare : Maybe Piece
+    rookSquare = getSquareContent game.board rookPosition
 
   in
     Maybe.Extra.join
-    <| (flip Maybe.map) leftRookSquare (\ piece ->
+    <| (flip Maybe.map) rookSquare (\ piece ->
         if not (piece.figure == Rook && piece.moved == False) then
           Nothing
         else
           let
             isIntermediateCastlingSquaresEmpty : Bool
             isIntermediateCastlingSquaresEmpty =
-              (isNothing <| getSquareContent' <| .fst castlingIntermediatePositions) &&
-              (isNothing <| getSquareContent' <| .snd castlingIntermediatePositions) &&
-              (isNothing <| getSquareContent' <| .thrd castlingIntermediatePositions)
+              0 == (List.length <| List.filter
+                  (isJust << getSquareContent game.board)
+                  castlingIntermediatePositions)
           in
             if not isIntermediateCastlingSquaresEmpty then
               Nothing
             else
-              Just <| kingLandingPoint)
-
-
-getKingCastlingArrivalPositionRight : Game -> { fst : Position, snd : Position } -> Maybe Position
-getKingCastlingArrivalPositionRight game castlingIntermediatePositions =
-  let
-    getSquareContent' = Board.getSquareContent game.board
-
-    leftRookPosition = Board.getRightRookInitialPosition game.turn
-
-    rightRookPosition = Board.getLeftRookInitialPosition game.turn
-
-    kingLandingPoint : Position
-    kingLandingPoint = .snd castlingIntermediatePositions
-
-    leftRookSquare : Maybe Piece
-    leftRookSquare = getSquareContent' leftRookPosition
-
-  in
-    Maybe.Extra.join
-    <| (flip Maybe.map) leftRookSquare (\ piece ->
-        if not (piece.figure == Rook && piece.moved == False) then
-          Nothing
-        else
-          let
-            isIntermediateCastlingSquaresEmpty : Bool
-            isIntermediateCastlingSquaresEmpty =
-              (isNothing <| getSquareContent' <| .fst castlingIntermediatePositions) &&
-              (isNothing <| getSquareContent' <| .snd castlingIntermediatePositions)
-          in
-
-
-            if not isIntermediateCastlingSquaresEmpty then
-              Nothing
-            else
-              Just <| kingLandingPoint)
-
+              kingLandingPoint)
 
 
 getCastlingDestinations : Game -> Position -> Piece -> (List Position, Maybe SpecialMove)
@@ -378,10 +345,16 @@ getCastlingDestinations game origin king =
         Board.getCastlingIntermediatePositions game.turn
 
       leftKingCastlingArrivalPosition =
-        getKingCastlingArrivalPositionLeft game leftCastlingIntermediatePositions
+        getKingCastlingArrivalPosition
+          game
+          leftCastlingIntermediatePositions
+          Board.getLeftRookInitialPosition
 
       rightKingCastlingArrivalPosition =
-        getKingCastlingArrivalPositionRight game rightCastlingIntermediatePositions
+        getKingCastlingArrivalPosition
+          game
+          rightCastlingIntermediatePositions
+          Board.getLeftRookInitialPosition
 
       castlingPositions =
         (Maybe.Extra.maybeToList
