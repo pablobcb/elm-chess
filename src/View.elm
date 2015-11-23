@@ -93,8 +93,8 @@ renderGraveyardPiece : Color -> Figure -> Html
 renderGraveyardPiece color figure  =
   let
     style = "graveyard square piece "
-      ++ (toString figure)
-      ++ (toString color)
+      ++ (toLower <| toString figure) ++ " "
+      ++ (toLower <| toString color)  ++ " "
 
   in
     div [ class style ] []
@@ -107,26 +107,8 @@ renderEmptyGraveyardSquare =
 
 renderGraveyard : Graveyard -> Color -> Html
 renderGraveyard graveyard color =
-  let
-
-    colorName : String
-    colorName = toString color
-
-    numberOfDeadPieces = List.length graveyard
-
-    --16 is the total number of piece a player controls
-    numberOfEmptySquares = 16 - numberOfDeadPieces
-
-    breno : List Html
-    breno =
-        List.map (renderGraveyardPiece color) graveyard
-
-    magro : List Html
-    magro =
-        List.map (\ _ -> renderEmptyGraveyardSquare) [1 .. numberOfEmptySquares ]
-  in
-    div [ class <| (++) "graveyard " <| toLower colorName ] breno
-
+  div [ class <| (++) "graveyard " <| toLower <| toString color]
+    <| List.map (renderGraveyardPiece color) graveyard
 
 {----------------------------- Status Bar ----------------------------}
 clock : Game -> Html
