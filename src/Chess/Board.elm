@@ -25,9 +25,6 @@ letters: List Char
 letters =
   [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' ]
 
-
--- FIXME: use Dict.Keys, but it inverts the board
--- is the board inverted better?
 -- no list comprehension :(
 getPositions : List Position
 getPositions =
@@ -146,16 +143,6 @@ pawnTakeRanges color =
        { right = (1, -1), left = (-1, -1) }
 
 
-takeWhileInclusive : (a -> Bool) -> List a -> List a
-takeWhileInclusive predicate xs =
-  case xs of
-    [] -> []
-    (x::xs') ->
-      x :: if predicate x
-           then takeWhileInclusive predicate xs'
-           else []
-
-
 getLeftRookInitialPosition : Color -> Position
 getLeftRookInitialPosition turn =
   case turn of
@@ -207,6 +194,16 @@ isPopulated board position =
   isJust << rangeToSquare position board
 
 
+takeWhileInclusive : (a -> Bool) -> List a -> List a
+takeWhileInclusive predicate xs =
+  case xs of
+    [] -> []
+    (x::xs') ->
+      x :: if predicate x
+           then takeWhileInclusive predicate xs'
+           else []
+
+
 getRegularDestinations : Color -> Board -> Piece -> Position -> List Position
 getRegularDestinations turn board piece position =
   let
@@ -221,7 +218,6 @@ getRegularDestinations turn board piece position =
       takeWhileInclusive
         (isNothing << rangeToSquare position board)
           rangesInclusive
-
 
     takeWhileEmpty' (a, b) =
       takeWhileEmpty <| zip a b
