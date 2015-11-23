@@ -11,7 +11,7 @@ import Chess.Color exposing (..)
 import Chess.Board as Board exposing (..)
 import Chess.Piece exposing (..)
 
-type alias Graveyard = List (Maybe Figure)
+type alias Graveyard = List Figure
 
 type SpecialMove
   -- @Position:  the position behind the enemy pawn,
@@ -112,7 +112,7 @@ promotePiece game promotedPiecePosition figure =
 makeInitialGame : Game
 makeInitialGame =
   let
-    emptyGraveyard = emptyRow ++ emptyRow
+    emptyGraveyard = []
   in
     { board          = makeInitialBoard
     , graveyard1     = emptyGraveyard
@@ -162,20 +162,17 @@ makeCastling game origin destination =
 
 updateGraveyard : Game -> Figure -> Game
 updateGraveyard game deadFigure =
-  let
-    updateGraveyard graveyard  =
-      List.drop 1 <| graveyard ++ [ Just deadFigure ]
-  in
-    case game.turn of
-      White ->
-        { game
-        | graveyard2 = updateGraveyard game.graveyard2
-        }
+  case game.turn of
+    White ->
+      { game
+      | graveyard2 = game.graveyard2 ++ [deadFigure]
+      }
 
-      Black ->
-        { game
-        | graveyard1 = updateGraveyard game.graveyard1
-        }
+    Black ->
+      { game
+      | graveyard1 = game.graveyard1 ++ [deadFigure]
+      }
+
 
 -- TODO FIXME : quebrar essa função em duas
 move : Game -> Position -> Position -> Game
