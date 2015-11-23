@@ -1,10 +1,10 @@
 {
     "version": "1.0.0",
-    "summary": "helpful summary of your project, less than 80 characters",
+    "summary": "little chess game to learn Elm",
     "repository": "https://github.com/pablobcb/elm-chess.git",
     "license": "BSD3",
     "source-directories": [
-        "./frontend"
+        "./src"
     ],
     "exposed-modules": [],
     "dependencies": {

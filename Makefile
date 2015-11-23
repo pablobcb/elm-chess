@@ -1,5 +1,5 @@
 build:
-	stylus -p frontend/styles/index.styl > public/styles.css && elm make frontend/Main.elm --warn --output public/elm.js
+	stylus -p src/styles/index.styl > dist/styles.css && elm make src/Main.elm --warn --output dist/elm.js
 
 open:
 	open public/index.html
