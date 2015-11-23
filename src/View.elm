@@ -89,31 +89,43 @@ renderBoard address turn state board =
 
 {----------------------------- Graveyard ----------------------------}
 
-renderGraveyardSquare : Square -> Html
-renderGraveyardSquare square =
+renderGraveyardPiece : Color -> Figure -> Html
+renderGraveyardPiece color figure  =
   let
-    attrs =
-      case square of
-        Nothing -> ""
-        Just piece -> getPieceClass piece
+    style = "graveyard square piece "
+      ++ (toString figure)
+      ++ (toString color)
 
   in
-    div [ class ("graveyard square " ++ attrs) ] []
+    div [ class style ] []
 
+
+renderEmptyGraveyardSquare : Html
+renderEmptyGraveyardSquare =
+    div [ class "graveyard square" ] []
 
 
 renderGraveyard : Graveyard -> Color -> Html
 renderGraveyard graveyard color =
   let
-    renderSquare figure =
-      case figure of
-        Nothing ->
-          renderGraveyardSquare Nothing
-        Just figure' ->
-          renderGraveyardSquare <| Just <| piece figure' color
+
+    colorName : String
+    colorName = toString color
+
+    numberOfDeadPieces = List.length graveyard
+
+    --16 is the total number of piece a player controls
+    numberOfEmptySquares = 16 - numberOfDeadPieces
+
+    breno : List Html
+    breno =
+        List.map (renderGraveyardPiece color) graveyard
+
+    magro : List Html
+    magro =
+        List.map (\ _ -> renderEmptyGraveyardSquare) [1 .. numberOfEmptySquares ]
   in
-    div [ class <| (++) "graveyard " <| toLower <| toString color ]
-        ( List.map renderSquare graveyard )
+    div [ class <| (++) "graveyard " <| toLower colorName ] breno
 
 
 {----------------------------- Status Bar ----------------------------}

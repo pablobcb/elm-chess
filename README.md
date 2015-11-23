@@ -1,5 +1,5 @@
 ## Elm Chess
-Study Project
+study project to try out the technology
 
 ## Install Instructions
 - Install Elm `npm install -g elm`
@@ -7,11 +7,6 @@ Study Project
 
 ## Run Instructions
 - run `make build`
-
-## Debug Instructions
-- run `elm-reactor`
-- debugger will be avaliable at `http://localhost:8000/index.html`
-
 
 ### Refactor Ideas
 `move : board -> (board, Maybe takenPiece)`
