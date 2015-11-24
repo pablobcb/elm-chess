@@ -7,6 +7,3 @@ study project to try out the technology
 
 ## Run Instructions
 - run `make build`
-
-### Refactor Ideas
-`move : board -> (board, Maybe takenPiece)`

@@ -171,17 +171,6 @@ getCastlingIntermediatePositions turn =
       ( [('B', 8 ), ( 'C', 8 ), ( 'D', 8 ) ], [( 'F', 8 ), ( 'G', 8 ) ] )
 
 
-filterPositions : List Position -> List Position
-filterPositions positions =
-  let
-    filterPosition pos =
-    -- excludes ranges with ! and negative values
-      ( List.member ( fst pos ) letters ) &&
-        ( List.member ( snd pos ) [ 1 .. 8 ] )
-  in
-    List.filter filterPosition <| positions
-
-
 rangeToSquare : Position -> Board -> Range -> Square
 rangeToSquare position board =
   (getSquareContent board) << shift position
@@ -202,6 +191,16 @@ takeWhileInclusive predicate xs =
            else []
 
 
+filterPositions : List Position -> List Position
+filterPositions positions =
+  let
+    filterPosition pos =
+    -- excludes ranges with ! and negative values
+      ( List.member ( fst pos ) letters ) &&
+        ( List.member ( snd pos ) [ 1 .. 8 ] )
+  in
+    List.filter filterPosition <| positions
+
 getRegularDestinations : Color -> Board -> Piece -> Position -> List Position
 getRegularDestinations turn board piece position =
   let
@@ -215,7 +214,7 @@ getRegularDestinations turn board piece position =
     takeWhileEmpty rangesInclusive =
       takeWhileInclusive
         (isNothing << rangeToSquare position board)
-          rangesInclusive
+        rangesInclusive
 
     takeWhileEmpty' (a, b) =
       takeWhileEmpty <| zip a b
@@ -313,3 +312,25 @@ numToChar num =
         , ( 4, 'D' ) , ( 5, 'E' ) , ( 6, 'F' )
         , ( 7, 'G' ) , ( 8, 'H' )
         ]
+
+move : Board -> Position -> Position -> (Board, Maybe Piece)
+move board origin destination =
+  let
+    destinationSquare =
+      getSquareContent board destination
+
+    originSquare =
+      getSquareContent board origin
+
+    -- insert piece in new position and clears origin
+    board' =
+      Dict.insert origin Nothing <|
+      Dict.insert
+        destination
+        ( Maybe.map (\ piece -> { piece | moved = True }) originSquare )
+        board
+
+    takenPiece = destinationSquare
+
+  in
+    (board', takenPiece)

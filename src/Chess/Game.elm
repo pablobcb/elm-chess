@@ -1,31 +1,16 @@
 module Chess.Game where
 
-import Debug       exposing (..)
+import Maybe        exposing (..)
+import Array        exposing (..)
+import Maybe.Extra  exposing (..)
+import Dict         exposing (..)
 
-import Maybe       exposing (..)
-import Array       exposing (..)
-import Maybe.Extra exposing (..)
-import Dict        exposing (..)
-
-import Chess.Color exposing (..)
-import Chess.Board as Board exposing (..)
-import Chess.Piece exposing (..)
+import Chess.Color        as Color        exposing (..)
+import Chess.Board        as Board        exposing (..)
+import Chess.SpecialMove  as SpecialMove  exposing (..)
+import Chess.Piece        as Piece        exposing (..)
 
 type alias Graveyard = List Figure
-
-type SpecialMove
-  -- @Position:  the position behind the enemy pawn,
-  --             where the attacking pawn will land
-  --             after taking another pawn with EnPassant
-  = EnPassant Position
-
-  -- @Position:  the left or right position
-  --             King will land after a Castling move
-  | Castling ( Maybe Position, Maybe Position )
-
-  -- @Position: position of the pawn which will be replaced for a new piece
-  | Promotion Position
-
 
 type GameState
   -- Waiting a player to select the piece he wants to move
@@ -124,28 +109,35 @@ makeInitialGame =
     }
 
 
-makeEnPassant : Game -> Position -> Position -> Position -> Game
-makeEnPassant game origin destination enemyPawnPosition =
-  let
-    -- move piece behind enemy pawn
-    gameMovedPawn = move game origin destination
+handleEnPassant : Game -> Position -> Position -> Game
+handleEnPassant game originPosition selectedPosition =
+    let
+      enemyPawnPosition =
+        Board.positionBelow
+          game.turn
+          selectedPosition
 
-    -- remove enemy pawn from game
-    board = Dict.insert enemyPawnPosition Nothing gameMovedPawn.board
+      board =
+        SpecialMove.makeEnPassant
+          game.board
+          originPosition
+          selectedPosition
+          enemyPawnPosition
 
-    -- put enemy pawn in the graveyard
-    gameAfterEnPassant = updateGraveyard gameMovedPawn Pawn
 
-  in
-    { gameAfterEnPassant
-    | board = board
-    }
+      gameAfterEnPassant =
+        { game
+        | board = board
+        }
+    in
+      waitForPieceSelection Nothing gameAfterEnPassant
+      
 
 makeCastling : Game -> Position -> Position -> Game
 makeCastling game origin destination =
   let
     -- move king to castling position
-    gameMovedKing = move game origin destination
+    gameMovedKing = handleMove game origin destination
 
     column = fst destination
 
@@ -154,7 +146,7 @@ makeCastling game origin destination =
       then ( Board.getLeftRookInitialPosition game.turn,  Board.positionLeft destination  )
       else ( Board.getRightRookInitialPosition game.turn, Board.positionRight destination )
 
-    gameMovedRook = move gameMovedKing rookOrigin rookDestination
+    gameMovedRook = handleMove gameMovedKing rookOrigin rookDestination
 
   in
     gameMovedRook
@@ -174,40 +166,23 @@ updateGraveyard game deadFigure =
       }
 
 
--- TODO FIXME : quebrar essa função em duas
-move : Game -> Position -> Position -> Game
-move game origin destination =
+handleMove : Game -> Position -> Position -> Game
+handleMove game origin destination =
   let
-    board = game.board
+    (board, takenPiece) = Board.move game.board origin destination
 
-    destinationSquare =
-      Board.getSquareContent board destination
-
-    originSquare =
-      Board.getSquareContent board origin
-
-    board' =
-      let
-        piece =
-          Maybe.map (\ piece -> { piece | moved = True }) originSquare
-
-      in -- copies piece to destination
-        Dict.insert
-          destination
-          piece
-          board
-
-    game' = --cleans origin
+    -- sends taken piece to graveyard
+    game' =
       { game
-      | board = Dict.insert origin Nothing board'
+      | board = board
       }
 
   in
-    case destinationSquare of
-      Nothing -> --just move
+    case takenPiece of
+      Nothing ->
         game'
 
-      Just piece -> --take piece moving it to the correct graveyard
+      Just piece ->
         updateGraveyard game' piece.figure
 
 
@@ -463,7 +438,7 @@ handleDestination game selectedPosition originPosition validDestinations special
 
     isPositionValid = List.member selectedPosition validDestinations
 
-    game' = move game originPosition selectedPosition
+    game' = handleMove game originPosition selectedPosition
 
     selectedDestination =
       getSquareContent game'.board selectedPosition
@@ -519,9 +494,7 @@ handleDestination game selectedPosition originPosition validDestinations special
         Just (EnPassant behindEnemyPawnPosition) ->
             if selectedPosition == behindEnemyPawnPosition
             then -- enpassant take detected
-              waitForPieceSelection Nothing <|
-                makeEnPassant game originPosition selectedPosition <|
-                  Board.positionBelow game.turn selectedPosition
+              handleEnPassant game originPosition selectedPosition
             else
               let
                 selectedDestination =
