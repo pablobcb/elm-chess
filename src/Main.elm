@@ -3,9 +3,10 @@ module Main(main) where
 import Time        exposing (..)
 import Html        exposing (..)
 
-import Chess.Game  exposing (..)
-import View        exposing (..)
 import Update      exposing (..)
+
+import Chess.Game  exposing (..)
+import View.Game   exposing (..)
 
 inbox : Signal.Mailbox Action
 inbox =
@@ -28,4 +29,4 @@ model =
 
 
 main : Signal Html
-main = Signal.map (renderGame inbox.address) model
+main = Signal.map (View.Game.renderGame inbox.address) model

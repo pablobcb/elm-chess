@@ -9,7 +9,6 @@ import Chess.Piece as Game exposing (..)
 
 type Action
   = UpdateTimer
-  | Restart
   | Promote Position Figure
   | Click Position
 
@@ -20,10 +19,6 @@ update action game =
     -- increase turn timer by 1 second
     UpdateTimer ->
       Game.tick game
-
-
-    Restart ->
-      Game.makeInitialGame
 
 
     -- sets promoted piece into position on board

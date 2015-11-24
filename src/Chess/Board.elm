@@ -1,7 +1,5 @@
 module Chess.Board where
 
-import Debug       exposing (..)
-
 import Dict        exposing (..)
 import Maybe       exposing (..)
 import Maybe.Extra exposing (..)
