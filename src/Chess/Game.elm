@@ -12,6 +12,7 @@ import Chess.Piece        as Piece        exposing (..)
 
 type alias Graveyard = List Figure
 
+
 type GameState
   -- Waiting a player to select the piece he wants to move
   -- @(Maybe Position): indicates the position of a pawn if
@@ -124,32 +125,45 @@ handleEnPassant game originPosition selectedPosition =
           selectedPosition
           enemyPawnPosition
 
-
       gameAfterEnPassant =
         { game
         | board = board
         }
     in
       waitForPieceSelection Nothing gameAfterEnPassant
-      
 
-makeCastling : Game -> Position -> Position -> Game
-makeCastling game origin destination =
+
+handleCastling : Game -> Position -> Position -> Maybe Position -> Maybe Position -> Game
+handleCastling game originPosition selectedPosition kingLeftPosition kingRightPosition =
   let
-    -- move king to castling position
-    gameMovedKing = handleMove game origin destination
-
-    column = fst destination
-
-    (rookOrigin, rookDestination) =
-      if column == 'C'
-      then ( Board.getLeftRookInitialPosition game.turn,  Board.positionLeft destination  )
-      else ( Board.getRightRookInitialPosition game.turn, Board.positionRight destination )
-
-    gameMovedRook = handleMove gameMovedKing rookOrigin rookDestination
+    doCastling game origin destination =
+      { game
+      | board = SpecialMove.makeCastling
+                  game.turn
+                  game.board
+                  origin
+                  destination
+      }
 
   in
-    gameMovedRook
+    case kingLeftPosition of
+      Just leftPosition ->
+        if selectedPosition == leftPosition then
+          doCastling game originPosition leftPosition
+        else
+          game
+
+      Nothing ->
+        case kingRightPosition of
+          Just rightPosition ->
+            if selectedPosition == rightPosition then
+              doCastling game originPosition rightPosition
+            else
+              game
+
+          Nothing ->
+            Debug.crash """castling special move without both
+              arguments being Nothing!"""
 
 
 updateGraveyard : Game -> Figure -> Game
@@ -221,56 +235,7 @@ noSpecialMove : ( List Position, Maybe SpecialMove )
 noSpecialMove = ( [], Nothing )
 
 
-getPawnSpecialDestinations : Game -> Position -> (List Position, Maybe SpecialMove)
-getPawnSpecialDestinations game origin =
-  let
-    left = Board.positionLeft origin
-
-    right = Board.positionRight origin
-
-    nextPosition = Board.positionAhead game.turn origin
-
-    nextRow = snd <| nextPosition
-
-    ( specialDestinations, specialMove ) =
-      if nextRow == 1 || nextRow == 8 then
-        ([], Just <| Promotion nextPosition)
-      else
-        case game.state of
-          Origin (Just pawnPosition) ->
-            if pawnPosition == left || pawnPosition == right then
-              let
-                enPassantDestination : Position
-                enPassantDestination =
-                    Board.shift pawnPosition <|
-                       case game.turn of
-                         Black ->
-                           (0, 1)
-
-                         White ->
-                           (0, -1)
-              in
-                ( [enPassantDestination]
-                , Just <| EnPassant enPassantDestination
-                )
-            else
-             noSpecialMove
-
-          _ ->
-             noSpecialMove
-
-    destinations = (getPawnValidTakes game origin) ++ specialDestinations
-
-  in
-    (destinations, specialMove)
-
-
-getKingCastlingArrivalPosition :
-  Game ->
-  List Position ->
-  ( Color -> Position ) ->
-  Maybe Position
-
+getKingCastlingArrivalPosition : Game -> List Position -> ( Color -> Position ) -> Maybe Position
 getKingCastlingArrivalPosition game castlingIntermediatePositions getRookInitialPosition =
   let
     rookPosition = getRookInitialPosition game.turn
@@ -301,7 +266,6 @@ getKingCastlingArrivalPosition game castlingIntermediatePositions getRookInitial
               Nothing
             else
               kingLandingPoint)
-
 
 getCastlingDestinations : Game -> Position -> Piece -> (List Position, Maybe SpecialMove)
 getCastlingDestinations game origin king =
@@ -349,21 +313,70 @@ getCastlingDestinations game origin king =
         )
 
 
+getPawnSpecialDestinations : Game -> Position -> (List Position, Maybe SpecialMove)
+getPawnSpecialDestinations game origin =
+  let
+    left = Board.positionLeft origin
+
+    right = Board.positionRight origin
+
+    nextPosition = Board.positionAhead game.turn origin
+
+    nextRow = snd <| nextPosition
+
+    ( specialDestinations, specialMove ) =
+      if nextRow == 1 || nextRow == 8 then
+        ([], Just <| Promotion nextPosition)
+      else
+        case game.state of
+          Origin (Just pawnPosition) ->
+            if pawnPosition == left || pawnPosition == right then
+              let
+                enPassantDestination : Position
+                enPassantDestination =
+                    Board.shift pawnPosition <|
+                       case game.turn of
+                         Black ->
+                           (0, 1)
+
+                         White ->
+                           (0, -1)
+              in
+                ( [enPassantDestination]
+                , Just <| EnPassant enPassantDestination
+                )
+            else
+             noSpecialMove
+
+          _ ->
+             noSpecialMove
+
+    destinations = (getPawnValidTakes game origin) ++ specialDestinations
+
+  in
+    (destinations, specialMove)
+
+
 getSpecialDestinations : Game -> Position -> Piece ->
   ( List Position, Maybe SpecialMove )
 getSpecialDestinations game origin piece =
   case piece.figure of
     Pawn ->
-      getPawnSpecialDestinations game origin
+      getPawnSpecialDestinations
+        game
+        origin
 
     King ->
-      getCastlingDestinations game origin piece
+      getCastlingDestinations
+        game
+        origin
+        piece
 
     _ ->
       noSpecialMove
 
-getValidDestinations : Game -> Position -> Piece ->
-  ( List Position, Maybe SpecialMove )
+
+getValidDestinations : Game -> Position -> Piece -> ( List Position, Maybe SpecialMove )
 getValidDestinations game origin piece =
   let
     regularDestinations : List Position
@@ -522,22 +535,13 @@ handleDestination game selectedPosition originPosition validDestinations special
 
         Just (Castling (kingLeftPosition, kingRightPosition)) ->
           waitForPieceSelection Nothing <|
-            case kingLeftPosition of
-              Just leftPosition ->
-                if selectedPosition == leftPosition then
-                  makeCastling game originPosition leftPosition
-                else
-                  game'
-              Nothing ->
-                case kingRightPosition of
-                  Just rightPosition ->
-                    if selectedPosition == rightPosition then
-                      makeCastling game originPosition rightPosition
-                    else
-                      game'
+            handleCastling
+              game
+              originPosition
+              selectedPosition
+              kingLeftPosition
+              kingRightPosition
 
-                  Nothing ->
-                    Debug.crash "castling special move without both arguments being Nothing!"
 
 
 handleClick : Game -> Position -> Game
