@@ -63,28 +63,13 @@ renderGutterItem label =
 
 renderGutterHorizontal : List Html
 renderGutterHorizontal =
-  [ renderGutterItem "A"
-  , renderGutterItem "B"
-  , renderGutterItem "C"
-  , renderGutterItem "D"
-  , renderGutterItem "E"
-  , renderGutterItem "F"
-  , renderGutterItem "G"
-  , renderGutterItem "H"
-  ]
+  List.map renderGutterItem [ "A", "B", "C", "D", "E", "F", "G", "H"]
 
 
 renderGutterVertical : List Html
 renderGutterVertical =
-  [ renderGutterItem "1"
-  , renderGutterItem "2"
-  , renderGutterItem "3"
-  , renderGutterItem "4"
-  , renderGutterItem "5"
-  , renderGutterItem "6"
-  , renderGutterItem "7"
-  , renderGutterItem "8"
-  ]
+  List.map renderGutterItem [ "1", "2", "3", "4", "5", "6", "7", "8"]
+
 
 renderGutter : GutterPlacement -> Html
 renderGutter placement =
