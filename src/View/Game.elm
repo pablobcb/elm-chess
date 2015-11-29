@@ -17,10 +17,10 @@ import Update          exposing (..)
 renderGame : Address Action -> Game -> Html
 renderGame address game =
   div [ class "game" ]
-      [ renderStatusBar address game
-      , div [ class "board-and-graveyard" ]
+      [ div [ class "board-and-graveyard" ]
             [ renderGraveyard game.graveyard2 Black
             , renderBoard address game.turn game.state game.board
             , renderGraveyard game.graveyard1 White
             ]
+      , renderStatusBar address game
       ]

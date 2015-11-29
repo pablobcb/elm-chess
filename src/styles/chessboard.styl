@@ -1,10 +1,61 @@
 .chessboard
-  height: $dimension-size
-  width:  $dimension-size
-  margin-left  auto
-  margin-right auto
-  border: 3px solid #333
-  font-size 0
+  width        $dimension-size + (2 * ($gutter-thickness + $chessboard-border-thickness))
+  font-size    0
+
+  .chessboard__grid
+    position  absolute
+    top    $gutter-thickness
+    left   $gutter-thickness
+    height $dimension-size
+    width  $dimension-size
+    border $chessboard-border-thickness solid #333
+
+  .chessboard__gutter
+    position: absolute
+    font-size    initial
+
+    &.top
+      top    0
+      left   $gutter-thickness
+      width  (2 * $chessboard-border-thickness) + $dimension-size
+      height $gutter-thickness
+
+    &.right
+      right 0
+      top   $gutter-thickness
+      height  (2 * $chessboard-border-thickness) + $dimension-size
+      width $gutter-thickness
+
+    &.left
+      left  0
+      top   $gutter-thickness
+      height  (2 * $chessboard-border-thickness) + $dimension-size
+      width $gutter-thickness
+
+    &.bottom
+      top    $gutter-thickness + $dimension-size + (2 * $chessboard-border-thickness)
+      left   $gutter-thickness
+      width  (2 * $chessboard-border-thickness) + $dimension-size
+      height $gutter-thickness
+
+    &.top,
+    &.bottom
+      .chessboard__gutter__item
+        display: inline-block
+        width: $square-size
+        height: $gutter-thickness
+        text-align: center
+        line-height: $gutter-thickness
+
+    &.right,
+    &.left
+      .chessboard__gutter__item
+        display: inline-block
+        width: $gutter-thickness
+        height: $square-size
+        text-align: center
+        line-height: $square-size
+
 
   .square
     display: inline-block

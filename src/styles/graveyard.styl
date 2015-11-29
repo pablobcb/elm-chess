@@ -1,6 +1,12 @@
 .graveyard
-  height: $dimension-size
-  width: (2 * $square-size)
+  height:    $graveyard-height
+  width:     $graveyard-width
+
+  &.white
+    left: $graveyard-width + $dimension-size + (2 * $gutter-thickness)
+
+  &.black
+    left: 0
 
   .square
     display: inline-block

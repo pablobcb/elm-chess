@@ -15,6 +15,13 @@ import Chess.Color as Color exposing (..)
 import View.Piece        exposing (..)
 
 
+type GutterPlacement
+  = Top
+  | Bottom
+  | Left
+  | Right
+
+
 renderBoardSquare : Address Action -> GameState -> Position -> Square -> Html
 renderBoardSquare address state position square =
   let
@@ -49,6 +56,37 @@ renderBoardSquare address state position square =
         renderSquare <| getPieceClass piece
 
 
+renderGutterItem : String -> Html
+renderGutterItem label =
+  div [ class "chessboard__gutter__item" ] [ text label ]
+
+
+renderGutterHorizontal : List Html
+renderGutterHorizontal =
+  List.map renderGutterItem [ "A", "B", "C", "D", "E", "F", "G", "H"]
+
+
+renderGutterVertical : List Html
+renderGutterVertical =
+  List.map renderGutterItem [ "1", "2", "3", "4", "5", "6", "7", "8"]
+
+
+renderGutter : GutterPlacement -> Html
+renderGutter placement =
+  case placement of
+    Top ->
+      div [ class "chessboard__gutter top"] renderGutterHorizontal
+
+    Left ->
+      div [ class "chessboard__gutter left"] renderGutterVertical
+
+    Right ->
+      div [ class "chessboard__gutter right" ] renderGutterVertical
+
+    Bottom ->
+      div [ class "chessboard__gutter bottom "] renderGutterHorizontal
+
+
 renderBoard : Address Action -> Color -> GameState -> Board -> Html
 renderBoard address turn state board =
   let
@@ -71,4 +109,9 @@ renderBoard address turn state board =
     className = String.join " " ["chessboard", highlight]
 
   in
-    div [ class className ] squares
+    div [ class className ] [ renderGutter Left
+                            , renderGutter Top
+                            , div [ class "chessboard__grid" ] squares
+                            , renderGutter Right
+                            , renderGutter Bottom
+                            ]

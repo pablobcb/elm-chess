@@ -1,6 +1,6 @@
 {
     "version": "1.0.0",
-    "summary": "little chess game to learn Elm",
+    "summary": "A little chess project in Elm",
     "repository": "https://github.com/pablobcb/elm-chess.git",
     "license": "BSD3",
     "source-directories": [
