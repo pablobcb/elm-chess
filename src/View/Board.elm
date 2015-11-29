@@ -35,16 +35,12 @@ renderBoardSquare address state position square =
 
         _ -> "")
 
-    title' =
-      title <| toString position
-
     emitPosition =
       onClick address <| Click position
 
     renderSquare pieceStyle =
       div [ class <| String.join " " [ "square", highlight, pieceStyle ]
           , emitPosition
-          , title'
           ] []
 
  in
