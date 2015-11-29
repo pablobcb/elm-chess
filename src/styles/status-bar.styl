@@ -9,30 +9,37 @@
   text-align: left
   border-style: solid
   border-width: 3px
-  border-color: black
+  border-color: transparent
 
-.status-bar__clock
-  float: left
+  &.status-bar--white
+    background: white
+    color: black
+
+  &.status-bar--black
+    background: black
+    color: white
+
+
+.status-bar__clock,
+.status-bar__turn,
+.status-bar__message
+  display: inline-block
+  box-sizing: border-box
+  width: (100/3)vw
   padding-left: 30px
   padding-right: 30px
-  border-right: 3px solid black
+
+.status-bar__message
+  text-align: center
+
+.status-bar__turn
+  text-align right
 
 .status-bar__clock-icon
   margin-right: 10px
 
-.status-bar__clock-message
-  margin-left: 10px
-
-.status-bar__clock--white
-  background: white
-  color: black
-
-.status-bar__clock--black
-  background: black
-  color: white
-
-.status-bar__promotion-btn
+.status-bar__promotion-button
+  position: relative
+  background: none
   padding: 0
   border: none
-  background: none
-  position: relative
