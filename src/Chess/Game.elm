@@ -9,6 +9,7 @@ import Chess.Color        as Color        exposing (..)
 import Chess.Board        as Board        exposing (..)
 import Chess.SpecialMove  as SpecialMove  exposing (..)
 import Chess.Piece        as Piece        exposing (..)
+import Chess.Check        as Check        exposing (..)
 
 type alias Graveyard = List Figure
 
