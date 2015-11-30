@@ -66,21 +66,7 @@ renderStatusBar address game =
           [ text  "select a destination" ]
 
         SelectPromotion position ->
-          let
-            renderPromotionBtn piece =
-              button
-                 [ onClick address <| Promote position piece.figure
-                 , class <| String.join " " [ getPieceClass piece
-                                            , "square"
-                                            , "status-bar__promotion-button"
-                                            ]
-                 ] []
-          in
-            [ text "promote to:"
-            , renderPromotionBtn <| piece Queen game.turn
-            , renderPromotionBtn <| piece Knight game.turn
-            ]
-
+          [ text "select a piece" ]
 
         Finished winner ->
           [ text
