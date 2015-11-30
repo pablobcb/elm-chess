@@ -10,6 +10,7 @@ import Chess.Board        as Board        exposing (..)
 import Chess.SpecialMove  as SpecialMove  exposing (..)
 import Chess.Piece        as Piece        exposing (..)
 import Chess.Check        as Check        exposing (..)
+import Chess.Updater      as Updater     exposing (..)
 
 type alias Graveyard = List Figure
 
@@ -42,27 +43,6 @@ type alias Game =
   , previousState : GameState
   , turnInSeconds : Int
   }
-
-
-resetClock : Game -> Game
-resetClock game =
-  { game | turnInSeconds = 0 }
-
-
-tick : Game -> Game
-tick game =
-  { game
-  | turnInSeconds = game.turnInSeconds + 1
-  }
-
-
-passTurn : Game -> Game
-passTurn game =
-  resetClock
-    { game
-    | previousState = game.state
-    , turn = other game.turn
-    }
 
 
 waitForPieceSelection : Maybe Position -> Game -> Game

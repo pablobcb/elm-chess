@@ -1,6 +1,7 @@
 module Update where
 
 import Chess.Game  as Game exposing (..)
+import Chess.Updater  as Updater exposing (..)
 import Chess.Board as Board exposing (..)
 import Chess.Piece as Game exposing (..)
 
@@ -16,7 +17,7 @@ update action game =
   case action of
     -- increase turn timer by 1 second
     UpdateTimer ->
-      Game.tick game
+      Updater.tick game
 
 
     -- sets promoted piece into position on board
