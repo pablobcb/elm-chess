@@ -278,19 +278,19 @@ getCastlingDestinations game origin king =
       ( leftCastlingIntermediatePositions
       , rightCastlingIntermediatePositions
       ) =
-        Board.getCastlingIntermediatePositions game.turn
+        SpecialMove.getCastlingIntermediatePositions game.turn
 
       leftKingCastlingArrivalPosition =
         getKingCastlingArrivalPosition
           game
           leftCastlingIntermediatePositions
-          Board.getLeftRookInitialPosition
+          SpecialMove.getLeftRookInitialPosition
 
       rightKingCastlingArrivalPosition =
         getKingCastlingArrivalPosition
           game
           rightCastlingIntermediatePositions
-          Board.getLeftRookInitialPosition
+          SpecialMove.getLeftRookInitialPosition
 
       castlingPositions =
         (Maybe.Extra.maybeToList

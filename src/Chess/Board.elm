@@ -12,12 +12,9 @@ import Chess.Piece exposing (..)
 
 type alias Position = (Char, Int)
 
-
 type alias Square = Maybe Piece
 
-
 type alias Board = Dict Position Square
-
 
 letters: List Char
 letters =
@@ -139,36 +136,6 @@ pawnTakeRanges color =
 
      White ->
        { right = (1, -1), left = (-1, -1) }
-
-
-getLeftRookInitialPosition : Color -> Position
-getLeftRookInitialPosition turn =
-  case turn of
-    Black ->
-      ( 'A', 1 )
-
-    White ->
-      ( 'A', 8 )
-
-
-getRightRookInitialPosition : Color -> Position
-getRightRookInitialPosition turn =
-  case turn of
-    Black ->
-      ( 'H', 1 )
-
-    White ->
-      ( 'H', 8 )
-
-
-getCastlingIntermediatePositions : Color -> ( List Position, List Position )
-getCastlingIntermediatePositions turn =
-  case turn of
-    Black ->
-      ( [('B', 1 ), ( 'C', 1 ), ( 'D', 1 ) ], [( 'F', 1 ), ( 'G', 1 ) ] )
-
-    White ->
-      ( [('B', 8 ), ( 'C', 8 ), ( 'D', 8 ) ], [( 'F', 8 ), ( 'G', 8 ) ] )
 
 
 rangeToSquare : Position -> Board -> Range -> Square

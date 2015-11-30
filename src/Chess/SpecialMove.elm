@@ -53,11 +53,11 @@ makeCastling color board origin destination =
     (rookOrigin, rookDestination) =
       if column == 'C'
       then
-        ( Board.getLeftRookInitialPosition color
+        ( getLeftRookInitialPosition color
         , Board.positionLeft destination
         )
       else
-        ( Board.getRightRookInitialPosition color
+        ( getRightRookInitialPosition color
         , Board.positionRight destination
         )
 
@@ -66,3 +66,32 @@ makeCastling color board origin destination =
 
   in
     boardAfterHookHasMoved
+
+getLeftRookInitialPosition : Color -> Position
+getLeftRookInitialPosition turn =
+  case turn of
+    Black ->
+      ( 'A', 1 )
+
+    White ->
+      ( 'A', 8 )
+
+
+getRightRookInitialPosition : Color -> Position
+getRightRookInitialPosition turn =
+  case turn of
+    Black ->
+      ( 'H', 1 )
+
+    White ->
+      ( 'H', 8 )
+
+
+getCastlingIntermediatePositions : Color -> ( List Position, List Position )
+getCastlingIntermediatePositions turn =
+  case turn of
+    Black ->
+      ( [('B', 1 ), ( 'C', 1 ), ( 'D', 1 ) ], [( 'F', 1 ), ( 'G', 1 ) ] )
+
+    White ->
+      ( [('B', 8 ), ( 'C', 8 ), ( 'D', 8 ) ], [( 'F', 8 ), ( 'G', 8 ) ] )
