@@ -1,0 +1,29 @@
+.promotion.active
+  position: absolute
+  top: 50%
+  left: 50%
+  width: 5 * $square-size
+  transform: translate(-50%, -50%)
+  z-index: $z-promotion
+  background-color: rgba(0,0,0,0.7)
+  text-align: center
+
+  .promotion__label,
+  .promotion__pieces
+    text-align: center
+    height: 2 * $square-size
+
+  .promotion__label
+    color: white
+    line-height: 2 * $square-size
+
+  .square
+    display: inline-block
+
+  .square:nth-of-type(1)
+    margin-right: ($square-size / 2)
+    background-color: white
+
+  .square:nth-of-type(2)
+    margin-left: ($square-size / 2)
+    inset-dark-background()
