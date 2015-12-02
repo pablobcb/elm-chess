@@ -324,11 +324,11 @@ move board origin destination =
 
     -- insert piece in new position and clears origin
     board' =
-      Dict.insert origin Nothing <|
       Dict.insert
         destination
         ( Maybe.map (\ piece -> { piece | moved = True }) originSquare )
         board
+      |> Dict.insert origin Nothing 
 
     takenPiece = destinationSquare
 

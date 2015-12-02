@@ -2,16 +2,12 @@ module View.StatusBar where
 
 import Html            exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events     exposing (..)
 import Signal          exposing (..)
 import String          exposing (..)
 
 import Chess.Game  exposing (..)
-import Chess.Piece exposing (..)
 
 import Update exposing (..)
-
-import View.Piece exposing (..)
 
 formatTime : Int -> String
 formatTime time =
@@ -24,9 +20,8 @@ formatTime time =
     time' f = toString <| f time 60
     seconds = ensure2digits <| time' rem
     minutes = time' (//)
-    parsedTime = minutes ++ ":" ++ seconds
   in
-    parsedTime
+    minutes ++ ":" ++ seconds
 
 
 clock : Game -> Html
