@@ -1,28 +1,26 @@
 body
-  margin: 0
 
-  // Avoid user selection
-  // http://caniuse.com/#feat=user-select-none
-  -webkit-user-select: none
-  -moz-user-select: none
-  -ms-user-select: none
-  user-select: none
+  -webkit-user-select none
+  -moz-user-select    none
+  -ms-user-select     none
+  user-select         none
 
-  font-family: 'Helvetica Neue', Helvetica, sans-serif
-  font-size: 18px
+  font-family 'Helvetica Neue', Helvetica, sans-serif
+  font-size   18px
+  margin      0
 
 .board-and-graveyard
-  position: absolute
-  top: 50%
-  left: 50%
-  height: $graveyard-height
-  width: (2 * ($graveyard-width + $chessboard-border-thickness + $gutter-thickness)) + $dimension-size
-  transform: translate(-50%, -50%)
+  position  absolute
+  top       50%
+  left      50%
+  height    $graveyard-height
+  width     (2 * ($graveyard-width + $chessboard-border-thickness + $gutter-thickness)) + $dimension-size
+  transform translate(-50%, -50%)
 
   .graveyard,
   .chessboard
-    position: absolute
+    position absolute
 
   .chessboard
-    top: 0
-    left: $graveyard-width
+    top  0
+    left $graveyard-width

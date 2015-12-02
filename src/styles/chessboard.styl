@@ -22,15 +22,15 @@
 
     &.right
       right 0
-      top   $gutter-thickness
-      height  (2 * $chessboard-border-thickness) + $dimension-size
-      width $gutter-thickness
+      top    $gutter-thickness
+      height (2 * $chessboard-border-thickness) + $dimension-size
+      width  $gutter-thickness
 
     &.left
-      left  0
-      top   $gutter-thickness
-      height  (2 * $chessboard-border-thickness) + $dimension-size
-      width $gutter-thickness
+      left   0
+      top    $gutter-thickness
+      height (2 * $chessboard-border-thickness) + $dimension-size
+      width  $gutter-thickness
 
     &.bottom
       top    $gutter-thickness + $dimension-size + (2 * $chessboard-border-thickness)
@@ -41,24 +41,24 @@
     &.top,
     &.bottom
       .chessboard__gutter__item
-        display: inline-block
-        width: $square-size
-        height: $gutter-thickness
-        text-align: center
-        line-height: $gutter-thickness
+        display     inline-block
+        width       $square-size
+        height      $gutter-thickness
+        text-align  center
+        line-height $gutter-thickness
 
     &.right,
     &.left
       .chessboard__gutter__item
-        display: inline-block
-        width: $gutter-thickness
-        height: $square-size
-        text-align: center
-        line-height: $square-size
+        display     inline-block
+        width       $gutter-thickness
+        height      $square-size
+        text-align  center
+        line-height $square-size
 
 
   .square
-    display: inline-block
+    display     inline-block
     line-height $square-size
 
     &:nth-of-type(16n + 16),
@@ -78,4 +78,4 @@
 
   &.highlight-destinations
     .square:not(.piece):hover
-      border: $square-highlight-width solid green
+      border $square-highlight-width solid green

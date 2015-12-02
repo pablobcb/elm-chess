@@ -1,33 +1,33 @@
 .promotion.active
-  position: absolute
-  top 50%
-  left 50%
-  width 5 * $square-size
-  transform translate(-50%, -50%)
-  z-index $z-promotion
+  position         absolute
+  top              50%
+  left             50%
+  width            5 * $square-size
   background-color rgba(0,0,0,0.7)
-  text-align center
-  border-radius 12px
+  transform        translate(-50%, -50%)
+  z-index          $z-promotion
+  text-align       center
+  border-radius    12px
 
   .promotion__label,
   .promotion__pieces
     text-align center
-    height $promotion-height
+    height     $promotion-height
 
   .promotion__label
-    color white
-    font-size 30px
+    color       white
+    font-size   30px
     line-height 2 * $square-size
 
   .square
     display inline-block
 
   .square:nth-of-type(1)
-    margin-right ($square-size / 2)
-    inset-dark-background()
+    margin-right  ($square-size / 2)
     border-radius 12px
+    inset-dark-background()
 
   .square:nth-of-type(2)
+    margin-left  ($square-size / 2)
     border-radius 12px
-    margin-left ($square-size / 2)
     inset-dark-background()
