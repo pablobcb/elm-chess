@@ -20,7 +20,7 @@ actions =
 
 ticker : Signal Action
 ticker =
-  Signal.map (\_-> UpdateTimer) <| Time.every Time.second
+  Signal.map (always UpdateTimer) <| Time.every Time.second
 
 
 model : Signal Game
