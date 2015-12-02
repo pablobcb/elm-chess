@@ -34,7 +34,7 @@ renderPromotion address game =
       in
         div
           [ class "promotion active" ]
-          [ div [ class "promotion__label" ] [ text "Promotion" ]
+          [ div [ class "promotion__label" ] [ text "promotion" ]
           , div
               [ class "promotion__pieces" ]
               [ renderPromotionButton <| piece Queen game.turn
