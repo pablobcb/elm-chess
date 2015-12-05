@@ -1,7 +1,7 @@
 inset-dark-background()
-  background #ccc
-  background linear-gradient(to bottom, #ccc, #eee)
-  box-shadow inset 0 0 10px rgba(0,0,0,.4)
+  background $inset-dark-background-color-start
+  background linear-gradient(to bottom, $inset-dark-background-color-start, $inset-dark-background-color-end)
+  box-shadow inset 0 0 10px rgba(0, 0, 0, 0.4)
 
 highlight-piece()
   border $square-highlight-width solid green
